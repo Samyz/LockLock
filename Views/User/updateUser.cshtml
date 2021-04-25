@@ -1,0 +1,40 @@
+@model LockLock.Models.User
+
+@{
+    ViewData["Title"] = "updateUser";
+}
+
+<h1>Update User</h1>
+
+<h4>User</h4>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="updateUser">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="UserId" class="form-control" hidden />
+            <div class="form group">
+                <label asp-for="email" class="control-label"></label>
+                <input asp-for="email" class="form-control" />
+                <span asp-validation-for="email" class="text-danger"></span>
+            </div>
+            <div class="form group">
+                <label asp-for="firstname" class="control-label"></label>
+                <input asp-for="firstname" class="form-control" />
+                <span asp-validation-for="firstname" class="text-danger"></span>
+            </div>
+            <div class="form group">
+                <label asp-for="lastname" class="control-label"></label>
+                <input asp-for="lastname" class="form-control" />
+                <span asp-validation-for="lastname" class="text-danger"></span>
+            </div>
+            <div class="form group">
+                <label asp-for="tel" class="control-label"></label>
+                <input asp-for="tel" class="form-control" />
+                <span asp-validation-for="tel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

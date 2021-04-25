@@ -1,8 +1,59 @@
-﻿@{
+﻿@* @model IEnumerable<LockLock.Models.User> *@
+
+@{
     ViewData["Title"] = "Home Page";
 }
+
+@* <h1>Index</h1> *@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+@* <p>
+    <a asp-action="newUser">Create New</a>
+    </p>
+    <table class="table">
+    <thead>
+    <tr>
+    <th>
+    @Html.DisplayNameFor(model => model.UserId)
+    </th>
+    <th>
+    @Html.DisplayNameFor(model => model.email)
+    </th>
+    <th>
+    @Html.DisplayNameFor(model => model.firstname)
+    </th>
+    <th>
+    @Html.DisplayNameFor(model => model.lastname)
+    </th>
+    <th>
+    @Html.DisplayNameFor(model => model.tel)
+    </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+    <tr>
+    <td>
+    @Html.DisplayFor(modelItem => item.UserId)
+    </td>
+    <td>
+    @Html.DisplayFor(modelItem => item.email)
+    </td>
+    <td>
+    @Html.DisplayFor(modelItem => item.firstname)
+    </td>
+    <td>
+    @Html.DisplayFor(modelItem => item.lastname)
+    </td>
+    <td>
+    @Html.DisplayFor(modelItem => item.tel)
+    </td>
+    </tr>
+    }
+    </tbody>
+    </table> *@
