@@ -11,7 +11,7 @@ namespace LockLock.Controllers
 {
     public class UserController : Controller
     {
-        private string firebaseJSON = "D:\\Samyz\\KMITL\\3-2\\SoftStu\\project\\locklockconfigure.json";
+        private string firebaseJSON = AppDomain.CurrentDomain.BaseDirectory + @"locklockconfigure.json";
         private string projectId;
         private FirestoreDb firestoreDb;
 
@@ -25,7 +25,7 @@ namespace LockLock.Controllers
         {
             Query userQuery = firestoreDb.Collection("user");
             QuerySnapshot userQuerySnapshot = await userQuery.GetSnapshotAsync();
-            List<User> listUser = new List<User>();
+            List<UserModel> listUser = new List<UserModel>();
 
             foreach (DocumentSnapshot documentSnapshot in userQuerySnapshot.Documents)
             {
@@ -33,7 +33,7 @@ namespace LockLock.Controllers
                 {
                     Dictionary<string, object> user = documentSnapshot.ToDictionary();
                     string json = JsonConvert.SerializeObject(user);
-                    User newUser = JsonConvert.DeserializeObject<User>(json);
+                    UserModel newUser = JsonConvert.DeserializeObject<UserModel>(json);
                     newUser.UserId = documentSnapshot.Id;
                     listUser.Add(newUser);
                 }
@@ -48,7 +48,7 @@ namespace LockLock.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> newUser(User user)
+        public async Task<IActionResult> newUser(UserModel user)
         {
             CollectionReference collectionReference = firestoreDb.Collection("user");
             await collectionReference.AddAsync(user);
@@ -63,7 +63,7 @@ namespace LockLock.Controllers
 
             if (documentSnapshot.Exists)
             {
-                User user = documentSnapshot.ConvertTo<User>();
+                UserModel user = documentSnapshot.ConvertTo<UserModel>();
                 return View(user);
             }
 
@@ -71,7 +71,7 @@ namespace LockLock.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> updateUser(User user)
+        public async Task<IActionResult> updateUser(UserModel user)
         {
             DocumentReference documentReference = firestoreDb.Collection("user").Document(user.UserId);
             await documentReference.SetAsync(user, SetOptions.Overwrite);

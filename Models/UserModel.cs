@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 using Google.Cloud.Firestore;
 
 namespace LockLock.Models
 {
     [FirestoreData]
-    public class User
+    public class UserModel
     {
         public string UserId { get; set; }
 
