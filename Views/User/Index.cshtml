@@ -21,16 +21,16 @@
                 @Html.DisplayNameFor(model => model.UserId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.email)
+                @Html.DisplayNameFor(model => model.Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.firstname)
+                @Html.DisplayNameFor(model => model.Firstname)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.lastname)
+                @Html.DisplayNameFor(model => model.Lastname)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.tel)
+                @Html.DisplayNameFor(model => model.Tel)
             </th>
             <th></th>
         </tr>
@@ -43,16 +43,16 @@
                     @Html.DisplayFor(modelItem => item.UserId)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.email)
+                    @Html.DisplayFor(modelItem => item.Email)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.firstname)
+                    @Html.DisplayFor(modelItem => item.Firstname)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.lastname)
+                    @Html.DisplayFor(modelItem => item.Lastname)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.tel)
+                    @Html.DisplayFor(modelItem => item.Tel)
                 </td>
                 <td>
                     <a asp-action="updateUser" asp-route-userId="@item.UserId">Update</a>

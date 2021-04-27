@@ -9,15 +9,16 @@ namespace LockLock.Models
         public string UserId { get; set; }
 
         [FirestoreProperty]
-        public string email { get; set; }
+        public string Email { get; set; }
 
         [FirestoreProperty]
-        public string firstname { get; set; }
+        public string Firstname { get; set; }
 
         [FirestoreProperty]
-        public string lastname { get; set; }
+        public string Lastname { get; set; }
 
         [FirestoreProperty]
-        public string tel { get; set; }
+        public string Tel { get; set; }
+        
     }
 }
