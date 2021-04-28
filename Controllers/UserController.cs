@@ -235,7 +235,7 @@ namespace LockLock.Controllers
                     {
                         tableData[i, j] = new Tuple<string, uint>("Grey", thisRoom.objNum - tableData[i, j].Item2);
                     }
-                    else if (thisRoom.objNum - tableData[i, j].Item2 == 0)
+                    else if (thisRoom.objNum - tableData[i, j].Item2 <= 0)
                     {
                         if (j % 2 == 0)
                             tableData[i, j] = new Tuple<string, uint>("Yellow", thisRoom.objNum - tableData[i, j].Item2);
