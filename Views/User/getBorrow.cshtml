@@ -1,0 +1,39 @@
+@model LockLock.Models.TableModel
+
+@{
+    ViewData["Title"] = "Borrow Page";
+}
+
+<h1>Borrow</h1>
+<br>
+<h4>Object Name</h4>
+<p>@Html.DisplayFor(modelItem => Model.objName)</p>
+<br>
+<h4>timeLength</h4>
+<p>@Html.DisplayFor(modelItem => Model.timeLength)</p>
+<table class="table">
+    <thead>
+        <tr>
+            @foreach (var item in Model.name)
+            {
+                <th>
+                    @Html.DisplayFor(modelItem => item)
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @for (var i = 0; i < 9; i++)
+        {
+            <tr>
+                @for (var j = 0; j < 7; j++)
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.table[j, i].Item1)
+                        &(@Html.DisplayFor(modelItem => Model.table[j, i].Item2))
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
