@@ -94,7 +94,8 @@ namespace LockLock.Controllers
             string roomID = "ROOM 1";
             Query roomQuery = firestoreDb.Collection("room").WhereEqualTo("name", roomID);
             QuerySnapshot roomQuerySnapshot = await roomQuery.GetSnapshotAsync();
-            List<RoomModel> listRoom = new List<RoomModel>();
+            // List<RoomModel> listRoom = new List<RoomModel>();
+            RoomModel Room = new RoomModel();
 
             foreach (DocumentSnapshot documentSnapshot in roomQuerySnapshot)
             {
@@ -104,16 +105,17 @@ namespace LockLock.Controllers
                     string json = JsonConvert.SerializeObject(room);
                     RoomModel newRoom = JsonConvert.DeserializeObject<RoomModel>(json);
                     newRoom.RoomID = documentSnapshot.Id;
-                    listRoom.Add(newRoom);
+                    Room = newRoom;
+                    // listRoom.Add(newRoom);
                 }
             }
 
-            RoomModel thisRoom = listRoom[0];
-            Console.WriteLine("RoomID = " + thisRoom.RoomID);
-            Console.WriteLine("adminID = " + thisRoom.adminID);
-            Console.WriteLine("name = " + thisRoom.name);
-            Console.WriteLine("objName = " + thisRoom.objName);
-            Console.WriteLine("objNum = " + thisRoom.objNum);
+            // RoomModel thisRoom = Room;//listRoom[0]
+            Console.WriteLine("RoomID = " + Room.RoomID);
+            Console.WriteLine("adminID = " + Room.adminID);
+            Console.WriteLine("name = " + Room.name);
+            Console.WriteLine("objName = " + Room.objName);
+            Console.WriteLine("objNum = " + Room.objNum);
             // foreach (RoomModel i in listRoom)
             // {
             //     Console.WriteLine("RoomID = " + i.RoomID);
@@ -233,18 +235,18 @@ namespace LockLock.Controllers
                 {
                     if (i == 0 && j <= hourNow - 9)
                     {
-                        tableData[i, j] = new Tuple<string, uint>("Grey", thisRoom.objNum - tableData[i, j].Item2);
+                        tableData[i, j] = new Tuple<string, uint>("Grey", Room.objNum - tableData[i, j].Item2);
                     }
-                    else if (thisRoom.objNum - tableData[i, j].Item2 <= 0)
+                    else if (Room.objNum - tableData[i, j].Item2 <= 0)
                     {
                         if (j % 2 == 0)
-                            tableData[i, j] = new Tuple<string, uint>("Yellow", thisRoom.objNum - tableData[i, j].Item2);
+                            tableData[i, j] = new Tuple<string, uint>("Yellow", Room.objNum - tableData[i, j].Item2);
                         else
-                            tableData[i, j] = new Tuple<string, uint>("Red", thisRoom.objNum - tableData[i, j].Item2);
+                            tableData[i, j] = new Tuple<string, uint>("Red", Room.objNum - tableData[i, j].Item2);
                     }
                     else
                     {
-                        tableData[i, j] = new Tuple<string, uint>("Green", thisRoom.objNum - tableData[i, j].Item2);
+                        tableData[i, j] = new Tuple<string, uint>("Green", Room.objNum - tableData[i, j].Item2);
                     }
                 }
             }
@@ -269,7 +271,7 @@ namespace LockLock.Controllers
 
             TableModel viewData = new TableModel()
             {
-                objName = listRoom[0].objName,
+                objName = Room.objName,
                 timeLength = timeLength,
                 name = viewDataName,
                 table = tableData
