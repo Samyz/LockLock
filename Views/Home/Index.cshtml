@@ -1,59 +1,271 @@
-﻿@* @model IEnumerable<LockLock.Models.User> *@
+﻿@model LockLock.Models.TableModel
+@* @model IEnumerable<LockLock.Models.User> *@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Index Page";
 }
 
-@* <h1>Index</h1> *@
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
-
-@* <p>
-    <a asp-action="newUser">Create New</a>
-    </p>
-    <table class="table">
-    <thead>
-    <tr>
-    <th>
-    @Html.DisplayNameFor(model => model.UserId)
-    </th>
-    <th>
-    @Html.DisplayNameFor(model => model.email)
-    </th>
-    <th>
-    @Html.DisplayNameFor(model => model.firstname)
-    </th>
-    <th>
-    @Html.DisplayNameFor(model => model.lastname)
-    </th>
-    <th>
-    @Html.DisplayNameFor(model => model.tel)
-    </th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model)
-    {
-    <tr>
-    <td>
-    @Html.DisplayFor(modelItem => item.UserId)
-    </td>
-    <td>
-    @Html.DisplayFor(modelItem => item.email)
-    </td>
-    <td>
-    @Html.DisplayFor(modelItem => item.firstname)
-    </td>
-    <td>
-    @Html.DisplayFor(modelItem => item.lastname)
-    </td>
-    <td>
-    @Html.DisplayFor(modelItem => item.tel)
-    </td>
-    </tr>
+<style>
+    .squaredThree {
+        position: relative;
+        float: left;
     }
-    </tbody>
-    </table> *@
+
+    .squaredThree label.Red {
+        width: 20px;
+        height: 15px;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #DD0000;
+        border-radius: 4px;
+        box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.4);
+    }
+
+    .squaredThree label.Green {
+        width: 15px;
+        height: 15px;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #62AD71;
+        border-radius: 4px;
+        box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.4);
+    }
+
+    .squaredThree label.Yellow {
+        width: 15px;
+        height: 15px;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #F9AD6A;
+        border-radius: 4px;
+        box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.4);
+    }
+
+    .squaredThree label.Grey {
+        width: 15px;
+        height: 15px;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: Grey;
+        border-radius: 4px;
+        box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.4);
+    }
+
+    .squaredThree label:after {
+        content: '';
+        width: 9px;
+        height: 5px;
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        border: 3px solid #fcfff4;
+        border-top: none;
+        border-right: none;
+        background: transparent;
+        opacity: 0;
+        -webkit-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+    }
+
+    @*.squaredThreelabel:hover::after{opacity:0.3;}*@.squaredThree input[type=checkbox] {
+        visibility: hidden;
+    }
+
+    .squaredThree input[type=checkbox]:checked+label:after {
+        opacity: 1;
+    }
+
+    .nav-tabs>li.active>a,
+    .nav-tabs>li.active>a:focus,
+    .nav-tabs>li.active>a:hover {
+        color: #D46C4E;
+        cursor: default;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-bottom-color: transparent;
+    }
+
+    .nav-tabs>li>a {
+        margin-right: 20px;
+        line-height: 1.42857143;
+        border: 1px solid transparent;
+        border-radius: 4px 4px 0 0;
+    }
+
+    .nav>li>a {
+        position: relative;
+        display: block;
+        padding: 10px 40px;
+    }
+
+    .btn-info {
+        color: #fff;
+        background-color: #489D93;
+        border-color: #489D93;
+    }
+
+    a {
+        color: white;
+        text-decoration: none;
+        background-color: #D46C4E;
+    }
+
+    .tab-content {
+        border: 1px solid #ddd;
+        border-top-color: transparent;
+    }
+
+    .nav-tabs>li>a {
+        margin-right: 20px;
+        line-height: 1.42857143;
+        border: 1px solid transparent;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .form-inline label {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        margin-bottom: 7px;
+    }
+
+    label {
+        display: inline-block;
+        max-width: 120%;
+        margin-bottom: 0;
+        font-weight: 700;
+    }
+
+    .container-row {
+        display: flex;
+        flex-direction: row;
+        width: 60%;
+        justify-content: space-around;
+    }
+</style>
+
+<div class="container">
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#room1">ROOM 1</a></li>
+        <li><a data-toggle="tab" href="#room2">ROOM 2</a></li>
+        <li><a data-toggle="tab" href="#room3">ROOM 3</a></li>
+        <li><a data-toggle="tab" href="#room4">ROOM 4</a></li>
+        <li><a data-toggle="tab" href="#room5">ROOM 5</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="room1" class="tab-pane fade in active">
+            <h4 style="color: #D46C4E">@Html.DisplayFor(modelItem => Model.objName)</h4>
+            <h4 class="text-center"><b>@Html.DisplayFor(modelItem => Model.timeLength)</b></h4>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th scope="col">Start Time</th>
+                            @foreach (var item in Model.name)
+                            {
+                                <th>
+                                    @Html.DisplayFor(modelItem => item)
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (var i = 0; i < 9; i++)
+                        {
+                            <tr>
+                                <th scope="row">@(i+9).00</th>
+                                @for (var j = 0; j < 7; j++)
+                                {
+                                    <td>
+                                        <form name="queryForm" class="form-inline">
+                                            <div class="squaredThree">
+                                                <input type="checkbox" name="optionsRadios" id="@i@j" value="other"
+                                            ng-model="formData.other" ng-true-value="'other'"
+                                            ng-init="formData.other='other'">
+                                                <label for="@i@j"
+                                            class="@Html.DisplayFor(modelItem => Model.table[j, i].Item1)"></label>
+                                            </div>
+                                            <label class="label-text">&nbsp;(@Html.DisplayFor(modelItem =>
+                                        Model.table[j,i].Item2))</label>
+                                        </form>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="container-row">
+                <form>
+                    <div class="squaredThree">
+                        <input type="checkbox" disabled>
+                        <label class="Red"></label>
+                    </div>
+                    <label class="label-text">&nbsp;ไม่สามารถจองได้</label>
+                </form>
+                <form>
+                    <div class="squaredThree">
+                        <input type="checkbox" disabled>
+                        <label class="Grey"></label>
+                    </div>
+                    <label class="label-text">&nbsp;หมดเวลาการจอง</label>
+                </form>
+
+                <form>
+                    <div class="squaredThree">
+                        <input type="checkbox" disabled>
+                        <label class="Green"></label>
+                    </div>
+                    <label class="label-text">&nbsp;สามารถจองได้</label>
+                </form>
+
+                <form>
+                    <div class="squaredThree">
+                        <input type="checkbox" disabled>
+                        <label class="Yellow"></label>
+                    </div>
+                    <label class="label-text">&nbsp;ยืมกลุ่มอื่น</label>
+                </form>
+            </div>
+            <button type="button" class="btn btn-info float-right">จองอุปกรณ์</button>
+            <br><br><br>
+        </div>
+        <div id="room2" class="tab-pane fade">
+            <h3>Menu 2</h3>
+            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                consequat.</p>
+        </div>
+        <div id="room3" class="tab-pane fade">
+            <h3>Menu 3</h3>
+            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam
+                rem aperiam.</p>
+        </div>
+        <div id="room4" class="tab-pane fade">
+            <h3>Menu 4</h3>
+            <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+        </div>
+        <div id="room5" class="tab-pane fade">
+            <h3>Menu 5</h3>
+            <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+        </div>
+    </div>
+</div>
