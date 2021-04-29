@@ -126,13 +126,17 @@ namespace LockLock.Controllers
             // }
 
             // get room data from Game API here //
-
-            DateTime timeNow = DateTime.UtcNow.Date;
-            DateTime timeEnd = DateTime.UtcNow.Date.AddDays(7);
+            DateTime timeRef = DateTime.Now.Date;
+            DateTime timeNow = DateTime.Now.Date;
+            timeNow = TimeZoneInfo.ConvertTimeToUtc(timeNow);
+            // timeNow = TimeZoneInfo.ConvertTimeFromUtc(timeNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+            DateTime timeEnd = timeNow.AddDays(7);
+            Console.WriteLine("Now " + timeNow.ToString("u"));
+            Console.WriteLine("Ref " + timeRef.ToString("u"));
             int hourNow = int.Parse(DateTime.Now.ToString("HH"));
             int dayNow = int.Parse(DateTime.Now.ToString("dd"));
             // Console.WriteLine("hour Now " + hourNow);
-            string timeLength = timeNow.ToString("dd MMMM") + " - " + timeNow.AddDays(6).ToString("dd MMMM yyyy");
+            string timeLength = timeRef.ToString("dd MMMM") + " - " + timeRef.AddDays(6).ToString("dd MMMM yyyy");
             List<string> viewDataName = new List<string>();
             for (int i = 0; i < 7; i++)
             {
@@ -211,10 +215,19 @@ namespace LockLock.Controllers
 
             foreach (BorrowModel i in listBorrow)
             {
-                Console.WriteLine(i.time.Subtract(timeNow).ToString().Split(".")[0]);
+                Console.WriteLine(i.time.Subtract(timeRef).ToString());//.Split(".")[0]
                 int day = int.Parse(i.time.ToString("dd"));
                 int hour = int.Parse(i.time.ToString("HH"));
-                // Console.WriteLine(day + " " + hour + " " + dayNow + " " + hourNow);
+                int x;
+                if (day == dayNow)
+                {
+                    x = 0;
+                }
+                else
+                {
+                    x = int.Parse(i.time.Subtract(timeRef).ToString().Split(".")[0]);
+                }
+                Console.WriteLine(day + " " + hour + " " + dayNow + " " + hourNow);
                 if (hour < 18) // !(int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0]) == 0 && hour - hourNow <= 0) && 
                 {
                     // Console.WriteLine(viewDataTable[int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0])][hour - 9].Item1 + " " + viewDataTable[int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0])][hour - 9].Item2);
@@ -225,7 +238,7 @@ namespace LockLock.Controllers
                     //     Console.WriteLine(temp[j]);
                     // }
                     // temp[hour - 9] = new Tuple<string, uint>(viewDataTable[int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0])][hour - 9].Item1, viewDataTable[int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0])][hour - 9].Item2 + 1);
-                    tableData[int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0]), hour - 9] = new Tuple<string, uint>(tableData[int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0]), hour - 9].Item1, tableData[int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0]), hour - 9].Item2 + 1);
+                    tableData[x, hour - 9] = new Tuple<string, uint>(tableData[x, hour - 9].Item1, tableData[x, hour - 9].Item2 + 1);
                 }
             }
 
