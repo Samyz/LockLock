@@ -118,10 +118,25 @@
         border-color: #489D93;
     }
 
-    a {
+    a.tab1 {
         color: white;
-        text-decoration: none;
+        background-color: #B24F32;
+    }
+    a.tab2 {
+        color: white;
         background-color: #D46C4E;
+    }
+    a.tab3 {
+        color: white;
+        background-color: #F18060;
+    }
+    a.tab4 {
+        color: white;
+        background-color: #F9AD6A;
+    }
+    a.tab5 {
+        color: white;
+        background-color: #F9C868;
     }
 
     .tab-content {
@@ -159,20 +174,30 @@
         width: 60%;
         justify-content: space-around;
     }
+
+    #object {
+        margin-left: 2%;
+        color: #D46C4E;
+    }
+
+    #btnBooking{
+        margin-left: 90%;
+    }
 </style>
 
 <div class="container">
     <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#room1">ROOM 1</a></li>
-        <li><a data-toggle="tab" href="#room2">ROOM 2</a></li>
-        <li><a data-toggle="tab" href="#room3">ROOM 3</a></li>
-        <li><a data-toggle="tab" href="#room4">ROOM 4</a></li>
-        <li><a data-toggle="tab" href="#room5">ROOM 5</a></li>
+        <li class="active"><a class="tab1" data-toggle="tab" href="#room1">ROOM 1</a></li>
+        <li><a class="tab2" data-toggle="tab" href="#room2">ROOM 2</a></li>
+        <li><a class="tab3" data-toggle="tab" href="#room3">ROOM 3</a></li>
+        <li><a class="tab4" data-toggle="tab" href="#room4">ROOM 4</a></li>
+        <li><a class="tab5" data-toggle="tab" href="#room5">ROOM 5</a></li>
     </ul>
 
     <div class="tab-content">
         <div id="room1" class="tab-pane fade in active">
-            <h4 style="color: #D46C4E">@Html.DisplayFor(modelItem => Model.objName)</h4>
+            <br>
+            <h4 id="object">Object : @Html.DisplayFor(modelItem => Model.objName)</h4>
             <h4 class="text-center"><b>@Html.DisplayFor(modelItem => Model.timeLength)</b></h4>
             <div class="table-responsive">
                 <table class="table">
@@ -199,7 +224,8 @@
                                             <div class="squaredThree">
                                                 <input type="checkbox" name="optionsRadios" id="@i@j" value="other"
                                             ng-model="formData.other" ng-true-value="'other'"
-                                            ng-init="formData.other='other'">
+                                            ng-init="formData.other='other'" @(Model.table[j,
+                                            i].Item1=="Red"||Model.table[j, i].Item1=="Grey"?"disabled":"")>
                                                 <label for="@i@j"
                                             class="@Html.DisplayFor(modelItem => Model.table[j, i].Item1)"></label>
                                             </div>
@@ -246,8 +272,8 @@
                     <label class="label-text">&nbsp;ยืมกลุ่มอื่น</label>
                 </form>
             </div>
-            <button type="button" class="btn btn-info float-right">จองอุปกรณ์</button>
-            <br><br><br>
+            <button id="btnBooking" type="button" class="btn btn-info">จองอุปกรณ์</button>
+            <br><br>
         </div>
         <div id="room2" class="tab-pane fade">
             <h3>Menu 2</h3>
