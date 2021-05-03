@@ -42,20 +42,6 @@ namespace LockLock.Controllers
         }
 
         [HttpGet]
-        public IActionResult newUser()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> newUser(UserModel user)
-        {
-            CollectionReference collectionReference = firestoreDb.Collection("user");
-            await collectionReference.AddAsync(user);
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpGet]
         public async Task<IActionResult> updateUser(string userId)
         {
             DocumentReference documentReference = firestoreDb.Collection("user").Document(userId);
