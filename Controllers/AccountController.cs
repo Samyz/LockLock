@@ -1,5 +1,6 @@
 
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Firebase.Auth;
 using FirebaseAdmin.Auth;
@@ -7,11 +8,13 @@ using Google.Cloud.Firestore;
 using LockLock.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace LockLock.Controllers
 {
     public class AccountController : Controller
     {
+        private string firebaseJSON = AppDomain.CurrentDomain.BaseDirectory + @"locklockconfigure.json";
         private FirebaseAuthProvider auth;
         private FirestoreDb firestoreDb;
 
@@ -20,21 +23,41 @@ namespace LockLock.Controllers
             auth = new FirebaseAuthProvider(
                             new FirebaseConfig("AIzaSyDYMUB0qohsGyFfdHCFWyxfcwr84HC-WCU"));
 
-            string projectId = "locklock-47b1d";
+            string projectId;
+            using (StreamReader r = new StreamReader(firebaseJSON))
+            {
+                string json = r.ReadToEnd();
+                var myJObject = JObject.Parse(json);
+                projectId = myJObject.SelectToken("project_id").Value<string>();
+            }
             firestoreDb = FirestoreDb.Create(projectId);
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
-            var token = HttpContext.Session.GetString("_UserToken");
-            if (token != null)
+            try
             {
+                var token = HttpContext.Session.GetString("_UserToken");
+                FirebaseToken decodedToken;
+                try
+                {
+                    decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
+                }
+                catch(Exception ex){
+                    Console.Write("Exception : ");
+                    Console.WriteLine(ex);
+                    return RedirectToAction("SignIn", "Account");
+                }
+                
+                return View();
+              
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
                 return View();
             }
-            else
-            {
-                return RedirectToAction("SignIn");
-            }
+
         }
 
         public IActionResult SignUp()
@@ -56,11 +79,11 @@ namespace LockLock.Controllers
                 if (token != null)
                 {
                     FirebaseToken decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
-                    CollectionReference userCollection = firestoreDb.Collection("user");
+                    CollectionReference userCollection = firestoreDb.Collection("users");
                     await userCollection.Document(decodedToken.Uid).SetAsync(singUpModel);
 
                     HttpContext.Session.SetString("_UserToken", token);
-                    return RedirectToAction("Index","User");
+                    return RedirectToAction("Index", "User");
                 }
                 else
                 {
@@ -69,7 +92,10 @@ namespace LockLock.Controllers
             }
             catch (Exception ex)
             {
+                Console.Write("Exception : ");
                 Console.WriteLine(ex);
+
+                ModelState.AddModelError(string.Empty, "EmailExists");
                 return View();
             }
         }
@@ -86,9 +112,6 @@ namespace LockLock.Controllers
                 var fbAuthLink = await auth
                                            .SignInWithEmailAndPasswordAsync(model.Email, model.Password);
                 string token = fbAuthLink.FirebaseToken;
-                Console.Write("Token : ");
-                Console.WriteLine(token);
-                Console.WriteLine("");
 
                 //saving the token in a session variable
                 if (token != null)
@@ -97,7 +120,7 @@ namespace LockLock.Controllers
 
                     HttpContext.Session.SetString("_UserToken", token);
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "User");
                 }
                 else
                 {
@@ -107,11 +130,11 @@ namespace LockLock.Controllers
             }
             catch (Exception ex)
             {
+                Console.Write("Exception : ");
                 Console.Write(ex);
                 ModelState.AddModelError(string.Empty, "Invalid username or password. Ex");
                 return View();
             }
-
         }
 
     }

@@ -1,15 +1,11 @@
-@model IEnumerable<LockLock.Models.UserModel>
+
+@model LockLock.Models.UserModel
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <h1>Index</h1>
-
-@* <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    </div> *@
 
 <table class="table">
     <thead>
@@ -33,34 +29,27 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserID)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Firstname)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Lastname)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Tel)
-                </td>
-                <td>
-                    <a asp-action="updateUser" asp-route-userId="@item.UserID">Update</a>
-                    <form asp-action="deleteUser" asp-route-userId="@item.UserID">
-                        <button type="submit">Delete</button>
-                    </form>
-                    @* @Html.ActionLink("Edit", "Edit", new {}) |
-                        @Html.ActionLink("Details", "Details", new {}) |
-                        @Html.ActionLink("Delete", "Delete", new {}) | *@
-                </td>
-            </tr>
-        }
+
+        <tr>
+            <td>
+                @Model.UserID
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Firstname)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Lastname)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Tel)
+            </td>
+            <td>
+                <a asp-action="updateUser">Update</a>
+            </td>
+        </tr>
+
     </tbody>
 </table>

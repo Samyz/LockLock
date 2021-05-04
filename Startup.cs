@@ -1,12 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,9 +11,11 @@ namespace LockLock
 {
     public class Startup
     {
+        private string firebaseJSON = AppDomain.CurrentDomain.BaseDirectory + @"locklockconfigure.json";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            
         }
 
         public IConfiguration Configuration { get; }
@@ -29,13 +27,13 @@ namespace LockLock
 
             services.AddMvc().AddSessionStateTempDataProvider();
             services.AddSession();
-            
+
             FirebaseApp.Create(new AppOptions()
             {
-                Credential = GoogleCredential.FromFile(AppDomain.CurrentDomain.BaseDirectory + @"locklockconfigure.json"),
+                Credential = GoogleCredential.FromFile(firebaseJSON),
             });
-            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", AppDomain.CurrentDomain.BaseDirectory + @"locklockconfigure.json");
-            
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", firebaseJSON);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
