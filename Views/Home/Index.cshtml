@@ -6,202 +6,11 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/user.css" />
 
 @{
     ViewData["Title"] = "Index Page";
 }
-
-
-<style>
-    .topic-color {
-        color: #D46C4E;
-    }
-
-    .squaredThree {
-        position: relative;
-        float: left;
-    }
-
-    .squaredThree label.Red {
-        width: 20px;
-        height: 15px;
-        cursor: pointer;
-        position: absolute;
-        top: 0;
-        left: 0;
-        background: #DD0000;
-        border-radius: 4px;
-        box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.4);
-    }
-
-    .squaredThree label.Green {
-        width: 15px;
-        height: 15px;
-        cursor: pointer;
-        position: absolute;
-        top: 0;
-        left: 0;
-        background: #62AD71;
-        border-radius: 4px;
-        box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.4);
-    }
-
-    .squaredThree label.Yellow {
-        width: 15px;
-        height: 15px;
-        cursor: pointer;
-        position: absolute;
-        top: 0;
-        left: 0;
-        background: #F9AD6A;
-        border-radius: 4px;
-        box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.4);
-    }
-
-    .squaredThree label.Grey {
-        width: 15px;
-        height: 15px;
-        cursor: pointer;
-        position: absolute;
-        top: 0;
-        left: 0;
-        background: Grey;
-        border-radius: 4px;
-        box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.4);
-    }
-
-    .squaredThree label:after {
-        content: '';
-        width: 9px;
-        height: 5px;
-        position: absolute;
-        top: 4px;
-        left: 4px;
-        border: 3px solid #fcfff4;
-        border-top: none;
-        border-right: none;
-        background: transparent;
-        opacity: 0;
-        -webkit-transform: rotate(-45deg);
-        transform: rotate(-45deg);
-    }
-
-    @*.squaredThreelabel:hover::after{opacity:0.3;}*@.squaredThree input[type=checkbox] {
-        visibility: hidden;
-    }
-
-    .squaredThree input[type=checkbox]:checked+label:after {
-        opacity: 1;
-    }
-
-    .nav-tabs>li.active>a,
-    .nav-tabs>li.active>a:focus,
-    .nav-tabs>li.active>a:hover {
-        color: #D46C4E;
-        cursor: default;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-bottom-color: transparent;
-    }
-
-    .nav-tabs>li>a {
-        margin-right: 20px;
-        line-height: 1.42857143;
-        border: 1px solid transparent;
-        border-radius: 4px 4px 0 0;
-    }
-
-    .nav>li>a {
-        position: relative;
-        display: block;
-        padding: 10px 40px;
-    }
-
-    .btn-info {
-        color: #fff;
-        background-color: #489D93;
-        border-color: #489D93;
-    }
-
-    a.tab1 {
-        color: white;
-        background-color: #B24F32;
-    }
-
-    a.tab2 {
-        color: white;
-        background-color: #D46C4E;
-    }
-
-    a.tab3 {
-        color: white;
-        background-color: #F18060;
-    }
-
-    a.tab4 {
-        color: white;
-        background-color: #F9AD6A;
-    }
-
-    a.tab5 {
-        color: white;
-        background-color: #F9C868;
-    }
-
-    .tab-content {
-        border: 1px solid #ddd;
-        border-top-color: transparent;
-    }
-
-    .nav-tabs>li>a {
-        margin-right: 20px;
-        line-height: 1.42857143;
-        border: 1px solid transparent;
-        border-radius: 10px 10px 0 0;
-    }
-
-    .form-inline label {
-        display: -ms-flexbox;
-        display: flex;
-        -ms-flex-align: center;
-        align-items: center;
-        -ms-flex-pack: center;
-        justify-content: center;
-        margin-bottom: 7px;
-    }
-
-    label {
-        display: inline-block;
-        max-width: 120%;
-        margin-bottom: 0;
-        font-weight: 700;
-    }
-
-    .container-row {
-        display: flex;
-        flex-direction: row;
-        width: 60%;
-        justify-content: space-around;
-    }
-
-    #object {
-        margin-left: 2%;
-    }
-
-    #btnBooking {
-        margin-left: 90%;
-    }
-
-    i {
-        font-style: normal;
-    }
-
-    .modal-header .close {
-        margin-top: 0px;
-        padding: 0;
-        margin: -3rem -2rem -1rem auto;
-    }
-</style>
 
 <div class="container">
     <ul class="nav nav-tabs">
@@ -256,54 +65,61 @@
                         }
                     </tbody>
                 </table>
+
+                <div class="d-flex">
+                    <div class="container-row">
+                        <div class="p-2">
+                            <div class="squaredThree">
+                                <input type="checkbox" disabled>
+                                <label class="Red"></label>
+                            </div>
+                            <label class="label-text">&nbsp;ไม่สามารถจองได้</label>
+                        </div>
+
+                        <div class="p-2">
+                            <div class="squaredThree">
+                                <input type="checkbox" disabled>
+                                <label class="Grey"></label>
+                            </div>
+                            <label class="label-text">&nbsp;หมดเวลาการจอง</label>
+                        </div>
+
+                        <div class="p-2">
+                            <div class="squaredThree">
+                                <input type="checkbox" disabled>
+                                <label class="Green disablepointer"></label>
+                            </div>
+                            <label class="label-text">&nbsp;สามารถจองได้</label>
+                        </div>
+
+                        <div class="p-2">
+                            <div class="squaredThree">
+                                <input type="checkbox" disabled>
+                                <label class="Yellow disablepointer"></label>
+                            </div>
+                            <label class="label-text">&nbsp;ยืมกลุ่มอื่น</label>
+                        </div>
+                    </div>
+                    <button id="btnBooking" type="button" class="btn btn-info ml-auto p-2" data-toggle="modal"
+                        data-target="#exampleModal">
+                        จองอุปกรณ์
+                    </button>
+                </div>
+
             </div>
-
-            <div class="container-row">
-                <form>
-                    <div class="squaredThree">
-                        <input type="checkbox" disabled>
-                        <label class="Red"></label>
-                    </div>
-                    <label class="label-text">&nbsp;ไม่สามารถจองได้</label>
-                </form>
-                <form>
-                    <div class="squaredThree">
-                        <input type="checkbox" disabled>
-                        <label class="Grey"></label>
-                    </div>
-                    <label class="label-text">&nbsp;หมดเวลาการจอง</label>
-                </form>
-
-                <form>
-                    <div class="squaredThree">
-                        <input type="checkbox" disabled>
-                        <label class="Green"></label>
-                    </div>
-                    <label class="label-text">&nbsp;สามารถจองได้</label>
-                </form>
-
-                <form>
-                    <div class="squaredThree">
-                        <input type="checkbox" disabled>
-                        <label class="Yellow"></label>
-                    </div>
-                    <label class="label-text">&nbsp;ยืมกลุ่มอื่น</label>
-                </form>
-            </div>
-            <button id="btnBooking" type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModal">
-                จองอุปกรณ์
-            </button>
-            <br><br>
         </div>
+
         <div id="room2" class="tab-pane fade">
             <h3>Menu 2</h3>
             <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
                 consequat.</p>
         </div>
         <div id="room3" class="tab-pane fade">
-            <h3>Menu 3</h3>
-            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam
-                rem aperiam.</p>
+            <div class="text-center blacklist-style">
+                <img src="~/img/blacklist.png" alt="blacklist">
+                <h3>คุณถูก Admin Blacklist!!!</h3>
+                <h3>กรุณาติดต่อไปที่ Email:61010756@kmitl.ac.th</h3>
+            </div>
         </div>
         <div id="room4" class="tab-pane fade">
             <h3>Menu 4</h3>
@@ -320,12 +136,10 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title w-100 text-center topic-color" id="exampleModalLabel">สรุปรายการจองอุปกรณ์</h3>
-                    @* <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button> *@
-                    <i class="bi bi-x-circle-fill close" data-dismiss="modal"></i>
+                <div class="modal-header border-0">
+                    <h2 class="modal-title w-100 text-center topic-color" id="exampleModalLabel">สรุปรายการจองอุปกรณ์
+                    </h2>
+                    <img src="~/img/close.png" alt="close" class="closebtn" data-dismiss="modal">
                 </div>
                 <div class="modal-body">
                     <p><i class="bi bi-person-fill"> <b>ชื่อ-นามสกุล :</b> พิมพิดา มุสิกมาศ</i></p>
@@ -334,9 +148,9 @@
                     <p><i class="bi bi-door-open-fill"> <b>ห้องที่จอง :</b> Room 1</i></p>
                     <p><i class="bi bi-clock-fill"> <b>วัน-เวลา :</b> - Sun, 7 March 2021 9.00 - 10.00</i></p>
                 </div>
-                <div class="modal-footer">
-                    @* <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> *@
-                    <button type="button" class="btn btn-info">ยืนยันการจอง</button>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-info"
+                        onclick="location.href='@Url.Action("History","Home")'">ยืนยันการจอง</button>
                 </div>
             </div>
         </div>
