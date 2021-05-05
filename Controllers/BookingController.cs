@@ -7,7 +7,6 @@ using Google.Cloud.Firestore;
 using LockLock.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace LockLock.Controllers
@@ -35,27 +34,32 @@ namespace LockLock.Controllers
             {
                 List<BookingModel> bookingList = new List<BookingModel>();
 
-                Query transactionQuery = firestoreDb.Collection("transaction").WhereEqualTo("userID", uid);
+                Query transactionQuery = firestoreDb.Collection("transaction").WhereEqualTo("userID", uid).WhereEqualTo("cancel", false);
                 QuerySnapshot transactionQuerySnapshot = await transactionQuery.GetSnapshotAsync();
+
+                DateTime currentDate = DateTime.Now;
 
                 foreach (DocumentSnapshot transactionSnapshot in transactionQuerySnapshot)
                 {
 
                     if (transactionSnapshot.Exists)
                     {
-                        transactionDataModel transactionData = transactionSnapshot.ConvertTo<transactionDataModel>();
+                        TransactionModel transactionData = transactionSnapshot.ConvertTo<TransactionModel>();
 
                         Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("transactionID", transactionSnapshot.Id);
                         QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
                         List<DateTime> timeLists = new List<DateTime>();
                         foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
                         {
-                            borrowDataModel borrowData = borrowSnapshot.ConvertTo<borrowDataModel>();
-                            timeLists.Add(borrowData.time);
+                            BorrowModel borrowData = borrowSnapshot.ConvertTo<BorrowModel>();
+                            timeLists.Add(borrowData.time.ToLocalTime());
                         }
+                        timeLists.Sort();
+                        int timeCompare = DateTime.Compare(timeLists[0].AddHours(-1), currentDate);
+
                         DocumentReference roomReference = firestoreDb.Collection("room").Document(transactionData.roomID);
                         DocumentSnapshot roomSnapshot = await roomReference.GetSnapshotAsync();
-                        roomDataModel roomData = roomSnapshot.ConvertTo<roomDataModel>();
+                        RoomModel roomData = roomSnapshot.ConvertTo<RoomModel>();
 
                         BookingModel bookingItem = new BookingModel()
                         {
@@ -63,7 +67,8 @@ namespace LockLock.Controllers
                             Name = roomData.objName,
                             Num = 1,
                             RoomName = roomData.name,
-                            timeList = timeLists
+                            timeList = timeLists,
+                            cancel = timeCompare > 0 ? true : false 
                         };
                         bookingList.Add(bookingItem);
                     }
@@ -89,18 +94,18 @@ namespace LockLock.Controllers
                 DocumentReference transactionReference = firestoreDb.Collection("transaction").Document(transactionID);
                 DocumentSnapshot transactionSnapshot = await transactionReference.GetSnapshotAsync();
 
-                transactionDataModel transactionData = transactionSnapshot.ConvertTo<transactionDataModel>();
+                TransactionModel transactionData = transactionSnapshot.ConvertTo<TransactionModel>();
 
                 if (transactionData.userID == uid)
                 {
-                    await transactionReference.UpdateAsync("cancle",true);
+                    await transactionReference.UpdateAsync("cancel", true);
 
                     Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("transactionID", transactionSnapshot.Id);
                     QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
                     foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
-                    {  
+                    {
                         DocumentReference borrowReference = firestoreDb.Collection("borrow").Document(borrowSnapshot.Id);
-                        await borrowReference.UpdateAsync("cancle",true);
+                        await borrowReference.UpdateAsync("cancel", true);
                     }
                     return RedirectToAction(nameof(Index));
                 }
@@ -132,39 +137,5 @@ namespace LockLock.Controllers
                 return null;
             }
         }
-
-        [FirestoreData]
-        private class transactionDataModel
-        {
-            [FirestoreProperty]
-            public string roomID { get; set; }
-            [FirestoreProperty]
-            public string userID { get; set; }
-            [FirestoreProperty]
-            public DateTime timestamp { get; set; }
-
-            [FirestoreProperty]
-            public bool cancle { get; set; }
-        }
-
-        [FirestoreData]
-        private class borrowDataModel
-        {
-            [FirestoreProperty]
-            public DateTime time { get; set; }
-            [FirestoreProperty]
-            public bool cancle { get; set; }
-
-        }
-
-        [FirestoreData]
-        private class roomDataModel
-        {
-            [FirestoreProperty]
-            public string name { get; set; }
-            [FirestoreProperty]
-            public string objName { get; set; }
-        }
-
     }
 }

@@ -51,9 +51,12 @@
                     }
                 </td>
                 <td>
-                    <form asp-action="cancle" asp-route-BookingID="@item.BookingID">
+                    @if(item.cancel){
+                    <form asp-action="cancle" asp-route-transactionID="@item.BookingID">
                         <button type="submit">Cancle</button>
                     </form>
+                    }
+
                 </td>
             </tr>
         }
