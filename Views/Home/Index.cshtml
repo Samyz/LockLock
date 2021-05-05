@@ -36,6 +36,8 @@
             error: function (response) {
                 console.log(response.status);
                 console.log(response.statusText);
+                var url = '@Url.Action("SignIn", "Account")';
+                window.location.href = url;
             },
             dataType: "json",
             traditional: true
@@ -230,8 +232,8 @@
         </div>
     </div>
 
-    <input type="button" onclick="sendData()" value="Show Message" />
-    <p id="TextMessage"></p>
+    @* <input type="button" onclick="sendData()" value="Show Message" />
+        <p id="TextMessage"></p> *@
 
 </div>
 </div>

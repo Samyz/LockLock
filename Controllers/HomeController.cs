@@ -147,7 +147,7 @@ namespace LockLock.Controllers
             // Console.WriteLine(timeNow.ToString("dd MMMM") + " - " + timeNow.AddDays(6).ToString("dd MMMM yyyy"));
             // Console.WriteLine(timeNow.AddDays(6).ToString("dd MMMM yyyy"));
 
-            Query borrowQuery = firestoreDb.Collection("borrow").WhereGreaterThanOrEqualTo("time", timeNow).WhereLessThanOrEqualTo("time", timeEnd).WhereEqualTo("cancel", false).WhereEqualTo("otherGroup", false);
+            Query borrowQuery = firestoreDb.Collection("borrow").WhereGreaterThanOrEqualTo("time", timeNow).WhereLessThanOrEqualTo("time", timeEnd).WhereEqualTo("cancel", false).WhereEqualTo("otherGroup", false).WhereEqualTo("roomID", Room.RoomID);
             QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
             List<BorrowModel> listBorrow = new List<BorrowModel>();
 

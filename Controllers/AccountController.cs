@@ -123,12 +123,8 @@ namespace LockLock.Controllers
                     HttpContext.Session.SetString("_UserToken", token);
                     Console.WriteLine(decodedToken.Uid);
 
-<<<<<<< HEAD
                     // return RedirectToAction("Index", "User");
                     return RedirectToAction("Index", "Home");
-=======
-                    return RedirectToAction("Index", "Booking");
->>>>>>> dev
                 }
                 else
                 {

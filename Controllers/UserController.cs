@@ -49,23 +49,9 @@ namespace LockLock.Controllers
                 catch
                 {
                     Console.Write("Exception : ");
-                    Console.Write(ex);
+                    // Console.Write(ex);
                     return RedirectToAction("Index", "Home");
                 }
-<<<<<<< HEAD
-
-                DocumentReference documentReference = firestoreDb.Collection("users").Document(decodedToken.Uid);
-                DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
-                Console.WriteLine(documentSnapshot.Exists);
-                Console.WriteLine(decodedToken.Uid);
-
-                UserModel user = documentSnapshot.ConvertTo<UserModel>();
-                Console.WriteLine(user.Email);
-                user.UserID = decodedToken.Uid;
-
-                return View(user);
-=======
->>>>>>> dev
             }
             else
             {
@@ -97,11 +83,7 @@ namespace LockLock.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-<<<<<<< HEAD
-            catch
-=======
             else
->>>>>>> dev
             {
                 Console.WriteLine("ID token must not be null or empty");
                 return RedirectToAction("SignIn", "Account");
@@ -116,14 +98,10 @@ namespace LockLock.Controllers
             {
                 DocumentReference documentReference = firestoreDb.Collection("users").Document(uid);
                 await documentReference.SetAsync(user, SetOptions.Overwrite);
-                
+
                 return RedirectToAction(nameof(Index));
             }
-<<<<<<< HEAD
-            catch
-=======
             else
->>>>>>> dev
             {
                 Console.WriteLine("ID token must not be null or empty");
                 return RedirectToAction("SignIn", "Account");
