@@ -5,23 +5,20 @@ using System;
 namespace LockLock.Models
 {
     [FirestoreData]
-    public class BorrowModel
+    public class TransactionModel
     {
-        public string BorrowID { get; set; }
+        public string TransactionID { get; set; }
 
         [FirestoreProperty]
         public string roomID { get; set; }
 
         [FirestoreProperty]
-        public DateTime time { get; set; }
+        public DateTime timestamp { get; set; }
 
         [FirestoreProperty]
-        public string transactionID { get; set; }
+        public string userID { get; set; }
 
         [FirestoreProperty]
         public bool cancel { get; set; }
-
-        [FirestoreProperty]
-        public bool otherGroup { get; set; }
     }
 }

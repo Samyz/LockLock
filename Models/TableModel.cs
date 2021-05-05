@@ -12,5 +12,13 @@ namespace LockLock.Models
         public List<string> name { get; set; }
 
         public Tuple<string, uint>[,] table { get; set; }
+
+        public string firstName { get; set; }
+
+        public string lastName { get; set; }
+
+        public string roomName { get; set; }
+
+        public string roomID { get; set; }
     }
 }

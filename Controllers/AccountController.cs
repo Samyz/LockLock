@@ -43,14 +43,15 @@ namespace LockLock.Controllers
                 {
                     decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
                 }
-                catch(Exception ex){
+                catch (Exception ex)
+                {
                     Console.Write("Exception : ");
                     Console.WriteLine(ex);
                     return RedirectToAction("SignIn", "Account");
                 }
-                
+
                 return View();
-              
+
             }
             catch (Exception ex)
             {
@@ -120,8 +121,10 @@ namespace LockLock.Controllers
                     FirebaseToken decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
 
                     HttpContext.Session.SetString("_UserToken", token);
+                    Console.WriteLine(decodedToken.Uid);
 
-                    return RedirectToAction("Index", "Booking");
+                    // return RedirectToAction("Index", "User");
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {
