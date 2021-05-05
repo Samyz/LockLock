@@ -34,20 +34,25 @@ namespace LockLock.Controllers
 
         public async Task<IActionResult> Index()
         {
-            try
+            string uid = await verifyTokenAsync();
+            if (uid != null)
             {
-                var token = HttpContext.Session.GetString("_UserToken");
-                FirebaseToken decodedToken;
                 try
                 {
-                    decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
+                    DocumentReference documentReference = firestoreDb.Collection("users").Document(uid);
+                    DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
+
+                    UserModel user = documentSnapshot.ConvertTo<UserModel>();
+                    user.UserID = uid;
+                    return View(user);
                 }
                 catch
                 {
                     Console.Write("Exception : ");
-                    Console.WriteLine("ID token must not be null or empty");
-                    return RedirectToAction("SignIn", "Account");
+                    Console.Write(ex);
+                    return RedirectToAction("Index", "Home");
                 }
+<<<<<<< HEAD
 
                 DocumentReference documentReference = firestoreDb.Collection("users").Document(decodedToken.Uid);
                 DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
@@ -59,69 +64,86 @@ namespace LockLock.Controllers
                 user.UserID = decodedToken.Uid;
 
                 return View(user);
+=======
+>>>>>>> dev
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine(ex);
-                return RedirectToAction("SignIn", "Account");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> updateUser(string userId)
-        {
-            var token = HttpContext.Session.GetString("_UserToken");
-            FirebaseToken decodedToken;
-            try
-            {
-                decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
-            }
-            catch
-            {
-                Console.Write("Exception : ");
                 Console.WriteLine("ID token must not be null or empty");
                 return RedirectToAction("SignIn", "Account");
             }
 
-            DocumentReference documentReference = firestoreDb.Collection("users").Document(decodedToken.Uid);
-            DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
+        }
 
-            if (documentSnapshot.Exists)
+        [HttpGet]
+        public async Task<IActionResult> updateUser()
+        {
+            string uid = await verifyTokenAsync();
+            if (uid != null)
             {
-                UserModel user = documentSnapshot.ConvertTo<UserModel>();
-                return View(user);
-            }
+                try
+                {
+                    DocumentReference documentReference = firestoreDb.Collection("users").Document(uid);
+                    DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
 
-            return NotFound();
+                    UserModel user = documentSnapshot.ConvertTo<UserModel>();
+                    return View(user);
+
+                }
+                catch (Exception ex)
+                {
+                    Console.Write("Exception : ");
+                    Console.Write(ex);
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+<<<<<<< HEAD
+            catch
+=======
+            else
+>>>>>>> dev
+            {
+                Console.WriteLine("ID token must not be null or empty");
+                return RedirectToAction("SignIn", "Account");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> updateUser(UserModel user)
         {
-            var token = HttpContext.Session.GetString("_UserToken");
-            FirebaseToken decodedToken;
+            string uid = await verifyTokenAsync();
+            if (uid != null)
+            {
+                DocumentReference documentReference = firestoreDb.Collection("users").Document(uid);
+                await documentReference.SetAsync(user, SetOptions.Overwrite);
+                
+                return RedirectToAction(nameof(Index));
+            }
+<<<<<<< HEAD
+            catch
+=======
+            else
+>>>>>>> dev
+            {
+                Console.WriteLine("ID token must not be null or empty");
+                return RedirectToAction("SignIn", "Account");
+            }
+        }
+
+        private async Task<string> verifyTokenAsync()
+        {
             try
             {
-                decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
+                var token = HttpContext.Session.GetString("_UserToken");
+                FirebaseToken decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
+                return decodedToken.Uid;
             }
             catch
             {
                 Console.Write("Exception : ");
                 Console.WriteLine("ID token must not be null or empty");
-                return RedirectToAction("SignIn", "Account");
+                return null;
             }
-
-            DocumentReference documentReference = firestoreDb.Collection("users").Document(decodedToken.Uid);
-            await documentReference.SetAsync(user, SetOptions.Overwrite);
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> deleteUser(string userId)
-        {
-            DocumentReference documentReference = firestoreDb.Collection("users").Document(userId);
-            await documentReference.DeleteAsync();
-            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
