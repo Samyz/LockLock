@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,6 +9,7 @@ using Google.Cloud.Firestore;
 using Microsoft.Extensions.Logging;
 using LockLock.Models;
 using Newtonsoft.Json;
+using FirebaseAdmin.Auth;
 
 using Newtonsoft.Json.Converters;
 
@@ -29,9 +31,65 @@ namespace LockLock.Controllers
             firestoreDb = FirestoreDb.Create(projectId);
         }
 
+        private async Task<string> checkLogedIn()
+        {
+            var token = HttpContext.Session.GetString("_UserToken");
+            if (token != null)
+            {
+                try
+                {
+                    FirebaseToken decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
+
+                    // HttpContext.Session.SetString("_UserToken", token);
+                    Console.WriteLine(decodedToken.Uid);
+
+                    return decodedToken.Uid;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                return null;
+            }
+        }
+
         public async Task<IActionResult> Index()
         {
-             string roomID = "ROOM 1";
+            string uid = await checkLogedIn();
+            UserModel user = new UserModel();
+            if (uid != null)
+            {
+                try
+                {
+                    DocumentReference documentReference = firestoreDb.Collection("users").Document(uid);
+                    DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
+                    Console.WriteLine(documentSnapshot.Exists);
+                    Console.WriteLine(uid);
+
+                    UserModel newUser = documentSnapshot.ConvertTo<UserModel>();
+                    newUser.UserID = uid;
+                    user = newUser;
+                }
+                catch
+                {
+                    return RedirectToAction("SignIn", "Account");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignIn", "Account");
+            }
+            Console.WriteLine("UserID = " + user.UserID);
+            Console.WriteLine("Firstname = " + user.Firstname);
+            Console.WriteLine("Lastname = " + user.Lastname);
+            Console.WriteLine("Email = " + user.Email);
+            Console.WriteLine("Tel = " + user.Tel);
+
+            string roomID = "Room 1";
             Query roomQuery = firestoreDb.Collection("room").WhereEqualTo("name", roomID);
             QuerySnapshot roomQuerySnapshot = await roomQuery.GetSnapshotAsync();
             // List<RoomModel> listRoom = new List<RoomModel>();
@@ -80,7 +138,7 @@ namespace LockLock.Controllers
             List<string> viewDataName = new List<string>();
             for (int i = 0; i < 7; i++)
             {
-                viewDataName.Add(timeNow.AddDays(i).ToString("ddd"));
+                viewDataName.Add(timeRef.AddDays(i).ToString("ddd"));
             }
             // foreach (string i in viewDataName)
             // {
@@ -89,12 +147,14 @@ namespace LockLock.Controllers
             // Console.WriteLine(timeNow.ToString("dd MMMM") + " - " + timeNow.AddDays(6).ToString("dd MMMM yyyy"));
             // Console.WriteLine(timeNow.AddDays(6).ToString("dd MMMM yyyy"));
 
-            Query borrowQuery = firestoreDb.Collection("borrow").WhereGreaterThanOrEqualTo("time", timeNow).WhereLessThanOrEqualTo("time", timeEnd);
+            Query borrowQuery = firestoreDb.Collection("borrow").WhereGreaterThanOrEqualTo("time", timeNow).WhereLessThanOrEqualTo("time", timeEnd).WhereEqualTo("cancel", false).WhereEqualTo("otherGroup", false);
             QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
             List<BorrowModel> listBorrow = new List<BorrowModel>();
 
             foreach (DocumentSnapshot documentSnapshot in borrowQuerySnapshot.Documents)
             {
+                Console.WriteLine("hello");
+                Console.WriteLine(documentSnapshot.Exists);
                 if (documentSnapshot.Exists)
                 {
                     Dictionary<string, object> borrow = documentSnapshot.ToDictionary();
@@ -119,7 +179,7 @@ namespace LockLock.Controllers
                 Console.WriteLine("BorrowID = " + i.BorrowID);
                 Console.WriteLine("roomID = " + i.roomID);
                 Console.WriteLine("time = " + i.time);
-                Console.WriteLine("userID = " + i.userID);
+                Console.WriteLine("userID = " + i.transactionID);
             }
 
 
@@ -132,14 +192,14 @@ namespace LockLock.Controllers
                 }
             }
             // tableData[1, 0] = new Tuple<string, uint>("Green", 1);
-            for (int j = 0; j < 9; j++)
-            {
-                for (int i = 0; i < 7; i++)
-                {
-                    Console.Write(tableData[i, j].Item1 + "-" + tableData[i, j].Item2 + " ");
-                }
-                Console.WriteLine();
-            }
+            // for (int j = 0; j < 9; j++)
+            // {
+            //     for (int i = 0; i < 7; i++)
+            //     {
+            //         Console.Write(tableData[i, j].Item1 + "-" + tableData[i, j].Item2 + " ");
+            //     }
+            //     Console.WriteLine();
+            // }
             // List<List<Tuple<string, uint>>> viewDataTable = new List<List<Tuple<string, uint>>>();
             // List<Tuple<string, uint>> templateList = new List<Tuple<string, uint>>();
             // for (int i = 0; i < 9; i++)
@@ -204,14 +264,14 @@ namespace LockLock.Controllers
                 }
             }
 
-            for (int j = 0; j < 9; j++)
-            {
-                for (int i = 0; i < 7; i++)
-                {
-                    Console.Write(tableData[i, j].Item1 + "-" + tableData[i, j].Item2 + " ");
-                }
-                Console.WriteLine();
-            }
+            // for (int j = 0; j < 9; j++)
+            // {
+            //     for (int i = 0; i < 7; i++)
+            //     {
+            //         Console.Write(tableData[i, j].Item1 + "-" + tableData[i, j].Item2 + " ");
+            //     }
+            //     Console.WriteLine();
+            // }
 
             // for (int j = 0; j < 9; j++)
             // {
@@ -227,12 +287,88 @@ namespace LockLock.Controllers
                 objName = Room.objName,
                 timeLength = timeLength,
                 name = viewDataName,
-                table = tableData
+                table = tableData,
+                firstName = user.Firstname,
+                lastName = user.Lastname,
+                roomName = Room.name,
+                roomID = Room.RoomID
             };
 
             // listBorrow.ForEach(Console.WriteLine);
             // Console.WriteLine(listBorrow);
             return View(viewData);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Transaction(string roomID, List<string> dates)//async Task<IActionResult>
+        {
+            string uid = await checkLogedIn();
+            UserModel user = new UserModel();
+            if (uid != null)
+            {
+                try
+                {
+                    DocumentReference documentReference = firestoreDb.Collection("users").Document(uid);
+                    DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
+
+                    UserModel newUser = documentSnapshot.ConvertTo<UserModel>();
+                    newUser.UserID = uid;
+                    user = newUser;
+                }
+                catch
+                {
+                    return StatusCode(400, "NotFound");
+                }
+            }
+            else
+            {
+                return StatusCode(400, "NotFound");
+            }
+            Console.WriteLine("UserID = " + user.UserID);
+            Console.WriteLine("Firstname = " + user.Firstname);
+            Console.WriteLine("Lastname = " + user.Lastname);
+            Console.WriteLine("Email = " + user.Email);
+            Console.WriteLine("Tel = " + user.Tel);
+
+            CollectionReference transactionCollection = firestoreDb.Collection("transaction");
+            TransactionModel newTransaction = new TransactionModel()
+            {
+                roomID = roomID,
+                timestamp = DateTime.UtcNow,
+                userID = user.UserID,
+                cancel = false
+            };
+            Console.WriteLine("Yahoo!");
+
+            DocumentReference transactionDocument = await transactionCollection.AddAsync(newTransaction);
+            string transactionId = transactionDocument.Id;
+
+            // CollectionReference borrowCollection = firestoreDb.Collection("borrow");
+            // BorrowModel newBorrow = new BorrowModel();
+
+            Console.WriteLine(roomID);
+
+            foreach (string date in dates)
+            {
+                string[] temp = date.Split(" ");
+                string[] month = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+
+                DateTime save = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
+
+                CollectionReference borrowCollection = firestoreDb.Collection("borrow");
+                BorrowModel newBorrow = new BorrowModel()
+                {
+                    roomID = roomID,
+                    time = TimeZoneInfo.ConvertTimeToUtc(save),
+                    transactionID = transactionId,
+                    cancel = false,
+                    otherGroup = false
+                };
+                DocumentReference borrowDocument = await borrowCollection.AddAsync(newBorrow);
+                Console.WriteLine(date);
+            }
+            // return RedirectToAction("History", "Home");
+            return Ok(Json("OK"));
         }
 
         public IActionResult History()

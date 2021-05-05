@@ -21,12 +21,14 @@ namespace LockLock.Controllers
         public UserController()
         {
             string projectId;
-            using (StreamReader r = new StreamReader(firebaseJSON))
-            {
-                string json = r.ReadToEnd();
-                var myJObject = JObject.Parse(json);
-                projectId = myJObject.SelectToken("project_id").Value<string>();
-            }
+            // using (StreamReader r = new StreamReader(firebaseJSON))
+            // {
+            //     string json = r.ReadToEnd();
+            //     var myJObject = JObject.Parse(json);
+            //     projectId = myJObject.SelectToken("project_id").Value<string>();
+            // }
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", firebaseJSON);
+            projectId = "locklock-47b1d";
             firestoreDb = FirestoreDb.Create(projectId);
         }
 
@@ -40,7 +42,7 @@ namespace LockLock.Controllers
                 {
                     decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
                 }
-                catch (Exception ex)
+                catch
                 {
                     Console.Write("Exception : ");
                     Console.WriteLine("ID token must not be null or empty");
@@ -49,8 +51,11 @@ namespace LockLock.Controllers
 
                 DocumentReference documentReference = firestoreDb.Collection("users").Document(decodedToken.Uid);
                 DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
+                Console.WriteLine(documentSnapshot.Exists);
+                Console.WriteLine(decodedToken.Uid);
 
                 UserModel user = documentSnapshot.ConvertTo<UserModel>();
+                Console.WriteLine(user.Email);
                 user.UserID = decodedToken.Uid;
 
                 return View(user);
@@ -71,7 +76,7 @@ namespace LockLock.Controllers
             {
                 decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
             }
-            catch (Exception ex)
+            catch
             {
                 Console.Write("Exception : ");
                 Console.WriteLine("ID token must not be null or empty");
@@ -99,7 +104,7 @@ namespace LockLock.Controllers
             {
                 decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
             }
-            catch (Exception ex)
+            catch
             {
                 Console.Write("Exception : ");
                 Console.WriteLine("ID token must not be null or empty");
@@ -210,7 +215,7 @@ namespace LockLock.Controllers
                 Console.WriteLine("BorrowID = " + i.BorrowID);
                 Console.WriteLine("roomID = " + i.roomID);
                 Console.WriteLine("time = " + i.time);
-                Console.WriteLine("userID = " + i.userID);
+                // Console.WriteLine("userID = " + i.userID);
             }
 
 
@@ -259,7 +264,7 @@ namespace LockLock.Controllers
                     x = int.Parse(i.time.Subtract(timeRef).ToString().Split(".")[0]);
                 }
                 Console.WriteLine(day + " " + hour + " " + dayNow + " " + hourNow);
-                if (hour < 18) // !(int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0]) == 0 && hour - hourNow <= 0) && 
+                if (hour < 18 && hour > 7) // !(int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0]) == 0 && hour - hourNow <= 0) && 
                 {
                     // Console.WriteLine(viewDataTable[int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0])][hour - 9].Item1 + " " + viewDataTable[int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0])][hour - 9].Item2);
 
