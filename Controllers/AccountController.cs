@@ -54,7 +54,8 @@ namespace LockLock.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.Write("Exception : ");
+                Console.Write(ex);
                 return View();
             }
 
@@ -65,7 +66,7 @@ namespace LockLock.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> SignUp(SignUpModel singUpModel, UserModel userModel)
+        public async Task<IActionResult> SignUp(SignUpModel singUpModel)
         {
             try
             {
@@ -120,7 +121,7 @@ namespace LockLock.Controllers
 
                     HttpContext.Session.SetString("_UserToken", token);
 
-                    return RedirectToAction("Index", "User");
+                    return RedirectToAction("Index", "Booking");
                 }
                 else
                 {
