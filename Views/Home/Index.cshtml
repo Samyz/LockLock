@@ -19,11 +19,12 @@
     var array = [];
     function sendData() {
         var roomID = "@Model.roomID";
+        console.log(roomID);
         var postData = {
             roomID: roomID,
             dates: array,
         }
-        $.ajax({
+        /*$.ajax({
             type: "POST",
             url: "/Home/Transaction",
             data: postData,
@@ -41,7 +42,26 @@
             },
             dataType: "json",
             traditional: true
+        })*/
+        fetch("/Home/Transaction", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(postData),
         })
+            .then(response => response.json())
+            .then(data => {
+                console.log("hello");
+                console.log(data.Result);
+                var url = '@Url.Action("History", "Home")';
+                window.location.href = url;
+            })
+            .catch((error) => {
+                console.log(error);
+                var url = '@Url.Action("SignIn", "Account")';
+                window.location.href = url;
+            })
         console.log(array);
     }
     function dataProcess() {
