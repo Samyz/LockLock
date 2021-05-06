@@ -121,10 +121,9 @@ namespace LockLock.Controllers
                     FirebaseToken decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
 
                     HttpContext.Session.SetString("_UserToken", token);
-                    Console.WriteLine(decodedToken.Uid);
+                    Console.WriteLine("User {0} sign in.", decodedToken.Uid);
 
-                    // return RedirectToAction("Index", "User");
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Booking");
                 }
                 else
                 {

@@ -11,6 +11,7 @@ namespace LockLock.Models
         public int Num { get; set; }
         public string RoomName { get; set; }
         public List<DateTime> timeList { get; set; }
+        public bool cancel { get; set; }
     }
 
 }
