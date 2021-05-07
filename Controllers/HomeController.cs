@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -409,6 +409,10 @@ namespace LockLock.Controllers
         }
 
         public IActionResult History()
+        {
+            return View();
+        }
+        public IActionResult Blacklist()
         {
             return View();
         }
