@@ -77,7 +77,7 @@ namespace LockLock.Controllers
                             RoomName = roomData.name,
                             timeList = timeLists,
                             status = timeCompare > 0 ? "Complete" : transactionData.cancel ? "Cancel" : "Booking",
-                            cancel = true,//timeCompare > 0 ? false : !transactionData.cancel,
+                            cancel = timeCompare > 0 ? false : !transactionData.cancel,
                             name = userData.Firstname + " " + userData.Lastname,
                             userID = transactionData.userID
                         };
@@ -126,7 +126,7 @@ namespace LockLock.Controllers
                 else
                 {
                     Console.WriteLine("adminID not macth");
-                    return RedirectToAction(nameof(Index));
+                    return Unauthorized();
                 }
 
 

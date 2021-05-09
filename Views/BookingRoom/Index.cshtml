@@ -63,7 +63,7 @@
                     @Html.DisplayFor(modelItem => item.status)
                 </td>
                 <td>
-                    <form asp-action="cancle" asp-route-transactionID="@item.userID">
+                    <form asp-action="add" asp-controller="Blacklist" asp-route-userID="@item.userID">
                         <button type="submit">Blacklist</button>
                     </form>
                     @if (item.cancel)
