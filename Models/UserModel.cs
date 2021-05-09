@@ -19,6 +19,9 @@ namespace LockLock.Models
 
         [FirestoreProperty]
         public string Tel { get; set; }
+
+        [FirestoreProperty]
+        public string role { get; set; }
         
     }
 }

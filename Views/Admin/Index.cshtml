@@ -1,0 +1,60 @@
+@model IEnumerable<LockLock.Models.RoomModel>
+
+@{
+    ViewData["Title"] = "Admin";
+}
+
+<h1>Index</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RoomID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.number)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.objName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.objNum)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoomID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.number)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.objName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItemmm => item.objNum)
+                </td>
+                <td>
+                    <form asp-action="updateRoom" asp-route-room="@item">
+                        <button type="submit">Edit</button>
+                    </form>
+                    <form asp-controller="BookingRoom" asp-route-room="@item.RoomID">
+                        <button type="submit">BookingRoom</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -21,14 +21,12 @@ namespace LockLock.Controllers
         public UserController()
         {
             string projectId;
-            // using (StreamReader r = new StreamReader(firebaseJSON))
-            // {
-            //     string json = r.ReadToEnd();
-            //     var myJObject = JObject.Parse(json);
-            //     projectId = myJObject.SelectToken("project_id").Value<string>();
-            // }
-            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", firebaseJSON);
-            projectId = "locklock-47b1d";
+            using (StreamReader r = new StreamReader(firebaseJSON))
+            {
+                string json = r.ReadToEnd();
+                var myJObject = JObject.Parse(json);
+                projectId = myJObject.SelectToken("project_id").Value<string>();
+            }
             firestoreDb = FirestoreDb.Create(projectId);
         }
 
