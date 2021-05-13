@@ -345,12 +345,12 @@ namespace LockLock.Controllers
                 }
                 catch
                 {
-                    return StatusCode(400, "NotFound");
+                    return StatusCode(400, "UserError");
                 }
             }
             else
             {
-                return StatusCode(400, "NotFound");
+                return StatusCode(400, "UserError");
             }
 
             Console.WriteLine();
@@ -362,9 +362,26 @@ namespace LockLock.Controllers
             // Console.WriteLine("RoomID = " + roomID);
 
             Console.WriteLine("RoomID = " + input.roomID);
+            int dateCheck = -1;
+            bool dateBool = false;
             foreach (string date in input.dates)
             {
+                string[] temp = date.Split(" ");
+                int tempI = int.Parse(temp[1]);
+                if (dateCheck == -1)
+                {
+                    dateCheck = tempI;
+                }
+                else if (tempI != dateCheck)
+                {
+                    dateBool = true;
+                }
                 Console.WriteLine(date);
+            }
+
+            if (dateCheck == -1 || dateBool)
+            {
+                return StatusCode(400, "DataError");
             }
 
             CollectionReference transactionCollection = firestoreDb.Collection("transaction");
@@ -406,6 +423,13 @@ namespace LockLock.Controllers
             }
             // return RedirectToAction("History", "Home");
             return Ok(Json("OK"));
+        }
+
+        [HttpPost]
+        public IActionResult Test()
+        {
+            return StatusCode(404, "UserError");
+            // return Ok(Json("OK"));
         }
 
         public IActionResult History()
