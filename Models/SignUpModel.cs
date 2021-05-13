@@ -13,6 +13,8 @@ namespace LockLock.Models
         public string Lastname { get; set; }
         [FirestoreProperty]
         public string Tel { get; set; }
+        [FirestoreProperty]
+        public string role { get; set; }
         public string Password { get; set; }
     }
 }

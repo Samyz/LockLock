@@ -14,7 +14,12 @@ namespace LockLock.Models
         public string name { get; set; }
 
         [FirestoreProperty]
+        public uint number { get; set; }
+
+
+        [FirestoreProperty]
         public string objName { get; set; }
+        
 
         [FirestoreProperty]
         public uint objNum { get; set; }

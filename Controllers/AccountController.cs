@@ -81,8 +81,8 @@ namespace LockLock.Controllers
                 if (token != null)
                 {
                     FirebaseToken decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
-                    CollectionReference userCollection = firestoreDb.Collection("users");
-                    await userCollection.Document(decodedToken.Uid).SetAsync(singUpModel);
+                    singUpModel.role = "user";
+                    await firestoreDb.Collection("users").Document(decodedToken.Uid).SetAsync(singUpModel);
 
                     HttpContext.Session.SetString("_UserToken", token);
                     return RedirectToAction("Index", "User");
@@ -118,12 +118,23 @@ namespace LockLock.Controllers
                 //saving the token in a session variable
                 if (token != null)
                 {
-                    FirebaseToken decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
-
                     HttpContext.Session.SetString("_UserToken", token);
-                    Console.WriteLine("User {0} sign in.", decodedToken.Uid);
 
-                    return RedirectToAction("Index", "Booking");
+                    FirebaseToken decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
+                    DocumentReference userReference = firestoreDb.Collection("users").Document(decodedToken.Uid);
+                    DocumentSnapshot userSnapshot = await userReference.GetSnapshotAsync();
+                    UserModel user = userSnapshot.ConvertTo<UserModel>();
+
+                    if (user.role == "user")
+                    {
+                        Console.WriteLine("User {0} Sign in.", decodedToken.Uid);
+                        return RedirectToAction("Index", "Booking");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Admin {0} Sign in.", decodedToken.Uid);
+                        return RedirectToAction("Index", "Admin");
+                    }
                 }
                 else
                 {
