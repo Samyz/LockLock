@@ -43,10 +43,7 @@ namespace LockLock.Controllers
                 try
                 {
                     FirebaseToken decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
-
-                    // HttpContext.Session.SetString("_UserToken", token);
                     Console.WriteLine(decodedToken.Uid);
-
                     return decodedToken.Uid;
                 }
                 catch
@@ -432,9 +429,102 @@ namespace LockLock.Controllers
             // return Ok(Json("OK"));
         }
 
-        public IActionResult History()
+        public async Task<IActionResult> History()
         {
-            return View();
+            string uid = await checkLogedIn();
+            if (uid != null)
+            {
+                List<BookingModel> bookingList = new List<BookingModel>();
+
+                Query transactionQuery = firestoreDb.Collection("transaction").WhereEqualTo("userID", uid).WhereEqualTo("cancel", false);
+                QuerySnapshot transactionQuerySnapshot = await transactionQuery.GetSnapshotAsync();
+
+                DateTime currentDate = DateTime.Now;
+
+                foreach (DocumentSnapshot transactionSnapshot in transactionQuerySnapshot)
+                {
+
+                    if (transactionSnapshot.Exists)
+                    {
+                        TransactionModel transactionData = transactionSnapshot.ConvertTo<TransactionModel>();
+
+                        Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("transactionID", transactionSnapshot.Id);
+                        QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
+                        List<DateTime> timeLists = new List<DateTime>();
+                        foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
+                        {
+                            BorrowModel borrowData = borrowSnapshot.ConvertTo<BorrowModel>();
+                            timeLists.Add(borrowData.time.ToLocalTime());
+                        }
+                        timeLists.Sort();
+                        int timeCompare = DateTime.Compare(timeLists[0].AddHours(-1), currentDate);
+
+                        DocumentReference roomReference = firestoreDb.Collection("room").Document(transactionData.roomID);
+                        DocumentSnapshot roomSnapshot = await roomReference.GetSnapshotAsync();
+                        RoomModel roomData = roomSnapshot.ConvertTo<RoomModel>();
+
+                        BookingModel bookingItem = new BookingModel()
+                        {
+                            BookingID = transactionSnapshot.Id,
+                            Name = roomData.objName,
+                            Num = 1,
+                            RoomName = roomData.name,
+                            timeList = timeLists,
+                            cancel = timeCompare > 0 ? true : false,
+                            timestamp = transactionData.timestamp
+                        };
+                        bookingList.Add(bookingItem);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Document does not exist!", transactionSnapshot.Id);
+                    }
+                }
+                bookingList = bookingList.OrderBy(x => x.timestamp).ToList();
+                return View(bookingList);
+            }
+            else
+            {
+                return RedirectToAction("SignIn", "Account");
+            }
+        }
+
+
+        public async Task<IActionResult> cancleAsync(string transactionID)
+        {
+            string uid = await checkLogedIn();
+            if (uid != null)
+            {
+                DocumentReference transactionReference = firestoreDb.Collection("transaction").Document(transactionID);
+                DocumentSnapshot transactionSnapshot = await transactionReference.GetSnapshotAsync();
+
+                TransactionModel transactionData = transactionSnapshot.ConvertTo<TransactionModel>();
+
+                if (transactionData.userID == uid)
+                {
+                    await transactionReference.UpdateAsync("cancel", true);
+
+                    Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("transactionID", transactionSnapshot.Id);
+                    QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
+                    foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
+                    {
+                        DocumentReference borrowReference = firestoreDb.Collection("borrow").Document(borrowSnapshot.Id);
+                        await borrowReference.UpdateAsync("cancel", true);
+                    }
+                    return RedirectToAction("History", "Home");
+                }
+                else
+                {
+                    Console.WriteLine("UserID not macth");
+                    return RedirectToAction("History", "Home");
+                }
+
+
+            }
+            else
+            {
+                return RedirectToAction("SignIn", "Account");
+            }
         }
         public IActionResult Blacklist()
         {

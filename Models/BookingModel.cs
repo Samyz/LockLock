@@ -15,6 +15,7 @@ namespace LockLock.Models
         public bool cancel { get; set; }
         public string status { get; set; }
         public string name { get; set; }
+        public DateTime timestamp { get; set; }
     }
 
 }

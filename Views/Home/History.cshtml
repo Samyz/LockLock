@@ -1,3 +1,9 @@
+@model IEnumerable<LockLock.Models.BookingModel>
+
+@{
+  ViewData["Title"] = "Booking";
+}
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -5,72 +11,108 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
 <link rel="stylesheet" href="~/css/user.css" />
-<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
-
+<script src="~/js/history.js"></script>
+@* <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script> *@
 
 @{
-    ViewData["Title"] = "History";
+  ViewData["Title"] = "History";
+}
+
+@functions {
+
+  public static String toTime(DateTime time)
+  {
+    var output = "";
+    output += time.ToString("dddd") + ", ";
+    output += time.ToString("dd") + " ";
+    output += time.ToString("MMMM") + " ";
+    output += time.ToString("yyyy") + " ";
+    output += time.ToString("HH") + ".00 - ";
+    output += time.AddHours(1).ToString("HH") + ".00";
+    return output;
+  }
 }
 
 <div class="container">
-    <h1 class="topic-color text-center">ประวัติการจอง</h1> 
-    
+  <h1 class="topic-color text-center">ประวัติการจอง</h1>
 
-<table class="table sortable">
-  <tr>
-    <th># <span id="sorttable_sortfwdind">&nbsp;▾</span> </th>
-    <th>ชื่ออุปกรณ์</th>
-    <th>จำนวน</th>
-    <th>ห้อง</th>
-    <th>วัน-เวลา</th>
-    <th></th>
-  </tr>
 
-  <tr class="item">
-    <td>1.</td>
-    <td>Hantek USB Oscilloscope</td>
-    <td>3 ชิ้น</td>
-    <td>Room 4</td>
-    <td>-  Sat, 7 March 2021 <br> 9.00 - 10.00</td>
-    <td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#CancelModal">ยกเลิก</button></td>
-  </tr>
-  <tr class="item">
-    <td>2.</td>
-    <td>Hantek 1832C Mini Handheld LCR Meter</td>
-    <td>1 ชิ้น</td>
-    <td>Room 2</td>
-    <td>-  Sat, 2 March 2021 <br> 9.00 - 10.00</td>
-    <td><button type="button" class="btn btn-danger" disabled>ยกเลิก</button></td>
-  </tr>
-  <tr class="item">
-    <td>3.</td>
-    <td>A</td>
-    <td>2 ชิ้น</td>
-    <td>Room 5</td>
-    <td>-  Sat, 3 March 2021 <br> 9.00 - 10.00</td>
-    <td><button type="button" class="btn btn-danger" disabled>ยกเลิก</button></td>
-  </tr>
-</table>
+  <table class="table sortable" id="myTable">
+    @* <tr>
+      <th># <span id="sorttable_sortfwdind">&nbsp;▾</span> </th>
+      <th>ชื่ออุปกรณ์</th>
+      <th>จำนวน</th>
+      <th>ห้อง</th>
+      <th>วัน-เวลา</th>
+      <th></th>
+      </tr> *@
+    <tr>
+      <th onclick="sortTable(0)"># &#9662</th>
+      <th onclick="sortTable(1)">ชื่ออุปกรณ์</th>
+      <th>จำนวน</th>
+      <th onclick="sortTable(3)">ห้อง</th>
+      <th onclick="sortTable(4)">วัน-เวลา</th>
+      <th></th>
+    </tr>
+
+    @foreach (var item in Model.Select((value, i) => new { i, value }))
+    {
+      <tr class="item">
+        <td>
+          @Html.DisplayFor(modelItem => item.i)
+        </td>
+        <td>
+          @Html.DisplayFor(modelItem => item.value.Name)
+        </td>
+        <td>
+          @Html.DisplayFor(modelItem => item.value.Num)
+        </td>
+        <td>
+          @Html.DisplayFor(modelItem => item.value.RoomName)
+        </td>
+        <td>
+          @foreach (var time in item.value.timeList)
+          {
+            @toTime(time)
+            <br>
+          }
+        </td>
+        <td>
+          @if (item.value.cancel)
+          {
+            <button type="button" class="btn btn-danger" onClick="toModal('@(item.value.BookingID)')"
+          data-toID="@item.value.BookingID">ยกเลิก</button>
+            @* <form asp-action="cancle" asp-route-transactionID="@item.value.BookingID">
+              <button type="submit">Cancle</button>
+              </form> *@
+          }
+          else
+          {
+            <butto type="button" class="btn btn-danger" disabled>ยกเลิก</butto>
+          }
+
+        </td>
+      </tr>
+    }
+  </table>
 </div>
 
 <!-- Modal -->
-    <div class="modal fade" id="CancelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <img src="~/img/close.png" alt="close" class="closebtn" data-dismiss="modal">
-                </div>
-                <div class="modal-body text-center">
+<div class="modal" id="CancelModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <img src="~/img/close.png" alt="close" class="closebtn" id="modalClose">
+      </div>
+      <div class="modal-body text-center">
         <img src="~/img/cancel.png" width="30%" alt="cancel">
         <h3>ต้องการ</h3>
         <h3>"ยกเลิกการจอง"</h3>
         <br>
-        <button type="button" class="btn btn-info ">ยกเลิกการจอง</button>
-                </div>
-            </div>
-        </div>
+        <form id="cancleForm" action="/Home/cancle" method="post">
+          <button type="submit" class="btn btn-info ">ยกเลิกการจอง</button>
+        </form>
+      </div>
     </div>
-
-
-
+  </div>
+</div>
