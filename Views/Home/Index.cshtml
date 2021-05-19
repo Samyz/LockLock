@@ -11,9 +11,7 @@
 @{
     ViewData["Title"] = "Index Page";
 }
-@* <script>
 
-    </script> *@
 <style>
     .modal {
         display: none;
@@ -43,12 +41,12 @@
     var array = [];
     window.onload = function () {
         var modal = document.getElementById('bookingModal');
-        var noneModal = document.getElementById('noneModal');
-        var errorModal = document.getElementById('errorModal');
+        /*var noneModal = document.getElementById('noneModal');
+        var errorModal = document.getElementById('errorModal');*/
         var modalButton = document.getElementById('btnBooking');
         var modalClose = document.getElementById('modalClose');
-        var modalCloseNone = document.getElementById('modalCloseNone');
-        var modalCloseError = document.getElementById('modalCloseError');
+        /*var modalCloseNone = document.getElementById('modalCloseNone');
+        var modalCloseError = document.getElementById('modalCloseError');*/
 
 
         modalButton.onclick = function () {
@@ -58,14 +56,10 @@
                 noneModal.style.display = "none";
             }
             else if (dataProcess() === "error") {
-                modal.style.display = "none";
-                errorModal.style.display = "block";
-                noneModal.style.display = "none";
+               alert("กรุณาจองภายในวันเดียวกัน");
             }
             else {
-                modal.style.display = "none";
-                errorModal.style.display = "none";
-                noneModal.style.display = "block";
+                alert("กรุณาทำการจองก่อน");
             }
             console.log("but");
         }
@@ -75,7 +69,7 @@
             console.log("clo");
         }
 
-        modalCloseNone.onclick = function () {
+        /*modalCloseNone.onclick = function () {
             noneModal.style.display = "none";
             console.log("clo");
         }
@@ -83,21 +77,21 @@
         modalCloseError.onclick = function () {
             errorModal.style.display = "none";
             console.log("clo");
-        }
+        }*/
 
         window.onclick = function () {
             if (event.target == modal) {
                 modal.style.display = "none";
                 console.log("out");
             }
-            if (event.target == noneModal) {
+            /*if (event.target == noneModal) {
                 noneModal.style.display = "none";
                 console.log("out");
             }
             if (event.target == errorModal) {
                 errorModal.style.display = "none";
                 console.log("out");
-            }
+            }*/
         }
 
         function dataProcess() {
@@ -348,35 +342,7 @@
         <h3>กรุณาติดต่อไปที่ Email:61010756@kmitl.ac.th</h3>
         </div> *@
 
-    <!-- Modal -->
-    @* <div class="modal fade" id="bookingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header border-0">
-        <h2 class="modal-title w-100 text-center topic-color" id="exampleModalLabel">สรุปรายการจองอุปกรณ์
-        </h2>
-        <img src="~/img/close.png" alt="close" class="closebtn" data-dismiss="modal">
-        </div>
-        <div class="modal-body">
-        <p><i class="bi bi-person-fill"> <b>ชื่อ-นามสกุล :</b>
-        <f id="name"></f>
-        </i></p>
-        <p><i class="bi bi-tools"> <b>อุปกรณ์ :</b> @Html.DisplayFor(modelItem => Model.objName)</i></p>
-        <p><i class="bi bi-basket-fill"> <b>จำนวนที่จอง :</b> 1</i></p>
-        <p><i class="bi bi-door-open-fill"> <b>ห้องที่จอง :</b>
-        <f id="roomName"></f>
-        </i></p>
-        <p><i class="bi bi-clock-fill"> <b>วัน-เวลา :</b>
-        <f id="times"></f>
-        </i></p>
-        </div>
-        <div class="modal-footer border-0">
-        <button type="button" class="btn btn-info" onclick="sendData()">ยืนยันการจอง</button>
-        </div>
-        </div>
-        </div>
-        </div> *@
+
 
     <div class="modal" id="bookingModal" tabindex="-1">
         <div class="modal-dialog">
@@ -406,7 +372,7 @@
         </div>
     </div>
 
-    <div class="modal" id="noneModal" tabindex="-1">
+    @* <div class="modal" id="noneModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header border-0">
@@ -428,7 +394,6 @@
                         </i></p>
                 </div>
                 <div class="modal-footer border-0">
-                    @* <button type="button" class="btn btn-info" onclick="sendData()">ยืนยันการจอง</button> *@
                 </div>
             </div>
         </div>
@@ -456,10 +421,9 @@
                         </i></p>
                 </div>
                 <div class="modal-footer border-0">
-                    @* <button type="button" class="btn btn-info" onclick="sendData()">ยืนยันการจอง</button> *@
                 </div>
             </div>
         </div>
-    </div>
+    </div> *@
 </div>
 </div>
