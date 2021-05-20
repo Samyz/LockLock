@@ -122,6 +122,10 @@ table {
   border-color: #489d93;
 }
 
+.btn.btn-danger:disabled{
+  background-color: grey !important;
+}
+
 a.tab1 {
   color: white;
   background-color: #b24f32;
