@@ -20,5 +20,9 @@ namespace LockLock.Models
         public string roomName { get; set; }
 
         public string roomID { get; set; }
+
+        public int roomNum { get; set; }
+
+        public string adminEmail { get; set; }
     }
 }
