@@ -635,6 +635,26 @@ namespace LockLock.Controllers
             return View();
         }
 
+         public IActionResult Profile()
+        {
+            return View();
+        }
+
+        public IActionResult EditProfile()
+        {
+            return View();
+        }
+
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        public IActionResult SignIn()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
