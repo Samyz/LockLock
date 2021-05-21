@@ -213,6 +213,11 @@ i {
   cursor: pointer;
 }
 
+.pointer-cursor:hover,
+.pointer-cursor:focus {
+  cursor: pointer;
+}
+
 .modal-header .closebtn {
   margin: -3rem -3rem -1rem auto;
 }
