@@ -41,312 +41,324 @@
     }
 </style>
 
-<script type="text/javascript">
-    var array = [];
-    window.onload = function () {
-        var modal = document.getElementById('bookingModal');
-        /*var noneModal = document.getElementById('noneModal');
-        var errorModal = document.getElementById('errorModal');*/
-        var modalButton = document.getElementById('btnBooking');
-        var modalClose = document.getElementById('modalClose');
-        /*var modalCloseNone = document.getElementById('modalCloseNone');
-        var modalCloseError = document.getElementById('modalCloseError');*/
+@if (Model.adminEmail == "")
+{
+    <script type="text/javascript">
+        var array = [];
+        window.onload = function () {
+            var modal = document.getElementById('bookingModal');
+            /*var noneModal = document.getElementById('noneModal');
+            var errorModal = document.getElementById('errorModal');*/
+            var modalButton = document.getElementById('btnBooking');
+            var modalClose = document.getElementById('modalClose');
+            /*var modalCloseNone = document.getElementById('modalCloseNone');
+            var modalCloseError = document.getElementById('modalCloseError');*/
 
 
-        modalButton.onclick = function () {
-            if (dataProcess() === "ok") {
-                modal.style.display = "block";
-                errorModal.style.display = "none";
-                noneModal.style.display = "none";
-            }
-            else if (dataProcess() === "error") {
-                alert("กรุณาจองภายในวันเดียวกัน");
-            }
-            else {
-                alert("กรุณาทำการจองก่อน");
-            }
-            console.log("but");
-        }
-
-        modalClose.onclick = function () {
-            modal.style.display = "none";
-            console.log("clo");
-        }
-
-        /*modalCloseNone.onclick = function () {
-            noneModal.style.display = "none";
-            console.log("clo");
-        }
-
-        modalCloseError.onclick = function () {
-            errorModal.style.display = "none";
-            console.log("clo");
-        }*/
-
-        window.onclick = function () {
-            if (event.target == modal) {
-                modal.style.display = "none";
-                console.log("out");
-            }
-            /*if (event.target == noneModal) {
-                noneModal.style.display = "none";
-                console.log("out");
-            }
-            if (event.target == errorModal) {
-                errorModal.style.display = "none";
-                console.log("out");
-            }*/
-        }
-
-        function dataProcess() {
-    @* document.getElementById('TextMessage').innerHTML = document.getElementById('02').checked; *@
-                Date.prototype.addDays = function(days) {
-                    var date = new Date(this.valueOf());
-                    date.setDate(date.getDate() + days);
-                    return date;
+            modalButton.onclick = function () {
+                if (dataProcess() === "ok") {
+                    modal.style.display = "block";
+                    errorModal.style.display = "none";
+                    noneModal.style.display = "none";
                 }
-            array = [];
-            var d = new Date();
-            var row = -1;
-            var rowChecked = false;
-            var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-            var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            for (var i = 0; i < 7; i++) {
-                for (var j = 0; j < 9; j++) {
-                    if (document.getElementById(`${j}${i}`).checked) {
-                        if (row == -1) {
-                            row = i;
+                else if (dataProcess() === "error") {
+                    alert("กรุณาจองภายในวันเดียวกัน");
+                }
+                else {
+                    alert("กรุณาทำการจองก่อน");
+                }
+                console.log("but");
+            }
+
+            modalClose.onclick = function () {
+                modal.style.display = "none";
+                console.log("clo");
+            }
+
+            /*modalCloseNone.onclick = function () {
+                noneModal.style.display = "none";
+                console.log("clo");
+            }
+
+            modalCloseError.onclick = function () {
+                errorModal.style.display = "none";
+                console.log("clo");
+            }*/
+
+            window.onclick = function () {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                    console.log("out");
+                }
+                /*if (event.target == noneModal) {
+                    noneModal.style.display = "none";
+                    console.log("out");
+                }
+                if (event.target == errorModal) {
+                    errorModal.style.display = "none";
+                    console.log("out");
+                }*/
+            }
+
+            function dataProcess() {
+        @* document.getElementById('TextMessage').innerHTML = document.getElementById('02').checked; *@
+                    Date.prototype.addDays = function(days) {
+                        var date = new Date(this.valueOf());
+                        date.setDate(date.getDate() + days);
+                        return date;
+                    }
+                array = [];
+                var d = new Date();
+                var row = -1;
+                var rowChecked = false;
+                var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+                var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                for (var i = 0; i < 7; i++) {
+                    for (var j = 0; j < 9; j++) {
+                        if (document.getElementById(`${j}${i}`).checked) {
+                            if (row == -1) {
+                                row = i;
+                            }
+                            else if (row != i) {
+                                rowChecked = true;
+                                break;
+                            }
+                            var now = d.addDays(i);
+                            array.push(days[now.getDay()] + ", " + now.getDate() + " " + months[now.getMonth()] + " " + now.getFullYear() + " " + (j + 9).toString() + ".00 - " + (j + 10).toString() + ".00")
                         }
-                        else if (row != i) {
-                            rowChecked = true;
-                            break;
-                        }
-                        var now = d.addDays(i);
-                        array.push(days[now.getDay()] + ", " + now.getDate() + " " + months[now.getMonth()] + " " + now.getFullYear() + " " + (j + 9).toString() + ".00 - " + (j + 10).toString() + ".00")
+                    }
+                    if (rowChecked) {
+                        break;
                     }
                 }
                 if (rowChecked) {
-                    break;
+                    return "error";
                 }
+                else if (row == -1) {
+                    return "none"
+                }
+                var output = "";
+                var name = "@Model.firstName" + " " + "@Model.lastName";
+                var roomName = "@Model.roomName";
+                array.forEach((value, index, array) => { output += value + "<br>" });
+        @* document.getElementById('TextMessage').innerHTML = days[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear(); *@
+        @* document.getElementById('TextMessage').innerHTML = output; *@
+                    document.getElementById('times').innerHTML = output;
+                document.getElementById('name').innerHTML = name;
+                document.getElementById('roomName').innerHTML = roomName;
+                return "ok";
             }
-            if (rowChecked) {
-                return "error";
-            }
-            else if (row == -1) {
-                return "none"
-            }
-            var output = "";
-            var name = "@Model.firstName" + " " + "@Model.lastName";
-            var roomName = "@Model.roomName";
-            array.forEach((value, index, array) => { output += value + "<br>" });
-    @* document.getElementById('TextMessage').innerHTML = days[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear(); *@
-    @* document.getElementById('TextMessage').innerHTML = output; *@
-                document.getElementById('times').innerHTML = output;
-            document.getElementById('name').innerHTML = name;
-            document.getElementById('roomName').innerHTML = roomName;
-            return "ok";
+
         }
 
-    }
-
-    function sendData() {
-        var roomID = "@Model.roomID";
-        console.log(roomID);
-        var postData = {
-            roomID: roomID,
-            dates: array,
-        }
-        /*$.ajax({
-            type: "POST",
-            url: "/Home/Transaction",
-            data: postData,
-            success: function (data) {
-                console.log("hello");
-                console.log(data.Result);
-                var url = '@Url.Action("History", "Home")';
-                window.location.href = url;
-            },
-            error: function (response) {
-                console.log(response.status);
-                console.log(response.statusText);
-                var url = '@Url.Action("SignIn", "Account")';
-                window.location.href = url;
-            },
-            dataType: "json",
-            traditional: true
-        })*/
-        //try{
-        fetch("/Home/Transaction", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(postData),
-        })
-            .then(response => {
-                if (response.ok) return response.json();
-    @* console.log("asdf => " + JSON.stringify(response)); *@
-                return response.text().then(response => {
-                    console.log(JSON.stringify(response));
-                    throw new Error(response);
-                })
-            })
-            .then(data => {
-                console.log("hello");
-                console.log(data.Result);
-                var url = '@Url.Action("History", "Home")';
-                window.location.href = url;
-            })
-            .catch(error => {
-                if (error.message == "UserError") {
+        function sendData() {
+            var roomID = "@Model.roomID";
+            console.log(roomID);
+            var postData = {
+                roomID: roomID,
+                dates: array,
+            }
+            /*$.ajax({
+                type: "POST",
+                url: "/Home/Transaction",
+                data: postData,
+                success: function (data) {
+                    console.log("hello");
+                    console.log(data.Result);
+                    var url = '@Url.Action("History", "Home")';
+                    window.location.href = url;
+                },
+                error: function (response) {
+                    console.log(response.status);
+                    console.log(response.statusText);
                     var url = '@Url.Action("SignIn", "Account")';
                     window.location.href = url;
-                }
-                else if (error.message == "DataError") {
-                    alert("Data not match in back-end");
-                }
+                },
+                dataType: "json",
+                traditional: true
+            })*/
+            //try{
+            fetch("/Home/Transaction", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(postData),
             })
-        //}
-        /*catch (error) {
-            console.log(JSON.stringify(error));
-            var url = '@Url.Action("SignIn", "Account")';
-            //window.location.href = url;
-        }*/
+                .then(response => {
+                    if (response.ok) return response.json();
+        @* console.log("asdf => " + JSON.stringify(response)); *@
+                    return response.text().then(response => {
+                        console.log(JSON.stringify(response));
+                        throw new Error(response);
+                    })
+                })
+                .then(data => {
+                    console.log("hello");
+                    console.log(data.Result);
+                    var url = '@Url.Action("History", "Home")';
+                    window.location.href = url;
+                })
+                .catch(error => {
+                    if (error.message == "UserError") {
+                        var url = '@Url.Action("SignIn", "Account")';
+                        window.location.href = url;
+                    }
+                    else if (error.message == "DataError") {
+                        alert("Data not match in back-end");
+                    }
+                })
+            //}
+            /*catch (error) {
+                console.log(JSON.stringify(error));
+                var url = '@Url.Action("SignIn", "Account")';
+                //window.location.href = url;
+            }*/
 
-        console.log(array);
-    }
+            console.log(array);
+        }
 
-    function getD() {
-        console.log("YO");
-        fetch("/Home/Test", {
-            method: 'POST',
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log("hello");
-                console.log(data.Result);
+        function getD() {
+            console.log("YO");
+            fetch("/Home/Test", {
+                method: 'POST',
             })
-            .catch((error) => {
-                console.log(error);
-            })
-    }
-</script>
+                .then(response => response.json())
+                .then(data => {
+                    console.log("hello");
+                    console.log(data.Result);
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+        }
+    </script>
+}
 
 @Html.Partial("Navbar", new NavbarModel{name= @Model.firstName,surname= @Model.lastName })
 
 <div class="container">
     <ul class="nav nav-tabs">
-        <li><a class="tab1" href="/?room=1">ROOM 1</a></li>
-        <li><a class="tab2" href="/?room=2">ROOM 2</a></li>
-        <li><a class="tab3" href="/?room=3">ROOM 3</a></li>
-        <li><a class="tab4" href="/?room=4">ROOM 4</a></li>
-        <li><a class="tab5" href="/?room=5">ROOM 5</a></li>
+        <li @(Model.roomNum==1?"class=active" :"")><a class="tab1" href="/?room=1">ROOM 1</a></li>
+        <li @(Model.roomNum==2?"class=active" :"")><a class="tab2" href="/?room=2">ROOM 2</a></li>
+        <li @(Model.roomNum==3?"class=active" :"")><a class="tab3" href="/?room=3">ROOM 3</a></li>
+        <li @(Model.roomNum==4?"class=active" :"")><a class="tab4" href="/?room=4">ROOM 4</a></li>
+        <li @(Model.roomNum==5?"class=active" :"")><a class="tab5" href="/?room=5">ROOM 5</a></li>
     </ul>
 
     <div class="tab-content">
-        <div>
-            @* <div>
-                @Html.DisplayFor(modelItem => Model.firstName)<br>
-                @Html.DisplayFor(modelItem => Model.lastName)<br>
-                @Html.DisplayFor(modelItem => Model.roomName)<br>
-                @Html.DisplayFor(modelItem => Model.roomID)<br>
-                </div> *@
-            <br>
-            <h4 class="topic-color" id="object">Object : @Html.DisplayFor(modelItem => Model.objName)</h4>
-            <h4 class="text-center"><b>@Html.DisplayFor(modelItem => Model.timeLength)</b></h4>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead class="table-secondary">
-                        <tr>
-                            <th scope="col">Start Time</th>
-                            @foreach (var item in Model.name)
-                            {
-                                <th>
-                                    @Html.DisplayFor(modelItem => item)
-                                </th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (var i = 0; i < 9; i++)
-                        {
+        @if (Model.adminEmail == "")
+        {
+            <div>
+                @* <div>
+                    @Html.DisplayFor(modelItem => Model.firstName)<br>
+                    @Html.DisplayFor(modelItem => Model.lastName)<br>
+                    @Html.DisplayFor(modelItem => Model.roomName)<br>
+                    @Html.DisplayFor(modelItem => Model.roomID)<br>
+                    </div> *@
+                <br>
+                <h4 class="topic-color" id="object">Object : @Html.DisplayFor(modelItem => Model.objName)</h4>
+                <h4 class="text-center"><b>@Html.DisplayFor(modelItem => Model.timeLength)</b></h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="table-secondary">
                             <tr>
-                                <th scope="row">@(i+9).00</th>
-                                @for (var j = 0; j < 7; j++)
+                                <th scope="col">Start Time</th>
+                                @foreach (var item in Model.name)
                                 {
-                                    <td>
-                                        <form name="queryForm" class="form-inline">
-                                            <div class="squaredThree">
-                                                <input type="checkbox" name="optionsRadios" id="@i@j" value="other"
+                                    <th>
+                                        @Html.DisplayFor(modelItem => item)
+                                    </th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (var i = 0; i < 9; i++)
+                            {
+                                <tr>
+                                    <th scope="row">@(i+9).00</th>
+                                    @for (var j = 0; j < 7; j++)
+                                    {
+                                        <td>
+                                            <form name="queryForm" class="form-inline">
+                                                <div class="squaredThree">
+                                                    <input type="checkbox" name="optionsRadios" id="@i@j" value="other"
                                             ng-model="formData.other" ng-true-value="'other'"
                                             ng-init="formData.other='other'" @(Model.table[j,
                                             i].Item1=="Red"||Model.table[j, i].Item1=="Grey"||Model.table[j,
                                             i].Item1=="Yellow"?"disabled":"")>
-                                                <label for="@i@j"
+                                                    <label for="@i@j"
                                             class="@Html.DisplayFor(modelItem => Model.table[j, i].Item1)"></label>
-                                            </div>
-                                            <label class="label-text">&nbsp;(@Html.DisplayFor(modelItem =>
+                                                </div>
+                                                <label class="label-text">&nbsp;(@Html.DisplayFor(modelItem =>
                                         Model.table[j,i].Item2))</label>
-                                        </form>
-                                    </td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                                            </form>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
 
-                <div class="d-flex">
-                    <div class="container-row">
-                        <div class="p-2">
-                            <div class="squaredThree">
-                                <input type="checkbox" disabled>
-                                <label class="Red"></label>
+                    <div class="d-flex">
+                        <div class="container-row">
+                            <div class="p-2">
+                                <div class="squaredThree">
+                                    <input type="checkbox" disabled>
+                                    <label class="Red"></label>
+                                </div>
+                                <label class="label-text">&nbsp;ไม่สามารถจองได้</label>
                             </div>
-                            <label class="label-text">&nbsp;ไม่สามารถจองได้</label>
-                        </div>
 
-                        <div class="p-2">
-                            <div class="squaredThree">
-                                <input type="checkbox" disabled>
-                                <label class="Grey"></label>
+                            <div class="p-2">
+                                <div class="squaredThree">
+                                    <input type="checkbox" disabled>
+                                    <label class="Grey"></label>
+                                </div>
+                                <label class="label-text">&nbsp;หมดเวลาการจอง</label>
                             </div>
-                            <label class="label-text">&nbsp;หมดเวลาการจอง</label>
-                        </div>
 
-                        <div class="p-2">
-                            <div class="squaredThree">
-                                <input type="checkbox" disabled>
-                                <label class="Green disablepointer"></label>
+                            <div class="p-2">
+                                <div class="squaredThree">
+                                    <input type="checkbox" disabled>
+                                    <label class="Green disablepointer"></label>
+                                </div>
+                                <label class="label-text">&nbsp;สามารถจองได้</label>
                             </div>
-                            <label class="label-text">&nbsp;สามารถจองได้</label>
-                        </div>
 
-                        <div class="p-2">
-                            <div class="squaredThree">
-                                <input type="checkbox" disabled>
-                                <label class="Yellow disablepointer"></label>
+                            <div class="p-2">
+                                <div class="squaredThree">
+                                    <input type="checkbox" disabled>
+                                    <label class="Yellow disablepointer"></label>
+                                </div>
+                                <label class="label-text">&nbsp;ยืมกลุ่มอื่น</label>
                             </div>
-                            <label class="label-text">&nbsp;ยืมกลุ่มอื่น</label>
                         </div>
+                        <button id="btnBooking" type="button" class="btn btn-info ml-auto p-2">
+                            จองอุปกรณ์
+                        </button>
+                        @* <button id="btnBooking" type="button" class="btn btn-info ml-auto p-2" data-toggle="modal"
+                            data-target="#bookingModal" onclick="dataProcess()">
+                            จองอุปกรณ์
+                            </button> *@
                     </div>
-                    <button id="btnBooking" type="button" class="btn btn-info ml-auto p-2">
-                        จองอุปกรณ์
-                    </button>
-                    @* <button id="btnBooking" type="button" class="btn btn-info ml-auto p-2" data-toggle="modal"
-                        data-target="#bookingModal" onclick="dataProcess()">
-                        จองอุปกรณ์
-                        </button> *@
-                </div>
 
+                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="text-center blacklist-style">
+                <img src="~/img/blacklist.png" alt="blacklist">
+                <h3>คุณถูก Admin Blacklist!!!</h3>
+                <h3>กรุณาติดต่อไปที่ Email:@Model.adminEmail</h3>
+            </div>
+        }
     </div>
 
-    @* <div class="text-center blacklist-style">
-        <img src="~/img/blacklist.png" alt="blacklist">
-        <h3>คุณถูก Admin Blacklist!!!</h3>
-        <h3>กรุณาติดต่อไปที่ Email:61010756@kmitl.ac.th</h3>
-        </div> *@
+
+
+
 
 
 
