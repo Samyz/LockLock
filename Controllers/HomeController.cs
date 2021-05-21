@@ -432,8 +432,27 @@ namespace LockLock.Controllers
         public async Task<IActionResult> History()
         {
             string uid = await checkLogedIn();
+
             if (uid != null)
             {
+                UserModel user = new UserModel();
+                try
+                {
+                    DocumentReference documentReference = firestoreDb.Collection("users").Document(uid);
+                    DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
+                    Console.WriteLine(documentSnapshot.Exists);
+                    Console.WriteLine(uid);
+
+                    UserModel newUser = documentSnapshot.ConvertTo<UserModel>();
+                    newUser.UserID = uid;
+                    user = newUser;
+                    TempData["name"] = user.Firstname;
+                    TempData["surname"] = user.Lastname;
+                }
+                catch
+                {
+                    return RedirectToAction("SignIn", "Account");
+                }
                 List<BookingModel> bookingList = new List<BookingModel>();
 
                 Query transactionQuery = firestoreDb.Collection("transaction").WhereEqualTo("userID", uid).WhereEqualTo("cancel", false);
