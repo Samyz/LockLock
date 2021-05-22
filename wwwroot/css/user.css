@@ -235,3 +235,11 @@ i {
   background-color: rgb(0, 0, 0); /* Fallback color */
   background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
+
+th {
+  width: 5%;
+}
+
+.topOfContent {
+  padding-top: 40px;
+}

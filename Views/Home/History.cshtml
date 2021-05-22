@@ -33,10 +33,11 @@
   }
 }
 
-@Html.Partial("Navbar", new NavbarModel{name= (string) TempData["name"],surname= (string) TempData["surname"] })
+@Html.Partial("Navbar", new NavbarModel{name= (string) TempData["name"],surname= (string) TempData["surname"],
+isUser=true })
 
 <div class="container">
-  <h1 class="topic-color text-center">ประวัติการจอง</h1>
+  <h1 class="topic-color text-center topOfContent">ประวัติการจอง</h1>
 
 
   <table class="table sortable" id="myTable">

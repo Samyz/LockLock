@@ -12,35 +12,6 @@
     ViewData["Title"] = "Index Page";
 }
 
-<style>
-    .modal {
-        display: none;
-        /* Hidden by default */
-        position: fixed;
-        /* Stay in place */
-        z-index: 1;
-        /* Sit on top */
-        padding-top: 100px;
-        /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%;
-        /* Full width */
-        height: 100%;
-        /* Full height */
-        overflow: auto;
-        /* Enable scroll if needed */
-        background-color: rgb(0, 0, 0);
-        /* Fallback color */
-        background-color: rgba(0, 0, 0, 0.4);
-        /* Black w/ opacity */
-    }
-
-    th {
-        width: 5%;
-    }
-</style>
-
 @if (Model.adminEmail == "")
 {
     <script type="text/javascript">
@@ -188,7 +159,7 @@
                 .then(response => {
                     if (response.ok) return response.json();
         @* console.log("asdf => " + JSON.stringify(response)); *@
-                    return response.text().then(response => {
+                                    return response.text().then(response => {
                         console.log(JSON.stringify(response));
                         throw new Error(response);
                     })
@@ -235,10 +206,10 @@
     </script>
 }
 
-@Html.Partial("Navbar", new NavbarModel{name= @Model.firstName,surname= @Model.lastName })
+@Html.Partial("Navbar", new NavbarModel{name= @Model.firstName,surname= @Model.lastName, isUser=true })
 
 <div class="container">
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs topOfContent">
         <li @(Model.roomNum==1?"class=active" :"")><a class="tab1" href="/?room=1">ROOM 1</a></li>
         <li @(Model.roomNum==2?"class=active" :"")><a class="tab2" href="/?room=2">ROOM 2</a></li>
         <li @(Model.roomNum==3?"class=active" :"")><a class="tab3" href="/?room=3">ROOM 3</a></li>
