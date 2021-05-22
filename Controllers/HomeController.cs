@@ -465,6 +465,53 @@ namespace LockLock.Controllers
                 return StatusCode(400, "DataError");
             }
 
+            // check data in DB
+            RoomModel Room = new RoomModel();
+            try
+            {
+                DocumentReference documentReference = firestoreDb.Collection("room").Document(input.roomID);
+                DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
+                Console.WriteLine(documentSnapshot.Exists);
+
+                RoomModel newRoom = documentSnapshot.ConvertTo<RoomModel>();
+                newRoom.RoomID = input.roomID;
+                Room = newRoom;
+            }
+            catch
+            {
+                return StatusCode(400, "DataError");
+            }
+            bool isError = false;
+            foreach (string date in input.dates)
+            {
+                string[] temp = date.Split(" ");
+                string[] month = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+
+                DateTime timeCheck = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
+
+                Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("time", TimeZoneInfo.ConvertTimeToUtc(timeCheck)).WhereEqualTo("cancel", false).WhereEqualTo("otherGroup", false).WhereEqualTo("roomID", Room.RoomID);
+                QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
+                int count = 0;
+
+                foreach (DocumentSnapshot documentSnapshot in borrowQuerySnapshot.Documents)
+                {
+                    if (documentSnapshot.Exists)
+                    {
+                        count++;
+                    }
+                }
+                Console.WriteLine(count);
+                if (count >= Room.objNum)
+                {
+                    isError = true;
+                }
+            }
+            if (isError)
+            {
+                return StatusCode(400, "DataError");
+            }
+
+            // store data in DB
             CollectionReference transactionCollection = firestoreDb.Collection("transaction");
             TransactionModel newTransaction = new TransactionModel()
             {
@@ -635,7 +682,7 @@ namespace LockLock.Controllers
             return View();
         }
 
-         public IActionResult Profile()
+        public IActionResult Profile()
         {
             return View();
         }
