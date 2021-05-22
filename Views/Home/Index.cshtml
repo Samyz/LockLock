@@ -159,7 +159,7 @@
                 .then(response => {
                     if (response.ok) return response.json();
         @* console.log("asdf => " + JSON.stringify(response)); *@
-                                    return response.text().then(response => {
+                                        return response.text().then(response => {
                         console.log(JSON.stringify(response));
                         throw new Error(response);
                     })
@@ -229,9 +229,10 @@
                     </div> *@
                 <br>
                 <h4 class="topic-color" id="object">Object : @Html.DisplayFor(modelItem => Model.objName)</h4>
-                <h4 class="text-center boxTopicDate"><b class="textDate">@Html.DisplayFor(modelItem => Model.timeLength)</b></h4>
+                <h4 class="text-center boxTopicDate"><b class="textDate">@Html.DisplayFor(modelItem => Model.timeLength)</b>
+                </h4>
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="main">
                         <thead class="table-secondary">
                             <tr>
                                 <th scope="col">Start Time</th>
@@ -247,22 +248,24 @@
                             @for (var i = 0; i < 9; i++)
                             {
                                 <tr>
-                                    <th scope="row">@(i+9).00</th>
+                                    <td scope="row">@(i+9).00</td>
                                     @for (var j = 0; j < 7; j++)
                                     {
                                         <td>
                                             <form name="queryForm" class="form-inline">
-                                                <div class="squaredThree">
-                                                    <input type="checkbox" name="optionsRadios" id="@i@j" value="other"
-                                            ng-model="formData.other" ng-true-value="'other'"
-                                            ng-init="formData.other='other'" @(Model.table[j,
-                                            i].Item1=="Red"||Model.table[j, i].Item1=="Grey"||Model.table[j,
-                                            i].Item1=="Yellow"?"disabled":"")>
-                                                    <label for="@i@j"
-                                            class="@Html.DisplayFor(modelItem => Model.table[j, i].Item1)"></label>
+                                                <div class="boxLabel">
+                                                    <div class="squaredThree">
+                                                        <input type="checkbox" name="optionsRadios" id="@i@j" value="other"
+                                                ng-model="formData.other" ng-true-value="'other'"
+                                                ng-init="formData.other='other'" @(Model.table[j,
+                                                i].Item1=="Red"||Model.table[j, i].Item1=="Grey"||Model.table[j,
+                                                i].Item1=="Yellow"?"disabled":"")>
+                                                        <label for="@i@j"
+                                                class="@Html.DisplayFor(modelItem => Model.table[j, i].Item1)"></label>
+                                                    </div>
+                                                    <label class="label-text">&nbsp;(@Html.DisplayFor(modelItem =>
+                                            Model.table[j,i].Item2))</label>
                                                 </div>
-                                                <label class="label-text">&nbsp;(@Html.DisplayFor(modelItem =>
-                                        Model.table[j,i].Item2))</label>
                                             </form>
                                         </td>
                                     }

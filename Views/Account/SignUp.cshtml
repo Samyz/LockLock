@@ -16,7 +16,6 @@
             @Html.AntiForgeryToken()
 
             <div class="form-horizontal">
-                @* <h4>SignUpModel</h4> *@
                 <hr />
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 <div class="form-group">
@@ -70,12 +69,10 @@
         <div>
             <a asp-action="SignIn">Already a member? <i class="bottomLink">Sign in</i></a>
         </div>
-    }
 
-    <div>
-        @Html.ActionLink("Back to SignIn", "SignIn")
     </div>
     <div class="itemSignIn">
         <img class="imgSigInPage" src="~/img/page12.jpg" alt="imgSigInPage" width="434px" height="501px" >
     </div>
+</div>
 </div>
