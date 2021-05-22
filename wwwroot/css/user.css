@@ -1,6 +1,7 @@
 .topic-color {
-  color: #d46c4e;
-}
+    color: #d46c4e;
+    font-weight: bold;
+  }
 table {
   border-bottom: 1px solid #e0e0e0;
 }
@@ -10,10 +11,11 @@ table {
   color: #8f9095;
 }
 .squaredThree {
-  position: relative;
-  float: left;
-  margin-top: 2px;
-}
+    position: relative;
+    float: left;
+    margin-top: 2px;
+    margin-right: 2px;
+  }
 
 .squaredThree label.Red {
   width: 15px;
@@ -94,13 +96,14 @@ table {
 }
 
 .nav-tabs > li.active > a,
-.nav-tabs > li.active > a:focus,
 .nav-tabs > li.active > a:hover {
-  color: #d46c4e;
-  cursor: default;
+  color: #B24F32;
+  cursor:pointer;
   background-color: #fff;
   border: 1px solid #ddd;
   border-bottom-color: transparent;
+  filter: drop-shadow(5px -2px 2px #E6E8ED);
+  font-weight: bold;
 }
 
 .nav-tabs > li > a {
@@ -117,10 +120,11 @@ table {
 }
 
 .btn-info {
-  color: #fff;
-  background-color: #489d93;
-  border-color: #489d93;
-}
+    color: #fff;
+    background-color: #489D93;
+    border-color: #489D93;
+    box-shadow: 3px 3px 2px #BDBEC2;
+  }
 
 .btn.btn-danger:disabled {
   background-color: grey;
@@ -130,27 +134,53 @@ table {
 a.tab1 {
   color: white;
   background-color: #b24f32;
+  font-weight: bold;
 }
 
 a.tab2 {
   color: white;
   background-color: #d46c4e;
+  font-weight: bold;
 }
 
 a.tab3 {
   color: white;
   background-color: #f18060;
+  font-weight: bold;
 }
 
 a.tab4 {
   color: white;
   background-color: #f9ad6a;
+  font-weight: bold;
 }
 
 a.tab5 {
   color: white;
   background-color: #f9c868;
+  font-weight: bold;
 }
+
+.nav-tabs a.tab1:hover{
+    background-color: #a04327;
+    color: #ffffff;
+  }
+  .nav-tabs a.tab2:hover{
+    background-color: #be5e44;
+    color: #ffffff;
+  }
+  .nav-tabs a.tab3:hover{
+    background-color: #e07153;
+    color: #ffffff;
+  }
+  .nav-tabs a.tab4:hover{
+    background-color: #f19b50;
+    color: #ffffff;
+  }
+  .nav-tabs a.tab5:hover{
+    background-color: #f5bd4e;
+    color: #ffffff;
+  }
 
 .tab-content {
   border: 1px solid #ddd;
