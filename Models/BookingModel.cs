@@ -17,11 +17,7 @@ namespace LockLock.Models
         public bool inBlacklist { get; set; }
         public string status { get; set; }
         public string name { get; set; }
-<<<<<<< HEAD
-
-=======
         public DateTime timestamp { get; set; }
->>>>>>> dev
     }
 
 }
