@@ -82,7 +82,7 @@ function sortTable(n) {
     shouldSwitch,
     dir,
     switchcount = 0;
-  table = document.getElementById('myTable');
+  table = document.getElementById('historyTable');
   switching = true;
   //Set the sorting direction to ascending:
   dir = 'asc';
@@ -162,7 +162,7 @@ function sortTable(n) {
     var temp = table.getElementsByTagName('TH')[i].innerHTML.split(' ')[0];
     if (n == i) {
       if (dir == 'asc') {
-        table.getElementsByTagName('TH')[i].innerHTML = temp + ' &#9662;';
+        table.getElementsByTagName('TH')[i].innerHTML = temp + ' &#9662;'; 
       } else {
         table.getElementsByTagName('TH')[i].innerHTML = temp + ' &#9652;';
       }

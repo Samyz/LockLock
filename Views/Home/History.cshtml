@@ -33,13 +33,14 @@
   }
 }
 
-@Html.Partial("Navbar", new NavbarModel{name= (string) TempData["name"],surname= (string) TempData["surname"] })
+@Html.Partial("Navbar", new NavbarModel{name= (string) TempData["name"],surname= (string) TempData["surname"],
+isUser=true })
 
 <div class="container">
-  <h1 class="topic-color text-center">ประวัติการจอง</h1>
+  <h1 class="topic-color text-center topOfContent">ประวัติการจอง</h1>
 
 
-  <table class="table sortable" id="myTable">
+  <table class="table sortable" id="historyTable">
     @* <tr>
       <th># <span id="sorttable_sortfwdind">&nbsp;▾</span> </th>
       <th>ชื่ออุปกรณ์</th>
@@ -48,54 +49,60 @@
       <th>วัน-เวลา</th>
       <th></th>
       </tr> *@
-    <tr>
-      <th class="pointer-cursor" onclick="sortTable(0)"># &#9662</th>
-      <th class="pointer-cursor" onclick="sortTable(1)">ชื่ออุปกรณ์</th>
-      <th>จำนวน</th>
-      <th class="pointer-cursor" onclick="sortTable(3)">ห้อง</th>
-      <th class="pointer-cursor" onclick="sortTable(4)">วัน-เวลา</th>
-      <th></th>
-    </tr>
-
-    @foreach (var item in Model.Select((value, i) => new { i, value }))
-    {
-      <tr class="item">
-        <td>
-          @Html.DisplayFor(modelItem => item.i)
-        </td>
-        <td>
-          @Html.DisplayFor(modelItem => item.value.Name)
-        </td>
-        <td>
-          @Html.DisplayFor(modelItem => item.value.Num)
-        </td>
-        <td>
-          @Html.DisplayFor(modelItem => item.value.RoomName)
-        </td>
-        <td>
-          @foreach (var time in item.value.timeList)
-          {
-            @toTime(time)
-            <br>
-          }
-        </td>
-        <td>
-          @if (item.value.cancel)
-          {
-            <button type="button" class="btn btn-danger" onClick="toModal('@(item.value.BookingID)')"
-          data-toID="@item.value.BookingID">ยกเลิก</button>
-            @* <form asp-action="cancle" asp-route-transactionID="@item.value.BookingID">
-              <button type="submit">Cancle</button>
-              </form> *@
-          }
-          else
-          {
-            <button type="button" class="btn btn-danger" disabled>ยกเลิก</button>
-          }
-
-        </td>
+    <thead>
+      <tr>
+        <th class="pointer-cursor" onclick="sortTable(0)"># &#9662</th>
+        <th class="pointer-cursor" onclick="sortTable(1)">ชื่ออุปกรณ์</th>
+        <th>จำนวน</th>
+        <th class="pointer-cursor" onclick="sortTable(3)">ห้อง</th>
+        <th class="pointer-cursor" onclick="sortTable(4)">วัน-เวลา</th>
+        <th></th>
       </tr>
-    }
+    </thead>
+
+    <tbody>
+      @foreach (var item in Model.Select((value, i) => new { i, value }))
+      {
+        <tr class="item">
+          <td>
+            @Html.DisplayFor(modelItem => item.i)
+          </td>
+          <td>
+            @Html.DisplayFor(modelItem => item.value.Name)
+          </td>
+          <td>
+            @Html.DisplayFor(modelItem => item.value.Num)
+          </td>
+          <td>
+            @Html.DisplayFor(modelItem => item.value.RoomName)
+          </td>
+          <td>
+            @foreach (var time in item.value.timeList)
+            {
+              @toTime(time)
+              <br>
+            }
+          </td>
+          <td>
+            @if (item.value.cancel)
+            {
+              <button type="button" class="btn btn-danger" onClick="toModal('@(item.value.BookingID)')"
+            data-toID="@item.value.BookingID">ยกเลิก</button>
+              @* <form asp-action="cancle" asp-route-transactionID="@item.value.BookingID">
+                <button type="submit">Cancle</button>
+                </form> *@
+            }
+            else
+            {
+              <button type="button" class="btn btn-danger" disabled>ยกเลิก</button>
+            }
+
+          </td>
+        </tr>
+      }
+
+    </tbody>
+
   </table>
 </div>
 
@@ -112,7 +119,7 @@
         <h3>"ยกเลิกการจอง"</h3>
         <br>
         <form id="cancleForm" action="/Home/cancle" method="post">
-          <button type="submit" class="btn btn-info ">ยกเลิกการจอง</button>
+          <button type="submit" class="btn btn-warning btn-popUp ">ยกเลิกการจอง</button>
         </form>
       </div>
     </div>
