@@ -35,32 +35,44 @@ namespace LockLock.Controllers
             {
                 List<BlackListModel> userBlackList = new List<BlackListModel>();
 
-                Query blacklistQuery = firestoreDb.Collection("blacklist").OrderBy("timeCreate");
-                QuerySnapshot blacklistQuerySnapshot = await blacklistQuery.GetSnapshotAsync();
+                DocumentReference adminReference = firestoreDb.Collection("users").Document(adminUID);
+                DocumentSnapshot adminSnapshot = await adminReference.GetSnapshotAsync();
+                AdminModel admin = adminSnapshot.ConvertTo<AdminModel>();
 
-                foreach (DocumentSnapshot blacklistSnapshot in blacklistQuerySnapshot)
+                foreach (string roomID in admin.rooms)
                 {
-                    if (blacklistSnapshot.Exists)
+                    Query blacklistQuery = firestoreDb.Collection("blacklist").WhereEqualTo("roomID", roomID);
+                    QuerySnapshot blacklistQuerySnapshot = await blacklistQuery.GetSnapshotAsync();
+
+                    DocumentReference roomReference = firestoreDb.Collection("room").Document(roomID);
+                    DocumentSnapshot roomSnapshot = await roomReference.GetSnapshotAsync();
+                    RoomModel roomData = roomSnapshot.ConvertTo<RoomModel>();
+
+                    foreach (DocumentSnapshot blacklistSnapshot in blacklistQuerySnapshot)
                     {
-                        BlackListDataModel blacklistData = blacklistSnapshot.ConvertTo<BlackListDataModel>();
-
-                        DocumentReference userReference = firestoreDb.Collection("users").Document(blacklistData.userID);
-                        DocumentSnapshot userSnapshot = await userReference.GetSnapshotAsync();
-                        UserModel userData = userSnapshot.ConvertTo<UserModel>();
-
-                        BlackListModel userBlacklistData = new BlackListModel()
+                        if (blacklistSnapshot.Exists)
                         {
-                            BlacklistID = blacklistSnapshot.Id,
-                            userID = blacklistData.userID,
-                            Name = userData.Firstname + " " + userData.Lastname,
-                            Tel = userData.Tel,
-                            Email = userData.Email
-                        };
-                        userBlackList.Add(userBlacklistData);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Document does not exist!", blacklistSnapshot.Id);
+                            BlackListDataModel blacklistData = blacklistSnapshot.ConvertTo<BlackListDataModel>();
+
+                            DocumentReference userReference = firestoreDb.Collection("users").Document(blacklistData.userID);
+                            DocumentSnapshot userSnapshot = await userReference.GetSnapshotAsync();
+                            UserModel userData = userSnapshot.ConvertTo<UserModel>();
+
+                            BlackListModel userBlacklistData = new BlackListModel()
+                            {
+                                BlacklistID = blacklistSnapshot.Id,
+                                userID = blacklistData.userID,
+                                Name = userData.Firstname + " " + userData.Lastname,
+                                Tel = userData.Tel,
+                                Email = userData.Email,
+                                RoomName = roomData.name
+                            };
+                            userBlackList.Add(userBlacklistData);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Document does not exist!", blacklistSnapshot.Id);
+                        }
                     }
                 }
                 return View(userBlackList);
@@ -71,19 +83,22 @@ namespace LockLock.Controllers
             }
 
         }
-        public async Task<IActionResult> addAsync(string userID)
+        public async Task<IActionResult> addAsync(string userID, string roomID)
         {
             string adminUID = await verifyAdminTokenAsync();
-            if(userID == null) return BadRequest();
+            if (userID == null) return BadRequest();
             if (adminUID != null)
             {
-        
-                BlackListDataModel  blackListData = new BlackListDataModel(){
+
+                BlackListDataModel blackListData = new BlackListDataModel()
+                {
                     userID = userID,
-                    timeCreate = System.DateTime.UtcNow
+                    timeCreate = System.DateTime.UtcNow,
+                    adminID = adminUID,
+                    roomID = roomID
                 };
                 await firestoreDb.Collection("blacklist").AddAsync(blackListData);
-                return Ok();
+                return RedirectToAction("Index", "BookingRoom", new { room = roomID });
             }
             else
             {
@@ -97,7 +112,7 @@ namespace LockLock.Controllers
             {
                 DocumentReference blacklistReference = firestoreDb.Collection("blacklist").Document(id);
                 await blacklistReference.DeleteAsync();
-                return Ok();
+                return RedirectToAction("Index");
             }
             else
             {
@@ -140,6 +155,11 @@ namespace LockLock.Controllers
             public System.DateTime timeCreate { get; set; }
             [FirestoreProperty]
             public string userID { get; set; }
+            [FirestoreProperty]
+            public string adminID { get; set; }
+            [FirestoreProperty]
+            public string roomID { get; set; }
+
         }
 
     }

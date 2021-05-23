@@ -29,9 +29,12 @@ namespace LockLock.Controllers
 
         public async Task<IActionResult> IndexAsync(string room)
         {
-            string adminUID = await verifyAdminTokenAsync();
+            Tuple<string, string, string> adminUID = await verifyAdminTokenAsync();
             if (adminUID != null)
             {
+                TempData["name"] = adminUID.Item2;
+                TempData["surname"] = adminUID.Item3;
+
                 List<BookingModel> bookingList = new List<BookingModel>();
 
                 Query transactionQuery = firestoreDb.Collection("transaction").WhereEqualTo("roomID", room);
@@ -69,6 +72,9 @@ namespace LockLock.Controllers
                         DocumentSnapshot userSnapshot = await userReference.GetSnapshotAsync();
                         UserModel userData = userSnapshot.ConvertTo<UserModel>();
 
+                        Query blacklistQuery = firestoreDb.Collection("blacklist").WhereEqualTo("userID", userReference.Id);
+                        QuerySnapshot blacklistQuerySnapshot = await blacklistQuery.GetSnapshotAsync();
+
                         BookingModel bookingItem = new BookingModel()
                         {
                             BookingID = transactionSnapshot.Id,
@@ -78,8 +84,10 @@ namespace LockLock.Controllers
                             timeList = timeLists,
                             status = timeCompare > 0 ? "Complete" : transactionData.cancel ? "Cancel" : "Booking",
                             cancel = timeCompare > 0 ? false : !transactionData.cancel,
+                            inBlacklist = blacklistQuerySnapshot.Count == 0,
                             name = userData.Firstname + " " + userData.Lastname,
-                            userID = transactionData.userID
+                            userID = transactionData.userID,
+                            RoomID = roomSnapshot.Id
                         };
                         bookingList.Add(bookingItem);
                     }
@@ -97,9 +105,9 @@ namespace LockLock.Controllers
 
         }
 
-        public async Task<IActionResult> cancleAsync(string transactionID)
+        public async Task<IActionResult> cancelAsync(string transactionID)
         {
-            string adminUID = await verifyAdminTokenAsync();
+            Tuple<string, string, string> adminUID = await verifyAdminTokenAsync();
             if (adminUID != null)
             {
                 DocumentReference transactionReference = firestoreDb.Collection("transaction").Document(transactionID);
@@ -110,7 +118,7 @@ namespace LockLock.Controllers
                 DocumentSnapshot roomSnapshot = await roomReference.GetSnapshotAsync();
                 RoomModel roomData = roomSnapshot.ConvertTo<RoomModel>();
 
-                if (roomData.adminID == adminUID)
+                if (roomData.adminID == adminUID.Item1)
                 {
                     await transactionReference.UpdateAsync("cancel", true);
 
@@ -140,7 +148,7 @@ namespace LockLock.Controllers
 
 
 
-        private async Task<string> verifyAdminTokenAsync()
+        private async Task<Tuple<string, string, string>> verifyAdminTokenAsync()
         {
             try
             {
@@ -153,7 +161,7 @@ namespace LockLock.Controllers
 
                 if (user.role == "admin")
                 {
-                    return decodedToken.Uid;
+                    return new Tuple<string, string, string>(decodedToken.Uid, user.Firstname, user.Lastname);
                 }
                 else
                 {

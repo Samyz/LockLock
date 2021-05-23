@@ -28,18 +28,30 @@ namespace LockLock.Controllers
         }
         public async Task<IActionResult> IndexAsync()
         {
-            string adminUid = await verifyAdminTokenAsync();
+            Tuple<string, string, string> adminUid = await verifyAdminTokenAsync();
             if (adminUid != null)
             {
-                Query roomQuery = firestoreDb.Collection("room").WhereEqualTo("adminID", adminUid);
+                TempData["name"] = adminUid.Item2;
+                TempData["surname"] = adminUid.Item3;
+                DocumentReference userReference = firestoreDb.Collection("users").Document(adminUid.Item1);
+                DocumentSnapshot userSnapshot = await userReference.GetSnapshotAsync();
+                AdminModel admin = userSnapshot.ConvertTo<AdminModel>();
+
+                Query roomQuery = firestoreDb.Collection("room").WhereEqualTo("adminID", adminUid.Item1);
                 QuerySnapshot roomQuerySnapshot = await roomQuery.GetSnapshotAsync();
+
                 List<RoomModel> roomList = new List<RoomModel>();
-                foreach(DocumentSnapshot roomSnapshot in roomQuerySnapshot){
+
+                foreach (string roomID in admin.rooms)
+                {
+                    DocumentReference roomReference = firestoreDb.Collection("room").Document(roomID);
+                    DocumentSnapshot roomSnapshot = await roomReference.GetSnapshotAsync();
                     RoomModel room = roomSnapshot.ConvertTo<RoomModel>();
+
                     room.RoomID = roomSnapshot.Id;
                     roomList.Add(room);
                 }
-                return View(roomList);          
+                return View(roomList);
             }
             else
             {
@@ -47,8 +59,9 @@ namespace LockLock.Controllers
             }
         }
 
-        public async Task<IActionResult> updateRoomAsync(RoomModel room){
-            string adminUid = await verifyAdminTokenAsync();
+        public async Task<IActionResult> updateRoomAsync(RoomModel room)
+        {
+            Tuple<string, string, string> adminUid = await verifyAdminTokenAsync();
             if (adminUid != null)
             {
                 DocumentReference roomReference = firestoreDb.Collection("room").Document(room.RoomID);
@@ -62,7 +75,7 @@ namespace LockLock.Controllers
             }
         }
 
-        private async Task<string> verifyAdminTokenAsync()
+        private async Task<Tuple<string, string, string>> verifyAdminTokenAsync()
         {
             try
             {
@@ -75,7 +88,7 @@ namespace LockLock.Controllers
 
                 if (user.role == "admin")
                 {
-                    return decodedToken.Uid;
+                    return new Tuple<string, string, string>(decodedToken.Uid, user.Firstname, user.Lastname);
                 }
                 else
                 {
@@ -89,5 +102,6 @@ namespace LockLock.Controllers
                 return null;
             }
         }
+
     }
 }
