@@ -11,10 +11,13 @@ namespace LockLock.Models
         public string Name { get; set; }
         public int Num { get; set; }
         public string RoomName { get; set; }
+        public string RoomID { get; set; }
         public List<DateTime> timeList { get; set; }
         public bool cancel { get; set; }
+        public bool inBlacklist { get; set; }
         public string status { get; set; }
         public string name { get; set; }
+
     }
 
 }

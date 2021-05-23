@@ -63,16 +63,19 @@
                     @Html.DisplayFor(modelItem => item.status)
                 </td>
                 <td>
-                    <form asp-action="add" asp-controller="Blacklist" asp-route-userID="@item.userID">
-                        <button type="submit">Blacklist</button>
-                    </form>
+                    @if (item.inBlacklist)
+                    {
+                        <form asp-action="add" asp-controller="Blacklist" asp-route-userID="@item.userID" asp-route-roomID="@item.RoomID">
+                            <button type="submit">Blacklist</button>
+                        </form>
+                    }
                     @if (item.cancel)
                     {
                         <form asp-action="cancle" asp-route-transactionID="@item.BookingID">
                             <button type="submit">Cancle</button>
                         </form>
                     }
-                    
+
                 </td>
             </tr>
         }

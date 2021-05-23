@@ -31,15 +31,26 @@ namespace LockLock.Controllers
             string adminUid = await verifyAdminTokenAsync();
             if (adminUid != null)
             {
+                DocumentReference userReference = firestoreDb.Collection("users").Document(adminUid);
+                DocumentSnapshot userSnapshot = await userReference.GetSnapshotAsync();
+                AdminModel admin = userSnapshot.ConvertTo<AdminModel>();
+
                 Query roomQuery = firestoreDb.Collection("room").WhereEqualTo("adminID", adminUid);
                 QuerySnapshot roomQuerySnapshot = await roomQuery.GetSnapshotAsync();
+
                 List<RoomModel> roomList = new List<RoomModel>();
-                foreach(DocumentSnapshot roomSnapshot in roomQuerySnapshot){
+
+                foreach (string roomID in admin.rooms)
+                {
+                    DocumentReference roomReference = firestoreDb.Collection("room").Document(roomID);
+                    DocumentSnapshot roomSnapshot = await roomReference.GetSnapshotAsync();
                     RoomModel room = roomSnapshot.ConvertTo<RoomModel>();
+
                     room.RoomID = roomSnapshot.Id;
                     roomList.Add(room);
                 }
-                return View(roomList);          
+
+                return View(roomList);
             }
             else
             {
@@ -47,7 +58,8 @@ namespace LockLock.Controllers
             }
         }
 
-        public async Task<IActionResult> updateRoomAsync(RoomModel room){
+        public async Task<IActionResult> updateRoomAsync(RoomModel room)
+        {
             string adminUid = await verifyAdminTokenAsync();
             if (adminUid != null)
             {
@@ -89,5 +101,6 @@ namespace LockLock.Controllers
                 return null;
             }
         }
+        
     }
 }

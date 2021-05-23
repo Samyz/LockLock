@@ -21,6 +21,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Email)
             </th>
+             <th>
+                @Html.DisplayNameFor(model => model.RoomName)
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -38,6 +41,9 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                 <td>
+                    @Html.DisplayFor(modelItem => item.RoomName)
                 </td>
                 <td>
                     <form asp-action="cancle" asp-route-id="@item.BlacklistID">

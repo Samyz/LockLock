@@ -69,6 +69,9 @@ namespace LockLock.Controllers
                         DocumentSnapshot userSnapshot = await userReference.GetSnapshotAsync();
                         UserModel userData = userSnapshot.ConvertTo<UserModel>();
 
+                        Query blacklistQuery = firestoreDb.Collection("blacklist").WhereEqualTo("userID", userReference.Id);
+                        QuerySnapshot blacklistQuerySnapshot = await blacklistQuery.GetSnapshotAsync();
+
                         BookingModel bookingItem = new BookingModel()
                         {
                             BookingID = transactionSnapshot.Id,
@@ -78,8 +81,10 @@ namespace LockLock.Controllers
                             timeList = timeLists,
                             status = timeCompare > 0 ? "Complete" : transactionData.cancel ? "Cancel" : "Booking",
                             cancel = timeCompare > 0 ? false : !transactionData.cancel,
+                            inBlacklist = blacklistQuerySnapshot.Count == 0,
                             name = userData.Firstname + " " + userData.Lastname,
-                            userID = transactionData.userID
+                            userID = transactionData.userID,
+                            RoomID = roomSnapshot.Id
                         };
                         bookingList.Add(bookingItem);
                     }
