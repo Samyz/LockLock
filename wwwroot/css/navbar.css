@@ -37,7 +37,11 @@ nav ul li a:visited {
   padding: 10px 25px;
 }
 .dropbtn:hover{
-  background-color: #BE5E44; 
+  color: white;
+  background: #BE5E44;
+  box-shadow: 4px 4px 4px #e6e8ed;
+  border-radius: 20px;
+  padding: 10px 25px;
 }
 
 .title {
