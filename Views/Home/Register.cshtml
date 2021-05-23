@@ -6,7 +6,7 @@
      
       display:flex;
       flex-direction: row;
-      flex-width: 100%;
+     
       
     }
 
@@ -14,33 +14,38 @@
         display:flex;
         flex-direction: column;
         align-items:flex-start;
-        width: 40%;
+        width: 100%;
    }
      .container2{
-
+        
         display:grid;
-        grid-template-row: 50% 50% ;   
+       
     }
     .container3{
 
         display:grid;
-        grid-template-column: 25% 25% 25% 25%;
+      
         width: 100%;
       }
 
       
        .item1{
-         padding: 10%;
+         margin-top:10%;
          float: left;
          position:relative;
-         left : 20%;
+    
+      }
+
+      #left{
+      
+         width:80%;
+    
       }
       .item2{
-         padding: 10%;
-         padding-Top: 10%;
+         margin-top:10%;        
          float: right;
          position: relative;
-         left : 20%;
+         
       }
       .item3{
          line-height:0;
@@ -63,19 +68,29 @@
          float: left;
          position: center;
          width:100%;
-         left:1%;
+         margin-top: 5%;
       }
       .item6{
-         
+         margin-left:25%;
          float: left;
          position: relative;
-         left : 30%;
+  
       }
        .item7{
-      
+         margin-top:5%;
          float: center;
          position: relative;
-         right:1%;
+   
+      }
+       .item8{
+         display:block;
+         margin-top:10%;
+         float: center;
+         position: relative;
+      }
+
+      #create{
+         width : 100%;
       }
        
       button {
@@ -89,18 +104,18 @@
   
 
 .resizedTextbox {
-    width: 95%; 
-    height: 40%; 
+    width: 100%; 
+    height: 65%; 
     }
    
 .resizedTextbox1 {
-    width: 80%; 
-    height: 40%;
+    width: 90%; 
+    height: 65%;
     }
     
 .resizedTextbox2 {
-    width: 90%; 
-    height: 40%;
+    width: 100%; 
+    height: 65%;
     }
      
    </style>
@@ -128,13 +143,13 @@
    <div class="container">
       <div class="container1">
       
-         <div class ="item1">
+         <div class ="item1" id="left">
          
             <h1><font size=10%>Register</font></h1>
          
          <div class ="item7">
-            <button><img src="~/img/Google_Register.jpg" width="100%" height="100%" ></button>
-             <br><p><img src="~/img/Or.jpg" width="100%" height="100%" ></br>
+            <button><img src="~/img/Google_Register.jpg" width="100%" height="100%" ></button><br><br>
+             <p><img src="~/img/Or.jpg" width="100%" height="100%" >
          </div>
          <div class="container3">
             
@@ -168,9 +183,9 @@
                         <p><b><font size=3%>Password</font></b></p>
                         <input type="password" class="resizedTextbox" id="password" style="background: #FAFBFF; text-align: center; border: 3px #E6E8ED solid;border-radius: 6px;"onmousedown=Change(this.id) onmouseleave=Back(this.id)> 
                </div> 
-               </div> <br></br>
-              <div class ="item7">
-               <button><img src="~/img/Create.jpg" style="width=100%; height=100%;" ></button>      
+               </div> 
+              <div class ="item8">
+               <button><img src="~/img/Create.jpg" id="create"  ></button>      
                </div>  
                <div class ="item6">  
               <p> <b><font size=3%>Already a member?</font></b>  
