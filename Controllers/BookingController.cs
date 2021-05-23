@@ -68,7 +68,7 @@ namespace LockLock.Controllers
                             Num = 1,
                             RoomName = roomData.name,
                             timeList = timeLists,
-                            cancel = timeCompare > 0 ? true : false 
+                            cancel = timeCompare > 0 ? true : false
                         };
                         bookingList.Add(bookingItem);
                     }
@@ -86,7 +86,7 @@ namespace LockLock.Controllers
 
         }
 
-        public async Task<IActionResult> cancleAsync(string transactionID)
+        public async Task<IActionResult> cancelAsync(string transactionID)
         {
             string uid = await verifyTokenAsync();
             if (uid != null)

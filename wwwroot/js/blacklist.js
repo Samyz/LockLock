@@ -25,7 +25,7 @@ function toModal(id) {
   //   var id = this.data-toID;
   console.log(id);
   var form = document.getElementById('cancelForm');
-  form.setAttribute('action', `/Home/cancel?transactionID=${id}`);
+  form.setAttribute('action', `/Blacklist/cancel?id=${id}`);
   modal.style.display = 'block';
   console.log('but');
 }
@@ -82,7 +82,7 @@ function sortTable(n) {
     shouldSwitch,
     dir,
     switchcount = 0;
-  table = document.getElementById('historyTable');
+  table = document.getElementById('blacklistTable');
   switching = true;
   //Set the sorting direction to ascending:
   dir = 'asc';
@@ -110,12 +110,6 @@ function sortTable(n) {
             shouldSwitch = true;
             break;
           }
-        } else if (n == 4) {
-          if (checkDate(x, y, 'asc')) {
-            //if so, mark as a switch and break the loop:
-            shouldSwitch = true;
-            break;
-          }
         } else if (checkString(x, y, 'asc')) {
           //if so, mark as a switch and break the loop:
           shouldSwitch = true;
@@ -124,12 +118,6 @@ function sortTable(n) {
       } else if (dir == 'desc') {
         if (n == 0) {
           if (checkInt(x, y, 'desc')) {
-            //if so, mark as a switch and break the loop:
-            shouldSwitch = true;
-            break;
-          }
-        } else if (n == 4) {
-          if (checkDate(x, y, 'desc')) {
             //if so, mark as a switch and break the loop:
             shouldSwitch = true;
             break;

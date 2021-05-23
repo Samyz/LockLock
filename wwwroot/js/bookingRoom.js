@@ -1,5 +1,7 @@
 var modal;
 var modalClose;
+var modalBlack;
+var modalBlackClose;
 
 window.onload = function () {
   modal = document.getElementById('CancelModal');

@@ -641,7 +641,7 @@ namespace LockLock.Controllers
         }
 
 
-        public async Task<IActionResult> cancleAsync(string transactionID)
+        public async Task<IActionResult> cancelAsync(string transactionID)
         {
             string uid = await checkLogedIn();
             if (uid != null)
