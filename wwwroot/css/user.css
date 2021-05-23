@@ -1,17 +1,19 @@
+/* ----------------------------------------------------------------------- */
+
+.topOfContent {
+  padding-top: 25px;
+}
 .topic-color {
   color: #d46c4e;
   font-weight: bold;
   text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   margin: 0px;
 }
-
 .pointer-cursor:hover,
 .pointer-cursor:focus {
   cursor: pointer;
 }
-h2 {
-  font-weight: bold;
-}
+
 
 /* ---------------------------------button Style--------------------------------- */
 .btn-info {
@@ -55,7 +57,6 @@ h2 {
   box-shadow: 3px 3px 2px #bdbec2;
   border-radius: 5px;
 }
-
 .btn-warning:hover {
   color: #fff;
   background-color: #c54a27;
@@ -432,38 +433,8 @@ b {
   display: flex;
   flex-direction: column;
 }
-/* .textTimes{
-  text-align: right;
-}
-.dataResultList{
-  text-align: left;
-} */
+
 /*--------------------- Log In & SignUp---------------------- */
-.col-md-2 {
-  max-width: 100%;
-  position: relative;
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-}
-.flex-container {
-  display: flex;
-  margin: 35px;
-  height: 80vh;
-  justify-content: space-evenly;
-  align-items: center;
-  align-content: center;
-  flex-direction: row;
-}
-
-.itemSignIn {
-  flex-basis: 50%;
-  width: 50vw;
-}
-.bottomLink {
-  color: #c52b00;
-}
-
 .form-control {
   display: block;
   width: 100%;
@@ -479,7 +450,30 @@ b {
   border-radius: 0.25rem;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
-
-.topOfContent {
-  padding-top: 25px;
+.col-md-2{
+    max-width: 100%;
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
 }
+.flex-container {
+  display: flex;
+  margin: 35px;
+  height: 80vh;
+  justify-content: space-evenly;
+  align-items: center;
+  align-content: center;
+  flex-direction: row;
+}
+.itemSignIn {
+  flex-basis: 50%;
+  width: 50vw;
+}
+.bottomLink {
+  color: #c52b00;
+}
+
+
+
+
