@@ -1,4 +1,5 @@
 using Google.Cloud.Firestore;
+using System.ComponentModel;
 
 namespace LockLock.Models
 {
@@ -12,8 +13,9 @@ namespace LockLock.Models
         [FirestoreProperty]
         public string Lastname { get; set; }
         [FirestoreProperty]
+        [DisplayName("Telephone Number")]
         public string Tel { get; set; }
-        [FirestoreProperty]
+        [FirestoreProperty] 
         public string role { get; set; }
         public string Password { get; set; }
     }

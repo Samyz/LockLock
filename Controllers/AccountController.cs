@@ -85,7 +85,7 @@ namespace LockLock.Controllers
                     await firestoreDb.Collection("users").Document(decodedToken.Uid).SetAsync(singUpModel);
 
                     HttpContext.Session.SetString("_UserToken", token);
-                    return RedirectToAction("Index", "User");
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {
@@ -128,7 +128,7 @@ namespace LockLock.Controllers
                     if (user.role == "user")
                     {
                         Console.WriteLine("User {0} Sign in.", decodedToken.Uid);
-                        return RedirectToAction("Index", "Booking");
+                        return RedirectToAction("Index", "Home");
                     }
                     else
                     {
