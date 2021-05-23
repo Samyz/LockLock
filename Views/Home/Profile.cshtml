@@ -12,12 +12,13 @@
         border-radius: 30px;
         background-color: #D46C4E;
         font-size:70%;
+        margin-left:-40%;
     }
 
     .nav {
         padding-bottom: 3%;
         margin-left:80%;
-        margin-top:-3.125%;
+        margin-top:-3%;
         position:static;
     }
 
@@ -42,7 +43,7 @@
     
     #dropdown{
 
-        margin-top: 1.55%;
+        margin-top: 1.65%;
         display:none;
         position: absolute;
         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
@@ -77,12 +78,14 @@
     .itemnav {
         width: 100%;
     }
-    
+
 
     /*template*/
     
      .container2{
-
+        margin-top: 5%;
+        margin-left: 6%;
+        margin-bottom: 10%;
         display:grid;
         grid-column: 50% 50%;
         
@@ -95,8 +98,9 @@
 
       
        .item1{
+        margin-left:25%;
         display:grid;
-        float: center;
+        justify-content:center;
         position:static;
         width: 50%;
        
@@ -179,15 +183,19 @@
     margin-right: auto;
     width: 50%;
     position: static;
-    margin-top: 2.5%;
+   
 }
 .profilepic{
-    width: 35%;
-    float: right;
-    bottom:35%;
+    width: 43%;
     position: static;
     grid-column-start:1;
-   
+    margin-bottom:-5%;
+    margin-left:-12%;
+}
+ 
+.edit{
+    margin-top:10%;
+    margin-left:-2%;
 }
 
 .editpic{    
@@ -205,11 +213,12 @@
 .nameandtell{
     width: 100%;
     float: center;
-    position: static;
+    position: relative;
     line-height:0.5;
     grid-column-start:2;
     right : 60%;
-    margin-top: 3%; 
+    margin-top: 10%; 
+    margin-left: 15%;
 }
      
    </style>
@@ -269,20 +278,15 @@
                 <li id="dropdown_li_lastchild"><a href="/Home/SignIn" class="lastlink"><b>Signout</b></a></li>
         </ul >         
         </div>
-     </div>
-    
-  
-      
-                  
+     </div>        
          <div class ="item1"> 
             
             <img src="~/img/MyProfile.jpg" class="Myprofile" style ="width:50%; height:auto; "  >
-            <br></br>
+         
          <div class = "container2">
           
           
-            <div class = "profilepic">
-                <button ><img src="~/img/EditPic.jpg" class ="editpic" style="width=100%; height=100%;" ></button>
+            <div class = "profilepic">   
                 <img src="~/img/ProfilePic.jpg"  width="100%" height="auto" >
             </div>            
            
@@ -292,55 +296,19 @@
             <p id="tell" style="color:#8F9095;front-size:5%;"><b>081-234-5678</b></p>
             </div>
         </div>
-            <div class="container3">
-            
-               <div class="container2">    
-                  <div class ="item3">
-                     <p><b><font size=3%>Name</font></b></p>
-                     
-                     <input type="text" class="resizedTextbox1" id="firstname" style="background: #FAFBFF; text-align: center; border: 3px #E6E8ED solid ;border-radius: 6px;color:#8F9095;"  value="Nim" onkeydown=ChangeColor(this.id) onchange=BackColor(this.id)>
-                  </div>
-
-                  <div class ="item4">
-                     <p><b><font size=3%>Surname</font></b></p>
-                     <input type="text" class="resizedTextbox2" id="lastname" style="background: #FAFBFF; text-align: center; border: 3px #E6E8ED solid;border-radius: 6px;color:#8F9095;" value="Pimpida"
-                     onkeydown=ChangeColor(this.id) onchange=BackColor(this.id)>
-                  </div>
-               
-               </div>
-                <br>
-           
-               <div class ="item5">
-                        
-                        <p><b><font size=3%>Telephone Number</font></b></p>
-                     
-                        <input type="text" class="resizedTextbox" id="tel" style="background: #FAFBFF; text-align: center; border: 3px #E6E8ED solid;border-radius: 6px;color:#8F9095;"value="081-234-5678"
-                        onkeydown=ChangeColor(this.id) onchange=BackColor(this.id)> 
-               </div> 
-               <br>
-               <div class ="item5">
-                       
-                        <p><b><font size=3%>Email</font></b></p>
-                        <input type="text" class="resizedTextbox" id="email" style="background: #FAFBFF; text-align: center; border: 3px #E6E8ED solid;border-radius: 6px;color:#8F9095;" value="debbie.baker@example.com" onkeydown=ChangeColor(this.id) onchange=BackColor(this.id)> 
-               </div> 
-               <br>
-               <div class ="item5">
-                       
-                        <p><b><font size=3%>Password</font></b></p>
-                        <input type="password" class="Textbox_password" id="password" value="123456789" onmousedown=Change(this.id) onmouseleave=Back(this.id) > 
-               </div> 
-               </div> <br></br>
-              <div class ="item7">
-               <button><img src="~/img/SaveChanges.jpg" style="width=100%; height=100%;" ></button>      
-               </div>  
-              
-        
-        
-            
-         
-      </div>
-   
-      
-   
+        <div class = "profileinfo">
+            <p  style="color:#000;text-size:2.5em;"><b><front size=10%>Name:  &nbsp;</front> </b>
+            <front size=3%><id="firstname" style="color:#8F9095;">Nim</front></p>
+            <p  style="color:#000;text-size:2.5em;"><b><front size=10%>Surname:  &nbsp;</front> </b>
+            <front size=3%><id="lastname" style="color:#8F9095;">Pimpida</front></p>
+            <p  style="color:#000;text-size:2.5em;"><b><front size=10%>Telephone Number:  &nbsp;</front> </b>
+            <front size=3%><id="tel" style="color:#8F9095;">081-234-5678</front></p>
+            <p  style="color:#000;text-size:2.5em;"><b><front size=10%>Email:  &nbsp;</front> </b>
+            <front size=3%><id="email" style="color:#8F9095;">debbie.baker@example.com</front></p>
+        </div>
+        <div class="edit">
+            <a href="/Home/EditProfile"><button><img src="~/img/Edit.jpg" style="width=100%; height=100%;" ></button></a>
+        <div>
+   </div>
 </body>
 </html>
