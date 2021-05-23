@@ -27,7 +27,6 @@ nav ul li a:visited {
 }
 
 .dropbtn,
-.dropbtn:hover,
 .dropbtn:focus,
 .dropbtn:visited {
   /* display: inline-block; */
@@ -36,6 +35,9 @@ nav ul li a:visited {
   box-shadow: 4px 4px 4px #e6e8ed;
   border-radius: 20px;
   padding: 10px 25px;
+}
+.dropbtn:hover{
+  background-color: #BE5E44; 
 }
 
 .title {
