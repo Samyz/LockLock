@@ -32,14 +32,16 @@ namespace LockLock.Controllers
             firestoreDb = FirestoreDb.Create(projectId);
         }
         [HttpGet]
-        public async Task<IActionResult> table([FromQuery(Name = "room")] int roomQueryString)
+        public async Task<IActionResult> table([FromQuery(Name = "room")] string roomQueryString)
         {
-            if (roomQueryString > 5 || roomQueryString < 1)
+            // Console.WriteLine("QueryString => " + roomQueryString + rooms.Contains(roomQueryString));
+            if (!rooms.Contains(roomQueryString))
                 return NotFound(Json("Room Error"));
-            int roomNum = roomQueryString;
-            Console.WriteLine("QueryString => " + roomNum);
+            // int roomNum = roomQueryString;
+            // Console.WriteLine("QueryString => " + roomNum);
             RoomModel Room = new RoomModel();
-            Room.RoomID = rooms[roomNum == 0 ? 0 : roomNum - 1];
+            // Room.RoomID = rooms[roomNum == 0 ? 0 : roomNum - 1];
+            Room.RoomID = roomQueryString;
             Console.WriteLine("RoomID => " + Room.RoomID);
 
             try
@@ -121,7 +123,7 @@ namespace LockLock.Controllers
             }
             List<List<uint>> list = new List<List<uint>>();
             TableDataModel sendData = new TableDataModel();
-            sendData.roomID = Room.RoomID;
+            // sendData.roomID = Room.RoomID;
             sendData.time = timeLength;
             // sendData.timeDate = timeRef.Ticks;
             for (int j = 0; j < 9; j++)
@@ -151,11 +153,29 @@ namespace LockLock.Controllers
 
             return Ok(Json(sendData));
         }
+
+        public async Task<IActionResult> allRoom()
+        {
+            Query roomQuery = firestoreDb.Collection("room");
+            QuerySnapshot roomQuerySnapshot = await roomQuery.GetSnapshotAsync();
+
+            List<RoomModel> roomList = new List<RoomModel>();
+
+            foreach (DocumentSnapshot value in roomQuerySnapshot)
+            {
+                RoomModel room = value.ConvertTo<RoomModel>();
+
+                room.RoomID = value.Id;
+                roomList.Add(room);
+            }
+            roomList = roomList.OrderBy(o => o.number).ToList();
+            return Ok(Json(roomList));
+        }
     }
     public class TableDataModel
     {
         public List<List<uint>> data { get; set; }
         public string time { get; set; }
-        public string roomID { get; set; }
+        // public string roomID { get; set; }
     }
 }
