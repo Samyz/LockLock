@@ -702,6 +702,11 @@ namespace LockLock.Controllers
             return View();
         }
 
+        public IActionResult MainRoom()
+        {
+            return View();
+        }
+        
         public IActionResult Privacy()
         {
             return View();
