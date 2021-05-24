@@ -49,10 +49,10 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">@Model.name @Model.surname</a>
                     <div class="dropdown-content">
-                        <a href="#">ประวัติส่วนตัว</a>
+                        <a asp-action="Index" asp-controller="User">ประวัติส่วนตัว</a>
                         @if (Model.isUser)
                         {
-                            <a asp-action="History">ประวัติการจอง</a>
+                            <a asp-action="History" asp-controller="Home">ประวัติการจอง</a>
                         }
                         else
                         {

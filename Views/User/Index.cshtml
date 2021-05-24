@@ -1,55 +1,35 @@
-
 @model LockLock.Models.UserModel
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<h1>Index</h1>
+<link rel="stylesheet" href="~/css/profile.css" />
+<link rel="stylesheet" href="~/css/user.css" />
+@* <link rel="stylesheet" href="~/css/all.css" /> *@
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UserID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Firstname)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Lastname)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Tel)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
+@Html.Partial("Navbar", new NavbarModel{name= @Model.Firstname,surname= @Model.Lastname,
+isUser=@Model.role == "user"?true:false })
 
-        <tr>
-            <td>
-                @Model.UserID
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.Firstname)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.Lastname)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.Tel)
-            </td>
-            <td>
-                <a asp-action="updateUser">Update</a>
-            </td>
-        </tr>
-
-    </tbody>
-</table>
+<div class="container">
+    <div class="contain600">
+        <h1 class="topic-color text-center topOfContent">My Profile</h1>
+        <div class="flexProfile">
+            <img src="~/img/defaultProfile.png" alt="defaultProfile">
+            <p class="profile-top">@Model.Firstname @Model.Lastname</p>
+        </div>
+        <p class="profile-text">Name: <n>@Model.Firstname</n>
+        </p>
+        <p class="profile-text">Surname: <n>@Model.Lastname</n>
+        </p>
+        <p class="profile-text">Telephone Number: <n>@Model.Tel</n>
+        </p>
+        <p class="profile-text">Email: <n>@Model.Email</n>
+        </p>
+        <div class="flexProfileButton">
+            <button type="button" class="btn btn-warning btn-profile"><a asp-action="updateUser"
+                    class="profileA">Edit</a></button>
+        </div>
+        <a asp-action="Index" class="profileAC">Change Password</a>
+    </div>
+</div>

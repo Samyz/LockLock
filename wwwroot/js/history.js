@@ -30,6 +30,15 @@ function toModal(id) {
   console.log('but');
 }
 
+function toModal_BL(id) {
+  var id = this.data-toID;
+  console.log(id);
+  var form = document.getElementById('BlacklistForm');
+  form.setAttribute('action', `/Home/blacklist?transactionID=${id}`);
+  modal.style.display = 'block';
+  console.log('but');
+}
+
 function checkString(x, y, z) {
   if (z == 'asc') return x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase();
   else return x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase();

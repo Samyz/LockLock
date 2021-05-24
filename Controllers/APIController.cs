@@ -119,15 +119,14 @@ namespace LockLock.Controllers
                     tableData[x, hour - 9] = tableData[x, hour - 9] + 1;
                 }
             }
+            List<List<uint>> list = new List<List<uint>>();
             TableDataModel sendData = new TableDataModel();
-            InTableModel[] tempTable = new InTableModel[9];
+            sendData.roomID = Room.RoomID;
             sendData.time = timeLength;
-            sendData.timeDate = timeRef.Ticks;
+            // sendData.timeDate = timeRef.Ticks;
             for (int j = 0; j < 9; j++)
             {
-                InTableModel temp = new InTableModel();
-                temp.time = (j + 9).ToString() + ".00";
-                temp.data = new uint[7];
+                List<uint> inList = new List<uint>();
                 for (int i = 0; i < 7; i++)
                 {
                     if (i == 0 && j <= hourNow - 9)
@@ -142,11 +141,11 @@ namespace LockLock.Controllers
                     {
                         tableData[i, j] = Room.objNum - tableData[i, j];
                     }
-                    temp.data[i] = tableData[i, j];
+                    inList.Add(tableData[i, j]);
                 }
-                tempTable[j] = temp;
+                list.Add(inList);
             }
-            sendData.data = tempTable;
+            sendData.data = list;
 
             Console.WriteLine("finish");
 
@@ -155,14 +154,8 @@ namespace LockLock.Controllers
     }
     public class TableDataModel
     {
-        public InTableModel[] data { get; set; }
-        public long timeDate { get; set; }
+        public List<List<uint>> data { get; set; }
         public string time { get; set; }
-    }
-
-    public class InTableModel
-    {
-        public string time { get; set; }
-        public uint[] data { get; set; }
+        public string roomID { get; set; }
     }
 }
