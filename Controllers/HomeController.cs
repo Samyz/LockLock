@@ -609,7 +609,7 @@ namespace LockLock.Controllers
 
                         if (borrowData.otherGroup != null)
                         {
-                            cancelRequest(borrowSnapshot.Id,uidOther);
+                            cancelRequest(borrowSnapshot.Id, uidOther);
                         }
 
                         await borrowReference.UpdateAsync("cancel", true);
@@ -708,8 +708,7 @@ namespace LockLock.Controllers
                 return null;
             }
         }
-<<<<<<< HEAD
-        private async Task<bool> cancelRequest(string transactionID,string token)
+        private async Task<bool> cancelRequest(string transactionID, string token)
         {
             const string URL = "https://borrowingsystem.azurewebsites.net/api/reservation/delete";
             try
@@ -741,10 +740,7 @@ namespace LockLock.Controllers
                 return false;
             }
         }
-        private async Task<string> WebRequestCreate(string token, int roomId, string time)
-=======
         private async Task<GetCreateModel> WebRequestCreate(string token, int roomId, string time)
->>>>>>> dev
         {
             const string URL = "https://borrowingsystem.azurewebsites.net/api/reservation/create";
             try
