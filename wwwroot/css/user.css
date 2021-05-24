@@ -518,7 +518,6 @@ b {
   font-weight: normal;
 }
 
-<<<<<<< HEAD
 #adminTable td:nth-child(3) {
   width: 20%;
 }
@@ -537,7 +536,3 @@ a:not([href]):not([tabindex]){
 #room1{
   position: static;
 }
-=======
-
-
->>>>>>> dev
