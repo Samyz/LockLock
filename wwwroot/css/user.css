@@ -513,22 +513,28 @@ b {
   margin-left:2.5%;
 }
 /*------------------------------ Admin ----------------------------*/
-#adminTable th:first-child, #adminTable td:first-child{
+#adminTable1 th:first-child,#adminTable2 th:first-child,#adminTable3 th:first-child,#adminTable4 th:first-child,#adminTable5 th:first-child{
   width: 40%;
   padding-left: 65px;
   text-align: left;
   border-right: none;
 }
-#adminTable td:first-child{
-  font-weight: normal;
-}
-
-#adminTable td:nth-child(3) {
-  width: 20%;
-}
-#adminTable .btn-info{
+#adminTable1 .btn-info,#adminTable2 .btn-info,#adminTable3 .btn-info,#adminTable4 .btn-info,#adminTable5 .btn-info{
   margin-right: 5%;
   margin-bottom: 2%;
+}
+#adminTable1 td,#adminTable2 td,#adminTable3 td,#adminTable4 td,#adminTable5 td{
+  width: 20%;
+  text-align: left;
+  padding-left: 55px;
+}
+#adminTable1 .td-objNum,#adminTable2 .td-objNum,#adminTable3 .td-objNum,#adminTable4 .td-objNum,#adminTable5 .td-objNum{
+  text-align: center;
+  padding: 12px;
+  margin-right: 100px;
+}
+#adminTable1 .td-btnEdit,#adminTable2 .td-btnEdit,#adminTable3 .td-btnEdit,#adminTable4 .td-btnEdit,#adminTable5 .td-btnEdit{
+  padding-left: 100px;
 }
 .btn-footer{
   position: absolute;
@@ -541,3 +547,37 @@ a:not([href]):not([tabindex]){
 #room1{
   position: static;
 }
+.input-objName:disabled{
+  background-color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 5px;
+  padding-left: 10px;
+  color: #000000;
+}
+.input-objName{
+  background-color: #fafbff;
+  border: 2px solid #a9abaf;
+  border-radius: 5px;
+  padding-left: 10px;
+  color: #030303;
+  width: 450px;
+}
+.input-objNum:disabled{
+  background-color: #ffffff;
+  border: 2px solid #E6E8ED;
+  color: #000000;
+  border-radius: 5px;
+  width: 60px;
+  text-align: center;
+}
+.input-objNum{
+  background-color: #fafbff;
+  border: 2px solid #a9abaf;
+  color: #000000;
+  border-radius: 5px;
+  width: 60px;
+  text-align: center;
+}
+
+
+
