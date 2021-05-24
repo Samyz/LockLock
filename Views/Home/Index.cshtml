@@ -1,12 +1,351 @@
-@model LockLock.Models.TableModel
+﻿@model LockLock.Models.TableModel
 @* @model IEnumerable<LockLock.Models.User> *@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+@* <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> *@
 <link rel="stylesheet" href="~/css/user.css" />
 @* <link rel="stylesheet" href="~/css/all.css" /> *@
+
+<style>
+    .container {
+        max-width: 1200px;
+    }
+
+    .container {
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .nav-tabs {
+        border-bottom: transparent !important;
+    }
+
+    .topOfContent {
+        padding-top: 25px;
+    }
+
+    .nav-tabs {
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    dl,
+    ol,
+    ul {
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+
+    *,
+    ::after,
+    ::before {
+        box-sizing: border-box;
+    }
+
+    li {
+        display: list-item;
+        text-align: -webkit-match-parent;
+    }
+
+    .nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+
+    .text-center {
+        text-align: center !important;
+    }
+
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+        border-collapse: collapse;
+        display: table;
+        text-indent: initial;
+        border-spacing: 2px;
+        border-color: grey;
+    }
+
+    .table-secondary,
+    .table-secondary>td,
+    .table-secondary>th {
+        background-color: #d6d8db;
+    }
+
+    thead {
+        display: table-header-group;
+        vertical-align: middle;
+        border-color: inherit;
+    }
+
+    thead> :first-child {
+        background-color: #e3e7eb;
+        border-bottom: 4px solid #c1c8ce;
+        font-weight: bold;
+    }
+
+    tr {
+        display: table-row;
+        vertical-align: inherit;
+        border-color: inherit;
+    }
+
+    #main th,
+    #main td {
+        width: 5%;
+    }
+
+    .table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table-secondary tbody+tbody,
+    .table-secondary td,
+    .table-secondary th,
+    .table-secondary thead th {
+        border-color: #b3b7bb;
+    }
+
+    .table td,
+    .table th {
+        padding: .75rem;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+
+    th,
+    td {
+        text-align: center;
+    }
+
+    th {
+        display: table-cell;
+        vertical-align: inherit;
+        font-weight: bold;
+        text-align: -internal-center;
+    }
+
+    thead> :first-child {
+        background-color: #e3e7eb;
+        border-bottom: 4px solid #c1c8ce;
+        font-weight: bold;
+    }
+
+    tbody {
+        display: table-row-group;
+        vertical-align: middle;
+        border-color: inherit;
+    }
+
+    td {
+        display: table-cell;
+        vertical-align: inherit;
+    }
+
+    .form-inline {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-flow: row wrap;
+        flex-flow: row wrap;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    form {
+        display: block;
+        margin-top: 0em;
+    }
+
+    [type=button]:not(:disabled),
+    [type=reset]:not(:disabled),
+    [type=submit]:not(:disabled),
+    button:not(:disabled) {
+        cursor: pointer;
+    }
+
+    .ml-auto,
+    .mx-auto {
+        margin-left: auto !important;
+    }
+
+    .p-2 {
+        padding: .5rem !important;
+    }
+
+    .btn {
+        display: inline-block;
+        font-weight: 400;
+
+        text-align: center;
+        vertical-align: middle;
+        -webkit-user-select: none;
+
+        border: 1px solid transparent;
+
+        font-size: 1rem;
+        line-height: 1.5;
+        border-radius: .25rem;
+        transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    }
+
+    [type=button],
+    [type=reset],
+    [type=submit],
+    button {
+        -webkit-appearance: button;
+    }
+
+    button,
+    select {
+        text-transform: none;
+    }
+
+    button,
+    input {
+        overflow: visible;
+    }
+
+    button,
+    input,
+    optgroup,
+    select,
+    textarea {
+        margin: 0;
+        font-family: inherit;
+    }
+
+    .modal {
+
+        outline: 0;
+    }
+
+    .modal-dialog {
+        max-width: 500px;
+        margin: 1.75rem auto;
+    }
+
+    .modal-dialog {
+        position: relative;
+        width: auto;
+        pointer-events: none;
+    }
+
+    .modal-content {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        width: 100%;
+        pointer-events: auto;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid rgba(0, 0, 0, .2);
+        border-radius: .3rem;
+        outline: 0;
+    }
+
+    .border-0 {
+        border: 0 !important;
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: 1rem 1rem;
+        border-top-left-radius: .3rem;
+        border-top-right-radius: .3rem;
+    }
+
+    .text-center {
+        text-align: center !important;
+    }
+
+    .w-100 {
+        width: 100% !important;
+    }
+
+    .modal-title {
+        line-height: 1.5;
+    }
+
+    .h2,
+    h2 {
+        font-size: 2rem;
+    }
+
+    img {
+        vertical-align: middle;
+        border-style: none;
+    }
+
+    .modal-body {
+        padding: 10px 30px 0px 30px;
+    }
+
+    .modal-body {
+        position: relative;
+        flex: 1 1 auto;
+    }
+
+    .modal-footer {
+        padding: 15px 30px 30px 15px;
+        text-align: right;
+    }
+
+    .modal-footer {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: flex-end;
+
+        border-bottom-right-radius: .3rem;
+        border-bottom-left-radius: .3rem;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .squaredThree {
+        margin-top: 5px;
+        margin-right: 4px;
+    }
+</style>
 
 @{
     ViewData["Title"] = "Index Page";
@@ -164,7 +503,7 @@
                 .then(response => {
                     if (response.ok) return response.json();
         @* console.log("asdf => " + JSON.stringify(response)); *@
-                                                            return response.text().then(response => {
+                                        return response.text().then(response => {
                         console.log(JSON.stringify(response));
                         throw new Error(response);
                     })
@@ -233,9 +572,9 @@
                     @Html.DisplayFor(modelItem => Model.roomID)<br>
                     </div> *@
                 <br>
-                <h4 class="topic-color" id="object">Object : @Html.DisplayFor(modelItem => Model.objName)</h4>
-                <h4 class="text-center boxTopicDate"><b class="textDate">@Html.DisplayFor(modelItem => Model.timeLength)</b>
-                </h4>
+                <h3 class="topic-color" id="object">Object : @Html.DisplayFor(modelItem => Model.objName)</h3>
+                <h3 class="text-center boxTopicDate"><b class="textDate">@Html.DisplayFor(modelItem => Model.timeLength)</b>
+                </h3>
                 <div class="table-responsive">
                     <table class="table" id="main">
                         <thead class="table-secondary">
@@ -281,37 +620,31 @@
 
                     <div class="d-flex">
                         <div class="container-row">
-                            <div class="p-2">
-                                <div class="squaredThree">
-                                    <input type="checkbox" disabled>
-                                    <label class="Red"></label>
-                                </div>
-                                <label class="label-text">&nbsp;ไม่สามารถจองได้</label>
-                            </div>
 
-                            <div class="p-2">
-                                <div class="squaredThree">
-                                    <input type="checkbox" disabled>
-                                    <label class="Grey"></label>
-                                </div>
-                                <label class="label-text">&nbsp;หมดเวลาการจอง</label>
+                            <div class="squaredThree">
+                                <input type="checkbox" disabled>
+                                <label class="Red"></label>
                             </div>
+                            <label class="label-text">&nbsp;ไม่สามารถจองได้</label>
 
-                            <div class="p-2">
-                                <div class="squaredThree">
-                                    <input type="checkbox" disabled>
-                                    <label class="Green disablepointer"></label>
-                                </div>
-                                <label class="label-text">&nbsp;สามารถจองได้</label>
+                            <div class="squaredThree">
+                                <input type="checkbox" disabled>
+                                <label class="Grey"></label>
                             </div>
+                            <label class="label-text">&nbsp;หมดเวลาการจอง</label>
 
-                            <div class="p-2">
-                                <div class="squaredThree">
-                                    <input type="checkbox" disabled>
-                                    <label class="Yellow disablepointer"></label>
-                                </div>
-                                <label class="label-text">&nbsp;ยืมกลุ่มอื่น</label>
+                            <div class="squaredThree">
+                                <input type="checkbox" disabled>
+                                <label class="Green disablepointer"></label>
                             </div>
+                            <label class="label-text">&nbsp;สามารถจองได้</label>
+
+                            <div class="squaredThree">
+                                <input type="checkbox" disabled>
+                                <label class="Yellow disablepointer"></label>
+                            </div>
+                            <label class="label-text">&nbsp;ยืมกลุ่มอื่น</label>
+
                         </div>
                         <button id="btnBooking" type="button" class="btn btn-info ml-auto p-2">
                             จองอุปกรณ์
