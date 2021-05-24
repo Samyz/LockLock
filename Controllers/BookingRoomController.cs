@@ -136,8 +136,6 @@ namespace LockLock.Controllers
                     Console.WriteLine("adminID not macth");
                     return Unauthorized();
                 }
-
-
             }
             else
             {

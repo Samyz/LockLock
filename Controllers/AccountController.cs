@@ -150,6 +150,11 @@ namespace LockLock.Controllers
                 return View();
             }
         }
+        public IActionResult SignOut()
+        {
+            HttpContext.Session.Remove("_UserToken");
+            return RedirectToAction("SignIn");
+        }
 
     }
 }
