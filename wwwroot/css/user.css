@@ -485,6 +485,7 @@ b {
 }
 .bottomLink {
   color: #c52b00;
+  display: inline;
 }
 
 
