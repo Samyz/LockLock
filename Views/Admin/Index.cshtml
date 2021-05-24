@@ -78,7 +78,7 @@ isUser=false })
         {
             @if (checkRoom[i])
             {
-                <li @(firstRoom[i]?"class=active" :"")><a class="tab@(i+1)" onclick="changeTab(@i)">ROOM @(i+1)</a></li>
+                <li @(firstRoom[i]?"class=active" :"")><a class="tab@(i+1) pointer-cursor" onclick="changeTab(@i)">ROOM @(i+1)</a></li>
             }
             else
             {
@@ -88,7 +88,7 @@ isUser=false })
         }
     </ul>
 
-    <div class="tab-content">
+    <div >
         <div id="room1">
             @if (checkRoom[0])
             {
@@ -114,7 +114,7 @@ isUser=false })
                                         @item.objName
                                     </td>
                                     <td>
-                                        @item.objNum
+                                        @item.objNum ชิ้น
                                     </td>
                                     <td>
                                         <form asp-action="updateRoom" asp-route-room="@item">
@@ -126,7 +126,7 @@ isUser=false })
 
                             </tbody>
                         </table>
-                        <form asp-controller="BookingRoom" asp-route-room="@item.RoomID">
+                        <form class="btn-footer" asp-controller="BookingRoom" asp-route-room="@item.RoomID">
                             <button type="submit" class="btn btn-info">รายการจอง</button>
                         </form>
                     }
@@ -158,7 +158,7 @@ isUser=false })
                                         @item.objName
                                     </td>
                                     <td>
-                                        @item.objNum
+                                        @item.objNum ชิ้น
                                     </td>
                                     <td>
                                         <form asp-action="updateRoom" asp-route-room="@item">
@@ -170,7 +170,7 @@ isUser=false })
 
                             </tbody>
                         </table>
-                        <form asp-controller="BookingRoom" asp-route-room="@item.RoomID">
+                        <form class="btn-footer" asp-controller="BookingRoom" asp-route-room="@item.RoomID">
                             <button type="submit" class="btn btn-info">รายการจอง</button>
                         </form>
                     }
@@ -202,7 +202,7 @@ isUser=false })
                                         @item.objName
                                     </td>
                                     <td>
-                                        @item.objNum
+                                        @item.objNum ชิ้น
                                     </td>
                                     <td>
                                         <form asp-action="updateRoom" asp-route-room="@item">
@@ -214,7 +214,7 @@ isUser=false })
 
                             </tbody>
                         </table>
-                        <form asp-controller="BookingRoom" asp-route-room="@item.RoomID">
+                        <form class="btn-footer" asp-controller="BookingRoom" asp-route-room="@item.RoomID">
                             <button type="submit" class="btn btn-info">รายการจอง</button>
                         </form>
                     }
@@ -246,7 +246,7 @@ isUser=false })
                                         @item.objName
                                     </td>
                                     <td>
-                                        @item.objNum
+                                        @item.objNum ชิ้น
                                     </td>
                                     <td>
                                         <form asp-action="updateRoom" asp-route-room="@item">
@@ -258,7 +258,7 @@ isUser=false })
 
                             </tbody>
                         </table>
-                        <form asp-controller="BookingRoom" asp-route-room="@item.RoomID">
+                        <form class="btn-footer" asp-controller="BookingRoom" asp-route-room="@item.RoomID">
                             <button type="submit" class="btn btn-info">รายการจอง</button>
                         </form>
                     }
@@ -290,7 +290,7 @@ isUser=false })
                                         @item.objName
                                     </td>
                                     <td>
-                                        @item.objNum
+                                        @item.objNum ชิ้น
                                     </td>
                                     <td>
                                         <form asp-action="updateRoom" asp-route-room="@item">
@@ -302,7 +302,7 @@ isUser=false })
 
                             </tbody>
                         </table>
-                        <form asp-controller="BookingRoom" asp-route-room="@item.RoomID">
+                        <form class="btn-footer" asp-controller="BookingRoom" asp-route-room="@item.RoomID">
                             <button type="submit" class="btn btn-info">รายการจอง</button>
                         </form>
                     }
