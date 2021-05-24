@@ -257,13 +257,13 @@ namespace LockLock.Controllers
                     time = date,
                     transactionID = transactionId,
                     cancel = false,
-                    otherGroup = false
+                    otherGroup = null
                 };
                 DocumentReference borrowDocument = await borrowCollection.AddAsync(newBorrow);
                 Console.WriteLine(date);
             }
 
-            return Ok("OK");
+            return Ok(newTransaction);
 
         }
 
@@ -361,7 +361,8 @@ namespace LockLock.Controllers
                     return BadRequest();
                 }
             }
-            else{
+            else
+            {
                 return BadRequest();
             }
         }
@@ -378,8 +379,8 @@ namespace LockLock.Controllers
                     TransactionModel transactionData = transactionSnapshot.ConvertTo<TransactionModel>();
 
                     if (transactionData.userID != uid) return BadRequest("User ID not Macth");
-                    if(transactionData.cancel) return BadRequest("This transaction is cancel");
-                    
+                    if (transactionData.cancel) return BadRequest("This transaction is cancel");
+
                     DocumentReference roomReference = firestoreDb.Collection("room").Document(transactionData.roomID);
                     DocumentSnapshot roomSnapshot = await roomReference.GetSnapshotAsync();
                     RoomModel roomData = roomSnapshot.ConvertTo<RoomModel>();

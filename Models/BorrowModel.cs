@@ -22,6 +22,6 @@ namespace LockLock.Models
         public bool cancel { get; set; }
 
         [FirestoreProperty]
-        public bool otherGroup { get; set; }
+        public string otherGroup { get; set; }
     }
 }
