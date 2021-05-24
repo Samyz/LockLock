@@ -355,6 +355,7 @@
 {
     <script type="text/javascript">
         var array = [];
+        var colorArray = [];
         window.onload = function () {
             var modal = document.getElementById('bookingModal');
             /*var noneModal = document.getElementById('noneModal');
@@ -418,6 +419,7 @@
                         return date;
                     }
                 array = [];
+                colorArray = [];
                 var d = new Date();
                 var row = -1;
                 var rowChecked = false;
@@ -426,6 +428,7 @@
                 for (var i = 0; i < 7; i++) {
                     for (var j = 0; j < 9; j++) {
                         if (document.getElementById(`${j}${i}`).checked) {
+                            //console.log(document.getElementById(`${j}${i}`).getAttribute("data-color"));
                             if (row == -1) {
                                 row = i;
                             }
@@ -435,6 +438,7 @@
                             }
                             var now = d.addDays(i);
                             array.push(days[now.getDay()] + ", " + now.getDate() + " " + months[now.getMonth()] + " " + now.getFullYear() + " " + (j + 9).toString() + ".00 - " + (j + 10).toString() + ".00")
+                            colorArray.push(document.getElementById(`${j}${i}`).getAttribute("data-color"));
                         }
                     }
                     if (rowChecked) {
@@ -467,6 +471,7 @@
             var postData = {
                 roomID: roomID,
                 dates: array,
+                color: colorArray,
             }
             /*$.ajax({
                 type: "POST",
@@ -498,7 +503,7 @@
                 .then(response => {
                     if (response.ok) return response.json();
         @* console.log("asdf => " + JSON.stringify(response)); *@
-                                                                                            return response.text().then(response => {
+                                        return response.text().then(response => {
                         console.log(JSON.stringify(response));
                         throw new Error(response);
                     })
@@ -597,8 +602,8 @@
                                                         <input type="checkbox" name="optionsRadios" id="@i@j" value="other"
                                                 ng-model="formData.other" ng-true-value="'other'"
                                                 ng-init="formData.other='other'" @(Model.table[j,
-                                                i].Item1=="Red"||Model.table[j, i].Item1=="Grey"||Model.table[j,
-                                                i].Item1=="Yellow"?"disabled":"")>
+                                                i].Item1=="Red"||Model.table[j, i].Item1=="Grey"?"disabled":"")
+                                                data-color="@Model.table[j, i].Item1">
                                                         <label for="@i@j"
                                                 class="@Html.DisplayFor(modelItem => Model.table[j, i].Item1)"></label>
                                                     </div>

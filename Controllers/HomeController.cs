@@ -13,6 +13,10 @@ using FirebaseAdmin.Auth;
 
 using Newtonsoft.Json.Converters;
 
+using Nancy.Json;
+using System.IO;
+using System.Net;
+
 
 namespace LockLock.Controllers
 {
@@ -142,41 +146,18 @@ namespace LockLock.Controllers
                     return RedirectToAction(nameof(Error));
                 }
 
-                // string roomID = "Room 1";
-                // Query roomQuery = firestoreDb.Collection("room").WhereEqualTo("name", roomID);
-                // QuerySnapshot roomQuerySnapshot = await roomQuery.GetSnapshotAsync();
-                // // List<RoomModel> listRoom = new List<RoomModel>();
-                // RoomModel Room = new RoomModel();
-
-                // foreach (DocumentSnapshot documentSnapshot in roomQuerySnapshot)
-                // {
-                //     if (documentSnapshot.Exists)
-                //     {
-                //         Dictionary<string, object> room = documentSnapshot.ToDictionary();
-                //         string json = JsonConvert.SerializeObject(room);
-                //         RoomModel newRoom = JsonConvert.DeserializeObject<RoomModel>(json);
-                //         newRoom.RoomID = documentSnapshot.Id;
-                //         Room = newRoom;
-                //         // listRoom.Add(newRoom);
-                //     }
-                // }
-
-                // RoomModel thisRoom = Room;//listRoom[0]
                 Console.WriteLine("RoomID = " + Room.RoomID);
                 Console.WriteLine("adminID = " + Room.adminID);
                 Console.WriteLine("name = " + Room.name);
                 Console.WriteLine("objName = " + Room.objName);
                 Console.WriteLine("objNum = " + Room.objNum);
-                // foreach (RoomModel i in listRoom)
-                // {
-                //     Console.WriteLine("RoomID = " + i.RoomID);
-                //     Console.WriteLine("adminID = " + i.adminID);
-                //     Console.WriteLine("name = " + i.name);
-                //     Console.WriteLine("objName = " + i.objName);
-                //     Console.WriteLine("objNum = " + i.objNum);
-                // }
 
                 // get room data from Game API here //
+                string token = await WebRequestLogin();
+                List<GetRoomModel> list = await WebRequestGetAllRoom(token);
+                List<List<int>> gameList = await WebRequestGetAllRoom(token, list[roomNum == 0 ? 0 : roomNum - 1].id);
+
+                // data from our DB //
                 DateTime timeRef = DateTime.Now.Date;
                 DateTime timeNow = DateTime.Now.Date;
                 timeNow = TimeZoneInfo.ConvertTimeToUtc(timeNow);
@@ -193,12 +174,6 @@ namespace LockLock.Controllers
                 {
                     viewDataName.Add(timeRef.AddDays(i).ToString("ddd"));
                 }
-                // foreach (string i in viewDataName)
-                // {
-                //     Console.WriteLine(i);
-                // }
-                // Console.WriteLine(timeNow.ToString("dd MMMM") + " - " + timeNow.AddDays(6).ToString("dd MMMM yyyy"));
-                // Console.WriteLine(timeNow.AddDays(6).ToString("dd MMMM yyyy"));
 
                 Query borrowQuery = firestoreDb.Collection("borrow").WhereGreaterThanOrEqualTo("time", timeNow).WhereLessThanOrEqualTo("time", timeEnd).WhereEqualTo("cancel", false).WhereEqualTo("otherGroup", false).WhereEqualTo("roomID", Room.RoomID);
                 QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
@@ -206,34 +181,18 @@ namespace LockLock.Controllers
 
                 foreach (DocumentSnapshot documentSnapshot in borrowQuerySnapshot.Documents)
                 {
-                    // Console.WriteLine("hello");
-                    // Console.WriteLine(documentSnapshot.Exists);
                     if (documentSnapshot.Exists)
                     {
                         Dictionary<string, object> borrow = documentSnapshot.ToDictionary();
                         string timeTemp = borrow["time"].ToString().Replace("Timestamp:", "").Trim();
                         borrow["time"] = TimeZoneInfo.ConvertTimeFromUtc(DateTime.ParseExact(timeTemp.Remove(timeTemp.Length - 1, 1), "s", null), TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
-                        // borrow["time"] = DateTime.ParseExact(timeTemp.Remove(timeTemp.Length - 1, 1), "s", null);
-                        // Console.WriteLine(borrow["time"]);
-                        // foreach (KeyValuePair<string, object> kvp in borrow)
-                        // {
-                        //     //textBox3.Text += ("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
-                        //     Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
-                        // }
+
                         string json = JsonConvert.SerializeObject(borrow);
-                        // Console.WriteLine(json);
                         BorrowModel newBorrow = JsonConvert.DeserializeObject<BorrowModel>(json);
                         newBorrow.BorrowID = documentSnapshot.Id;
                         listBorrow.Add(newBorrow);
                     }
                 }
-                // foreach (BorrowModel i in listBorrow)
-                // {
-                //     Console.WriteLine("BorrowID = " + i.BorrowID);
-                //     Console.WriteLine("roomID = " + i.roomID);
-                //     Console.WriteLine("time = " + i.time);
-                //     Console.WriteLine("userID = " + i.transactionID);
-                // }
 
 
                 Tuple<string, uint>[,] tableData = new Tuple<string, uint>[7, 9];
@@ -244,31 +203,9 @@ namespace LockLock.Controllers
                         tableData[i, j] = new Tuple<string, uint>("", 0);
                     }
                 }
-                // tableData[1, 0] = new Tuple<string, uint>("Green", 1);
-                // for (int j = 0; j < 9; j++)
-                // {
-                //     for (int i = 0; i < 7; i++)
-                //     {
-                //         Console.Write(tableData[i, j].Item1 + "-" + tableData[i, j].Item2 + " ");
-                //     }
-                //     Console.WriteLine();
-                // }
-                // List<List<Tuple<string, uint>>> viewDataTable = new List<List<Tuple<string, uint>>>();
-                // List<Tuple<string, uint>> templateList = new List<Tuple<string, uint>>();
-                // for (int i = 0; i < 9; i++)
-                // {
-                //     templateList.Add(new Tuple<string, uint>("", 0));
-                // }
-                // for (int i = 0; i < 7; i++)
-                // {
-                //     viewDataTable.Add(templateList);
-                // }
-
-                // Console.WriteLine(viewDataTable[1][0].Item1 + " " + viewDataTable[1][0].Item2);
 
                 foreach (BorrowModel i in listBorrow)
                 {
-                    // Console.WriteLine(i.time.Subtract(timeRef).ToString());//.Split(".")[0]
                     int day = int.Parse(i.time.ToString("dd"));
                     int hour = int.Parse(i.time.ToString("HH"));
                     int x;
@@ -280,17 +217,8 @@ namespace LockLock.Controllers
                     {
                         x = int.Parse(i.time.Subtract(timeRef).ToString().Split(".")[0]);
                     }
-                    // Console.WriteLine(day + " " + hour + " " + dayNow + " " + hourNow);
                     if (hour < 18 && hour >= 9) // !(int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0]) == 0 && hour - hourNow <= 0) && 
                     {
-                        // Console.WriteLine(viewDataTable[int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0])][hour - 9].Item1 + " " + viewDataTable[int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0])][hour - 9].Item2);
-
-                        // List<Tuple<string, uint>> temp = viewDataTable[int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0])];
-                        // for (int j = 0; j < 9; j++)
-                        // {
-                        //     Console.WriteLine(temp[j]);
-                        // }
-                        // temp[hour - 9] = new Tuple<string, uint>(viewDataTable[int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0])][hour - 9].Item1, viewDataTable[int.Parse(i.time.Subtract(timeNow).ToString().Split(".")[0])][hour - 9].Item2 + 1);
                         tableData[x, hour - 9] = new Tuple<string, uint>(tableData[x, hour - 9].Item1, tableData[x, hour - 9].Item2 + 1);
                     }
                 }
@@ -305,10 +233,10 @@ namespace LockLock.Controllers
                         }
                         else if (Room.objNum - tableData[i, j].Item2 <= 0)
                         {
-                            if (j % 2 == 0)
-                                tableData[i, j] = new Tuple<string, uint>("Yellow", Room.objNum - tableData[i, j].Item2);
+                            if (gameList[i][j] > 0)
+                                tableData[i, j] = new Tuple<string, uint>("Yellow", (uint)gameList[i][j]);
                             else
-                                tableData[i, j] = new Tuple<string, uint>("Red", Room.objNum - tableData[i, j].Item2);
+                                tableData[i, j] = new Tuple<string, uint>("Red", 0);
                         }
                         else
                         {
@@ -316,24 +244,6 @@ namespace LockLock.Controllers
                         }
                     }
                 }
-
-                // for (int j = 0; j < 9; j++)
-                // {
-                //     for (int i = 0; i < 7; i++)
-                //     {
-                //         Console.Write(tableData[i, j].Item1 + "-" + tableData[i, j].Item2 + " ");
-                //     }
-                //     Console.WriteLine();
-                // }
-
-                // for (int j = 0; j < 9; j++)
-                // {
-                //     for (int i = 0; i < 7; i++)
-                //     {
-                //         Console.Write(viewDataTable[i][j].Item1 + "-" + viewDataTable[i][j].Item2 + " ");
-                //     }
-                //     Console.WriteLine();
-                // }
 
                 TableModel viewData = new TableModel()
                 {
@@ -349,8 +259,6 @@ namespace LockLock.Controllers
                     adminEmail = ""
                 };
 
-                // listBorrow.ForEach(Console.WriteLine);
-                // Console.WriteLine(listBorrow);
                 return View(viewData);
             }
             else
@@ -461,6 +369,11 @@ namespace LockLock.Controllers
             {
                 return StatusCode(400, "DataError");
             }
+            //check data in Game API
+            string token = await WebRequestLogin();
+            List<GetRoomModel> list = await WebRequestGetAllRoom(token);
+            List<List<int>> gameList = await WebRequestGetAllRoom(token, list[Array.IndexOf(rooms, input.roomID)].id);
+            Console.WriteLine("GAME ID => " + list[Array.IndexOf(rooms, input.roomID)].id);
 
             // check data in DB
             RoomModel Room = new RoomModel();
@@ -479,28 +392,42 @@ namespace LockLock.Controllers
                 return StatusCode(400, "DataError");
             }
             bool isError = false;
-            foreach (string date in input.dates)
+            DateTime timeNow = DateTime.Now.Date;
+            timeNow = TimeZoneInfo.ConvertTimeToUtc(timeNow);
+            for (int i = 0; i < input.dates.Count; i++)
+            // foreach (string date in input.dates)
             {
-                string[] temp = date.Split(" ");
+                Console.WriteLine(input.color[i]);
+                string[] temp = input.dates[i].Split(" ");
                 string[] month = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
                 DateTime timeCheck = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
-
-                Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("time", TimeZoneInfo.ConvertTimeToUtc(timeCheck)).WhereEqualTo("cancel", false).WhereEqualTo("otherGroup", false).WhereEqualTo("roomID", Room.RoomID);
-                QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
-                int count = 0;
-
-                foreach (DocumentSnapshot documentSnapshot in borrowQuerySnapshot.Documents)
+                if (input.color[i] == "Green")
                 {
-                    if (documentSnapshot.Exists)
+                    Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("time", TimeZoneInfo.ConvertTimeToUtc(timeCheck)).WhereEqualTo("cancel", false).WhereEqualTo("otherGroup", false).WhereEqualTo("roomID", Room.RoomID);
+                    QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
+                    int count = 0;
+
+                    foreach (DocumentSnapshot documentSnapshot in borrowQuerySnapshot.Documents)
                     {
-                        count++;
+                        if (documentSnapshot.Exists)
+                        {
+                            count++;
+                        }
+                    }
+                    Console.WriteLine(count);
+                    if (count >= Room.objNum)
+                    {
+                        isError = true;
                     }
                 }
-                Console.WriteLine(count);
-                if (count >= Room.objNum)
+                else if (input.color[i] == "Yellow")
                 {
-                    isError = true;
+                    TimeSpan interval = timeCheck - timeNow;
+                    if (gameList[interval.Days][int.Parse(temp[4].Split(".")[0]) - 9] <= 0)
+                    {
+                        isError = true;
+                    }
                 }
             }
             if (isError)
@@ -525,36 +452,54 @@ namespace LockLock.Controllers
             // CollectionReference borrowCollection = firestoreDb.Collection("borrow");
             // BorrowModel newBorrow = new BorrowModel();
 
-            // Console.WriteLine(roomID);
+            Console.WriteLine(transactionId);
 
-            foreach (string date in input.dates)
+            for (int i = 0; i < input.dates.Count; i++)
+            // foreach (string date in input.dates)
             {
-                string[] temp = date.Split(" ");
+                string[] temp = input.dates[i].Split(" ");
                 string[] month = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
                 DateTime save = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
 
-                CollectionReference borrowCollection = firestoreDb.Collection("borrow");
-                BorrowModel newBorrow = new BorrowModel()
+                if (input.color[i] == "Green")
                 {
-                    roomID = input.roomID,
-                    time = TimeZoneInfo.ConvertTimeToUtc(save),
-                    transactionID = transactionId,
-                    cancel = false,
-                    otherGroup = false
-                };
-                DocumentReference borrowDocument = await borrowCollection.AddAsync(newBorrow);
-                Console.WriteLine(date);
+                    CollectionReference borrowCollection = firestoreDb.Collection("borrow");
+                    BorrowModel newBorrow = new BorrowModel()
+                    {
+                        roomID = input.roomID,
+                        time = TimeZoneInfo.ConvertTimeToUtc(save),
+                        transactionID = transactionId,
+                        cancel = false,
+                        otherGroup = false
+                    };
+                    DocumentReference borrowDocument = await borrowCollection.AddAsync(newBorrow);
+                    Console.WriteLine(input.dates[i]);
+                    Console.WriteLine(TimeZoneInfo.ConvertTimeToUtc(save).ToString("u"));
+                    Console.WriteLine(TimeZoneInfo.ConvertTimeToUtc(save));
+                }
+                else if (input.color[i] == "Yellow")
+                {
+                    string[] temporary = TimeZoneInfo.ConvertTimeToUtc(save).ToString("u").Split(" ");
+                    string timeOut = temporary[0] + "T" + temporary[1].Substring(0, 8) + ".000Z";
+                    Console.WriteLine("time out => " + timeOut);
+                    CollectionReference borrowCollection = firestoreDb.Collection("borrow");
+                    BorrowModel newBorrow = new BorrowModel()
+                    {
+                        roomID = input.roomID,
+                        time = TimeZoneInfo.ConvertTimeToUtc(save),
+                        transactionID = transactionId,
+                        cancel = false,
+                        otherGroup = true
+                    };
+                    DocumentReference borrowDocument = await borrowCollection.AddAsync(newBorrow);
+                    string outs = await WebRequestCreate(token, list[Array.IndexOf(rooms, input.roomID)].id, timeOut);
+                    if (outs == null)
+                        return StatusCode(400, "DataError");
+                }
             }
             // return RedirectToAction("History", "Home");
             return Ok(Json("OK"));
-        }
-
-        [HttpPost]
-        public IActionResult Test()
-        {
-            return StatusCode(404, "UserError");
-            // return Ok(Json("OK"));
         }
 
         public async Task<IActionResult> History()
@@ -674,6 +619,157 @@ namespace LockLock.Controllers
                 return RedirectToAction("SignIn", "Account");
             }
         }
+        public async Task<IActionResult> Test()
+        {
+            string token = await WebRequestLogin();
+            List<GetRoomModel> list = await WebRequestGetAllRoom(token);
+            // string outs = await WebRequestCreate(token, 1);
+            List<List<int>> test = await WebRequestGetAllRoom(token, 1);
+            // Console.WriteLine(test[0][8]);
+            return Ok(test);
+        }
+        private async Task<string> WebRequestLogin()
+        {
+            const string URL = "https://borrowingsystem.azurewebsites.net/api/user/login";
+            try
+            {
+                var webRequest = System.Net.WebRequest.Create(URL);
+                GetLoginModel login = new GetLoginModel();
+                string json = new JavaScriptSerializer().Serialize(new
+                {
+                    email = "admin@locklock.com",
+                    password = "password"
+                });
+                if (webRequest != null)
+                {
+                    webRequest.Method = "POST";
+                    webRequest.Timeout = 12000;
+                    webRequest.ContentType = "application/json";
+
+                    await using (var streamWriter = new StreamWriter(webRequest.GetRequestStream()))
+                    {
+                        streamWriter.Write(json);
+                    }
+
+                    await using (System.IO.Stream s = webRequest.GetResponse().GetResponseStream())
+                    {
+                        using (System.IO.StreamReader sr = new System.IO.StreamReader(s))
+                        {
+                            var jsonResponse = sr.ReadToEnd();
+                            login = JsonConvert.DeserializeObject<GetLoginModel>(jsonResponse);
+                        }
+                    }
+                }
+                return login.accessToken;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
+        }
+        private async Task<List<GetRoomModel>> WebRequestGetAllRoom(string token)
+        {
+            const string URL = "https://borrowingsystem.azurewebsites.net/api/room/get-all";
+            try
+            {
+                var webRequest = System.Net.WebRequest.Create(URL);
+                List<GetRoomModel> list = new List<GetRoomModel>();
+                if (webRequest != null)
+                {
+                    webRequest.Method = "GET";
+                    webRequest.Timeout = 12000;
+                    webRequest.Headers.Add("Authorization", "Bearer " + token);
+
+                    await using (System.IO.Stream s = webRequest.GetResponse().GetResponseStream())
+                    {
+                        using (System.IO.StreamReader sr = new System.IO.StreamReader(s))
+                        {
+                            var jsonResponse = sr.ReadToEnd();
+                            list = JsonConvert.DeserializeObject<List<GetRoomModel>>(jsonResponse);
+                        }
+                    }
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
+        }
+        private async Task<string> WebRequestCreate(string token, int roomId, string time)
+        {
+            const string URL = "https://borrowingsystem.azurewebsites.net/api/reservation/create";
+            try
+            {
+                var webRequest = System.Net.WebRequest.Create(URL);
+                string json = new JavaScriptSerializer().Serialize(new
+                {
+                    roomId = roomId,
+                    startDateTime = time,
+                    hourPeriod = 1
+                });
+                if (webRequest != null)
+                {
+                    webRequest.Method = "POST";
+                    webRequest.Timeout = 12000;
+                    webRequest.Headers.Add("Authorization", "Bearer " + token);
+                    webRequest.ContentType = "application/json";
+
+
+                    await using (var streamWriter = new StreamWriter(webRequest.GetRequestStream()))
+                    {
+                        streamWriter.Write(json);
+                    }
+                    HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+                    Console.WriteLine((int)response.StatusCode);
+                    // await using (System.IO.Stream s = webRequest.GetResponse().GetResponseStream())
+                    // {
+                    //     using (System.IO.StreamReader sr = new System.IO.StreamReader(s))
+                    //     {
+                    //         var jsonResponse = sr.ReadToEnd();
+                    //     }
+                    // }
+                }
+                return "OK";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
+        }
+        private async Task<List<List<int>>> WebRequestGetAllRoom(string token, int id)
+        {
+            const string URL = "https://borrowingsystem.azurewebsites.net/api/reservation/get-available-equipment-in-month";
+            try
+            {
+                var webRequest = System.Net.WebRequest.Create(URL + "?Id=" + id.ToString());
+                List<List<int>> list = new List<List<int>>();
+                if (webRequest != null)
+                {
+                    webRequest.Method = "GET";
+                    webRequest.Timeout = 12000;
+                    webRequest.Headers.Add("Authorization", "Bearer " + token);
+
+                    await using (System.IO.Stream s = webRequest.GetResponse().GetResponseStream())
+                    {
+                        using (System.IO.StreamReader sr = new System.IO.StreamReader(s))
+                        {
+                            var jsonResponse = sr.ReadToEnd();
+                            list = JsonConvert.DeserializeObject<List<List<int>>>(jsonResponse);
+                        }
+                    }
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
+        }
         public IActionResult Blacklist()
         {
             return View();
@@ -708,12 +804,12 @@ namespace LockLock.Controllers
         {
             return View();
         }
-        
-         public IActionResult HistoryAdmin()
+
+        public IActionResult HistoryAdmin()
         {
             return View();
         }
-        
+
         public IActionResult Privacy()
         {
             return View();
@@ -724,5 +820,22 @@ namespace LockLock.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+    }
+    public class GetLoginModel
+    {
+        public string fullName { get; set; }
+        public string email { get; set; }
+        public string user { get; set; }
+        public string accessToken { get; set; }
+        public string refreshToken { get; set; }
+        public string profileImage { get; set; }
+    }
+    public class GetRoomModel
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string createBy { get; set; }
+        public string dateModified { get; set; }
+        public string equipmentName { get; set; }
     }
 }
