@@ -14,7 +14,6 @@ namespace LockLock.Controllers
 {
     public class AccountController : Controller
     {
-        private string firebaseJSON = AppDomain.CurrentDomain.BaseDirectory + @"locklockconfigure.json";
         private FirebaseAuthProvider auth;
         private FirestoreDb firestoreDb;
 
@@ -23,14 +22,7 @@ namespace LockLock.Controllers
             auth = new FirebaseAuthProvider(
                             new FirebaseConfig("AIzaSyDYMUB0qohsGyFfdHCFWyxfcwr84HC-WCU"));
 
-            string projectId;
-            using (StreamReader r = new StreamReader(firebaseJSON))
-            {
-                string json = r.ReadToEnd();
-                var myJObject = JObject.Parse(json);
-                projectId = myJObject.SelectToken("project_id").Value<string>();
-            }
-            firestoreDb = FirestoreDb.Create(projectId);
+            firestoreDb = FirestoreDb.Create("locklock-47b1d");
         }
 
         public async Task<IActionResult> IndexAsync()

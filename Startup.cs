@@ -10,8 +10,8 @@ using Microsoft.Extensions.Hosting;
 namespace LockLock
 {
     public class Startup
-    {
-        private string firebaseJSON = AppDomain.CurrentDomain.BaseDirectory + @"locklockconfigure.json";
+    {   
+        private string firebaseJSON = "./locklockconfigure.json";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;

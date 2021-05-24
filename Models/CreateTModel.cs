@@ -7,5 +7,7 @@ namespace LockLock.Models
         public string roomID { get; set; }
 
         public List<string> dates { get; set; }
+
+        public List<string> color { get; set; }
     }
 }

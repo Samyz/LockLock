@@ -13,18 +13,10 @@ namespace LockLock.Controllers
 {
     public class AdminController : Controller
     {
-        private string firebaseJSON = AppDomain.CurrentDomain.BaseDirectory + @"locklockconfigure.json";
         private FirestoreDb firestoreDb;
         public AdminController()
         {
-            string projectId;
-            using (StreamReader r = new StreamReader(firebaseJSON))
-            {
-                string json = r.ReadToEnd();
-                var myJObject = JObject.Parse(json);
-                projectId = myJObject.SelectToken("project_id").Value<string>();
-            }
-            firestoreDb = FirestoreDb.Create(projectId);
+            firestoreDb = FirestoreDb.Create("locklock-47b1d");
         }
         public async Task<IActionResult> IndexAsync()
         {
