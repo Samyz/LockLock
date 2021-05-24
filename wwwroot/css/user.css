@@ -1,3 +1,4 @@
+
 /* ----------------------------------------------------------------------- */
 
 .topOfContent {
@@ -538,8 +539,8 @@ b {
 }
 .btn-footer{
   position: absolute;
-  bottom: 5%;
-  right: 15%;
+  bottom: 10%;
+  right: 20%;
 }
 a:not([href]):not([tabindex]){
   color: #fff;
