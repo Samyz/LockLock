@@ -14,7 +14,6 @@
   cursor: pointer;
 }
 
-
 /* ---------------------------------button Style--------------------------------- */
 .btn-info {
   color: #fff;
@@ -220,7 +219,7 @@ tbody tr td:first-child {
 #blacklistTable th:not(:first-child),
 #blacklistTable td:not(:first-child),
 #historyTable th:not(:first-child),
-#historyTable td:not(:first-child) {
+#historyTable td:not(:first-child),#adminTabletd:not(:first-child) {
   padding-left: 30px;
   text-align: left;
 }
@@ -320,8 +319,9 @@ a.tab5:visited {
 
 a.disable {
   pointer-events: none;
-  background-color: grey;
-  color: #ffffff;
+  cursor: not-allowed;
+  background-color: #c1c8ce;
+  color: #BDBEC2;
 }
 
 .nav-tabs a.tab1:hover {
@@ -492,5 +492,32 @@ b {
   width:95%;
   margin-left:2.5%;
 }
+/*------------------------------ Admin ----------------------------*/
+#adminTable th:first-child, #adminTable td:first-child{
+  width: 40%;
+  padding-left: 65px;
+  text-align: left;
+  border-right: none;
+}
+#adminTable td:first-child{
+  font-weight: normal;
+}
 
-
+#adminTable td:nth-child(3) {
+  width: 20%;
+}
+#adminTable .btn-info{
+  margin-right: 5%;
+  margin-bottom: 2%;
+}
+.btn-footer{
+  position: absolute;
+  bottom: 5%;
+  right: 15%;
+}
+a:not([href]):not([tabindex]){
+  color: #fff;
+}
+#room1{
+  position: static;
+}
