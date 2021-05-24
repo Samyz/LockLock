@@ -124,11 +124,8 @@ namespace LockLock.Controllers
             {
                 try
                 {
-                    Console.WriteLine("in 0");
                     UserRecord user = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.GetUserAsync(uid);
-                    Console.WriteLine("in 1");
                     await auth.SendPasswordResetEmailAsync(user.Email);
-                    Console.WriteLine("in 2");
                     return Ok();
                 }
                 catch
