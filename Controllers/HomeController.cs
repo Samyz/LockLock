@@ -19,7 +19,6 @@ namespace LockLock.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private string firebaseJSON = AppDomain.CurrentDomain.BaseDirectory + @"locklockconfigure.json";
         private string projectId;
         private FirestoreDb firestoreDb;
 
@@ -30,9 +29,7 @@ namespace LockLock.Controllers
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", firebaseJSON);
-            projectId = "locklock-47b1d";
-            firestoreDb = FirestoreDb.Create(projectId);
+            firestoreDb = FirestoreDb.Create("locklock-47b1d");
         }
 
         private async Task<string> checkLogedIn()
