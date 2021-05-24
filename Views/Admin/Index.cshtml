@@ -107,23 +107,19 @@ isUser=false })
                             </thead>
 
                             <tbody>
-
-
                                 <tr class="item">
-                                    <td>
-                                        @item.objName
-                                    </td>
-                                    <td>
-                                        @item.objNum
-                                    </td>
-                                    <td>
-                                        <form asp-action="updateRoom" asp-route-room="@item">
+                                    <form asp-action="updateRoom" asp-route-room="@item">
+                                        <td>
+                                            <input disabled type="text" id="fname" name="fname" value="@item.objName">
+                                        </td>
+                                        <td>
+                                            <input disabled type="number" id="fname" name="fname" value="@item.objNum">
+                                        </td>
+                                        <td> 
                                             <button type="submit" class="btn btn-warning">แก้ไข</button>
-                                        </form>
-                                    </td>
+                                        </td>          
+                                    </form>
                                 </tr>
-
-
                             </tbody>
                         </table>
                         <form asp-controller="BookingRoom" asp-route-room="@item.RoomID">
@@ -195,8 +191,6 @@ isUser=false })
                             </thead>
 
                             <tbody>
-
-
                                 <tr class="item">
                                     <td>
                                         @item.objName
