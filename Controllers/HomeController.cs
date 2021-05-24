@@ -706,6 +706,11 @@ namespace LockLock.Controllers
         {
             return View();
         }
+
+        public IActionResult Edit()
+        {
+            return View();
+        }
         
         public IActionResult Privacy()
         {
