@@ -175,7 +175,7 @@ namespace LockLock.Controllers
                     viewDataName.Add(timeRef.AddDays(i).ToString("ddd"));
                 }
 
-                Query borrowQuery = firestoreDb.Collection("borrow").WhereGreaterThanOrEqualTo("time", timeNow).WhereLessThanOrEqualTo("time", timeEnd).WhereEqualTo("cancel", false).WhereEqualTo("otherGroup", false).WhereEqualTo("roomID", Room.RoomID);
+                Query borrowQuery = firestoreDb.Collection("borrow").WhereGreaterThanOrEqualTo("time", timeNow).WhereLessThanOrEqualTo("time", timeEnd).WhereEqualTo("cancel", false).WhereEqualTo("otherGroup", null).WhereEqualTo("roomID", Room.RoomID);
                 QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
                 List<BorrowModel> listBorrow = new List<BorrowModel>();
 
@@ -471,7 +471,7 @@ namespace LockLock.Controllers
                         time = TimeZoneInfo.ConvertTimeToUtc(save),
                         transactionID = transactionId,
                         cancel = false,
-                        otherGroup = false
+                        otherGroup = null
                     };
                     DocumentReference borrowDocument = await borrowCollection.AddAsync(newBorrow);
                     Console.WriteLine(input.dates[i]);
@@ -483,6 +483,10 @@ namespace LockLock.Controllers
                     string[] temporary = TimeZoneInfo.ConvertTimeToUtc(save).ToString("u").Split(" ");
                     string timeOut = temporary[0] + "T" + temporary[1].Substring(0, 8) + ".000Z";
                     Console.WriteLine("time out => " + timeOut);
+                    GetCreateModel outs = await WebRequestCreate(token, list[Array.IndexOf(rooms, input.roomID)].id, timeOut);
+                    if (outs == null)
+                        return StatusCode(400, "DataError");
+
                     CollectionReference borrowCollection = firestoreDb.Collection("borrow");
                     BorrowModel newBorrow = new BorrowModel()
                     {
@@ -490,12 +494,10 @@ namespace LockLock.Controllers
                         time = TimeZoneInfo.ConvertTimeToUtc(save),
                         transactionID = transactionId,
                         cancel = false,
-                        otherGroup = true
+                        otherGroup = outs.id
                     };
                     DocumentReference borrowDocument = await borrowCollection.AddAsync(newBorrow);
-                    string outs = await WebRequestCreate(token, list[Array.IndexOf(rooms, input.roomID)].id, timeOut);
-                    if (outs == null)
-                        return StatusCode(400, "DataError");
+
                 }
             }
             // return RedirectToAction("History", "Home");
@@ -706,6 +708,7 @@ namespace LockLock.Controllers
                 return null;
             }
         }
+<<<<<<< HEAD
         private async Task<bool> cancelRequest(string transactionID,string token)
         {
             const string URL = "https://borrowingsystem.azurewebsites.net/api/reservation/delete";
@@ -739,11 +742,15 @@ namespace LockLock.Controllers
             }
         }
         private async Task<string> WebRequestCreate(string token, int roomId, string time)
+=======
+        private async Task<GetCreateModel> WebRequestCreate(string token, int roomId, string time)
+>>>>>>> dev
         {
             const string URL = "https://borrowingsystem.azurewebsites.net/api/reservation/create";
             try
             {
                 var webRequest = System.Net.WebRequest.Create(URL);
+                GetCreateModel model = new GetCreateModel();
                 string json = new JavaScriptSerializer().Serialize(new
                 {
                     roomId = roomId,
@@ -762,17 +769,18 @@ namespace LockLock.Controllers
                     {
                         streamWriter.Write(json);
                     }
-                    HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
-                    Console.WriteLine((int)response.StatusCode);
-                    // await using (System.IO.Stream s = webRequest.GetResponse().GetResponseStream())
-                    // {
-                    //     using (System.IO.StreamReader sr = new System.IO.StreamReader(s))
-                    //     {
-                    //         var jsonResponse = sr.ReadToEnd();
-                    //     }
-                    // }
+                    // HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+                    // Console.WriteLine((int)response.StatusCode);
+                    await using (System.IO.Stream s = webRequest.GetResponse().GetResponseStream())
+                    {
+                        using (System.IO.StreamReader sr = new System.IO.StreamReader(s))
+                        {
+                            var jsonResponse = sr.ReadToEnd();
+                            model = JsonConvert.DeserializeObject<GetCreateModel>(jsonResponse);
+                        }
+                    }
                 }
-                return "OK";
+                return model;
             }
             catch (Exception ex)
             {
@@ -877,5 +885,13 @@ namespace LockLock.Controllers
         public string createBy { get; set; }
         public string dateModified { get; set; }
         public string equipmentName { get; set; }
+    }
+    public class GetCreateModel
+    {
+        public string id { get; set; }
+        public int userId { get; set; }
+        public int roomId { get; set; }
+        public string startDateTime { get; set; }
+        public string endDateTime { get; set; }
     }
 }
