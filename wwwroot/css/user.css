@@ -62,6 +62,19 @@
   background-color: #c54a27;
   border-color: #c54a27;
 }
+.btn-confirm {
+  font-weight: bold;
+  color: #fff;
+  background-color: #27c53c;
+  border-color: #27c53c;
+  box-shadow: 3px 3px 2px #bdbec2;
+  border-radius: 5px;
+}
+.btn-comfirm:hover {
+  color: #fff;
+  background-color: #27c564cc;
+  border-color: #27c564cc;
+}
 /* --------------------------------------table ----------------------------------- */
 .boxTopicDate {
   height: 40px;
@@ -474,6 +487,8 @@ b {
   color: #c52b00;
 }
 
+
+/*--------------------- MainRoom & Edit ---------------------- */
 .flex-container1 {
   display: flex;
   margin: 0;
@@ -492,5 +507,6 @@ b {
   width:95%;
   margin-left:2.5%;
 }
+
 
 
