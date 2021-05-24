@@ -370,60 +370,132 @@ namespace LockLock.Controllers
                 return BadRequest();
             }
         }
-
         [HttpGet]
-
-        public async Task<IActionResult> getTransectionByUserAsync()
+        public async Task<IActionResult> getTransactionByID(string id)
         {
             string uid = await verifyTokenAsync();
             if (uid != null)
             {
-                List<BookingModel> bookingList = new List<BookingModel>();
-
-                Query transactionQuery = firestoreDb.Collection("transaction").WhereEqualTo("userID", uid).WhereEqualTo("cancel", false);
-                QuerySnapshot transactionQuerySnapshot = await transactionQuery.GetSnapshotAsync();
-
-                DateTime currentDate = DateTime.Now;
-
-                foreach (DocumentSnapshot transactionSnapshot in transactionQuerySnapshot)
+                try
                 {
+                    DocumentReference transactionReference = firestoreDb.Collection("transaction").Document(id);
+                    DocumentSnapshot transactionSnapshot = await transactionReference.GetSnapshotAsync();
+                    TransactionModel transactionData = transactionSnapshot.ConvertTo<TransactionModel>();
 
-                    if (transactionSnapshot.Exists)
+                    if (transactionData.userID != uid)
                     {
-                        TransactionModel transactionData = transactionSnapshot.ConvertTo<TransactionModel>();
+                        Console.Write("User ID not Macth");
+                        return BadRequest();
+                    }
 
-                        Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("transactionID", transactionSnapshot.Id);
-                        QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
-                        List<DateTime> timeLists = new List<DateTime>();
-                        foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
+                    DocumentReference roomReference = firestoreDb.Collection("room").Document(transactionData.roomID);
+                    DocumentSnapshot roomSnapshot = await roomReference.GetSnapshotAsync();
+                    RoomModel roomData = roomSnapshot.ConvertTo<RoomModel>();
+
+                    List<DateTime> timeLists = new List<DateTime>();
+                    Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("transactionID", transactionSnapshot.Id);
+                    QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
+                    foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
+                    {
+                        BorrowModel borrowData = borrowSnapshot.ConvertTo<BorrowModel>();
+                        timeLists.Add(borrowData.time.ToLocalTime());
+                    }
+                    timeLists.Sort();
+
+                    getTransaction transaction = new getTransaction()
+                    {
+                        reservation = new reservationData()
                         {
-                            BorrowModel borrowData = borrowSnapshot.ConvertTo<BorrowModel>();
-                            timeLists.Add(borrowData.time.ToLocalTime());
+                            id = transactionSnapshot.Id,
+                            userId = uid,
+                            roomId = transactionData.roomID,
+                            startDateTime = timeLists[0],
+                            endDateTime = timeLists[timeLists.Count - 1].AddHours(1)
+                        },
+                        room = new roomReservation()
+                        {
+                            id = transactionData.roomID,
+                            name = roomData.name,
+                            equipmentName = roomData.objName
                         }
-                        timeLists.Sort();
-                        int timeCompare = DateTime.Compare(timeLists[0].AddHours(-1), currentDate);
-
-                        DocumentReference roomReference = firestoreDb.Collection("room").Document(transactionData.roomID);
-                        DocumentSnapshot roomSnapshot = await roomReference.GetSnapshotAsync();
-                        RoomModel roomData = roomSnapshot.ConvertTo<RoomModel>();
-
-                        BookingModel bookingItem = new BookingModel()
-                        {
-                            BookingID = transactionSnapshot.Id,
-                            Name = roomData.objName,
-                            Num = 1,
-                            RoomName = roomData.name,
-                            timeList = timeLists,
-                            cancel = timeCompare > 0 ? true : false
-                        };
-                        bookingList.Add(bookingItem);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Document does not exist!", transactionSnapshot.Id);
-                    }
+                    };
+                    return Ok(transaction);
                 }
-                return View(bookingList);
+                catch
+                {
+                    return BadRequest("Exception");
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> getTransactionByUserAsync()
+        {
+            string uid = await verifyTokenAsync();
+            if (uid != null)
+            {
+                try
+                {
+                    List<getTransaction> bookingList = new List<getTransaction>();
+
+                    Query transactionQuery = firestoreDb.Collection("transaction").WhereEqualTo("userID", uid).WhereEqualTo("cancel", false);
+                    QuerySnapshot transactionQuerySnapshot = await transactionQuery.GetSnapshotAsync();
+
+                    foreach (DocumentSnapshot transactionSnapshot in transactionQuerySnapshot)
+                    {
+
+                        if (transactionSnapshot.Exists)
+                        {
+                            TransactionModel transactionData = transactionSnapshot.ConvertTo<TransactionModel>();
+
+                            DocumentReference roomReference = firestoreDb.Collection("room").Document(transactionData.roomID);
+                            DocumentSnapshot roomSnapshot = await roomReference.GetSnapshotAsync();
+                            RoomModel roomData = roomSnapshot.ConvertTo<RoomModel>();
+
+                            List<DateTime> timeLists = new List<DateTime>();
+                            Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("transactionID", transactionSnapshot.Id);
+                            QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
+                            foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
+                            {
+                                BorrowModel borrowData = borrowSnapshot.ConvertTo<BorrowModel>();
+                                timeLists.Add(borrowData.time.ToLocalTime());
+                            }
+                            timeLists.Sort();
+
+                            getTransaction transaction = new getTransaction()
+                            {
+                                reservation = new reservationData()
+                                {
+                                    id = transactionSnapshot.Id,
+                                    userId = uid,
+                                    roomId = transactionData.roomID,
+                                    startDateTime = timeLists[0],
+                                    endDateTime = timeLists[timeLists.Count - 1].AddHours(1)
+                                },
+                                room = new roomReservation()
+                                {
+                                    id = transactionData.roomID,
+                                    name = roomData.name,
+                                    equipmentName = roomData.objName
+                                }
+                            };
+                            bookingList.Add(transaction);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Document does not exist!", transactionSnapshot.Id);
+                        }
+                    }
+                    return Ok(bookingList);
+                }
+                catch(Exception ex){
+                    Console.Write(ex);
+                    return BadRequest("Exception");
+                }
             }
             else
             {
@@ -473,6 +545,28 @@ namespace LockLock.Controllers
         [Required]
         [JsonPropertyName("id")]
         public string id { get; set; }
+
+    }
+    public class reservationData
+    {
+        public string id { get; set; }
+        public string userId { get; set; }
+        public string roomId { get; set; }
+        public DateTime startDateTime { get; set; }
+        public DateTime endDateTime { get; set; }
+
+    }
+    public class roomReservation
+    {
+        public string id { get; set; }
+        public string name { get; set; }
+        public string equipmentName { get; set; }
+
+    }
+    public class getTransaction
+    {
+        public reservationData reservation { get; set; }
+        public roomReservation room { get; set; }
 
     }
 
