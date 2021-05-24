@@ -95,7 +95,12 @@ namespace LockLock.Controllers
             if (uid != null)
             {
                 DocumentReference documentReference = firestoreDb.Collection("users").Document(uid);
-                await documentReference.SetAsync(user, SetOptions.Overwrite);
+                // await documentReference.SetAsync(user, SetOptions.Overwrite);
+                await documentReference.UpdateAsync(new Dictionary<FieldPath, object>{
+                    { new FieldPath("Firstname"), user.Firstname},
+                    { new FieldPath("Lastname"), user.Lastname},
+                    { new FieldPath("Tel"), user.Tel}
+                });
 
                 return RedirectToAction(nameof(Index));
             }
