@@ -83,7 +83,7 @@
 
 .textDate {
   text-align: center;
-  line-height: 40px;
+  line-height: 60px;
   text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
@@ -132,8 +132,6 @@ tbody tr td:first-child {
 .squaredThree {
   position: relative;
   float: left;
-  margin-top: 2px;
-  margin-right: 2px;
 }
 
 .squaredThree label.Red {
@@ -266,6 +264,10 @@ label {
 
 /* ----------------------------------Nav Room-------------------------------- */
 
+.nav-tabs {
+  border-bottom: transparent !important;
+}
+
 .nav-tabs > li.active > a,
 .nav-tabs > li.active > a:hover {
   color: #b24f32;
@@ -369,7 +371,6 @@ a.disable {
 
 .tab-content {
   border: 1px solid #ddd;
-  border-top-color: transparent;
 }
 
 .nav-tabs > li > a {
@@ -377,6 +378,9 @@ a.disable {
   line-height: 1.42857143;
   border: 1px solid transparent;
   border-radius: 10px 10px 0 0;
+}
+.d-flex {
+  display: flex!important;
 }
 
 .container-row {
@@ -395,7 +399,7 @@ a.disable {
 
 /* ----------------------------------Pop Up----------------------------------- */
 .modal-header .closebtn {
-  margin: -3rem -3rem -1rem auto;
+  margin: -2.5rem -2.5rem -1rem auto;
 }
 .modal {
   display: none;
