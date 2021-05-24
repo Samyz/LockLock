@@ -31,12 +31,35 @@ namespace LockLock.Controllers
             projectId = "locklock-47b1d";
             firestoreDb = FirestoreDb.Create(projectId);
         }
+        private async Task<string> checkLogedIn()
+        {
+            var token = HttpContext.Session.GetString("_UserToken");
+            if (token != null)
+            {
+                try
+                {
+                    FirebaseToken decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
+                    Console.WriteLine(decodedToken.Uid);
+                    return decodedToken.Uid;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                return null;
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> table([FromQuery(Name = "room")] string roomQueryString)
         {
             // Console.WriteLine("QueryString => " + roomQueryString + rooms.Contains(roomQueryString));
             if (!rooms.Contains(roomQueryString))
-                return NotFound(Json("Room Error"));
+                return NotFound("Room Error");
             // int roomNum = roomQueryString;
             // Console.WriteLine("QueryString => " + roomNum);
             RoomModel Room = new RoomModel();
@@ -59,7 +82,7 @@ namespace LockLock.Controllers
             catch
             {
                 Console.WriteLine("in catch");
-                return NotFound(Json("Room Error"));
+                return NotFound("Room Error");
             }
 
             DateTime timeRef = DateTime.Now.Date;
@@ -151,7 +174,90 @@ namespace LockLock.Controllers
 
             Console.WriteLine("finish");
 
-            return Ok(Json(sendData));
+            return Ok(sendData);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> createTransaction([FromBody] string roomID, [FromBody] DateTime startDateTime, [FromBody] int hourPeriod)
+        {
+            List<DateTime> timeList = new List<DateTime>();
+            if (startDateTime.Minute != 0 && startDateTime.Second != 0)
+                return NotFound("Date Error");
+            for (int i = 0; i < hourPeriod; i++)
+            {
+                timeList.Add(startDateTime.AddHours(i));
+            }
+
+            RoomModel Room = new RoomModel();
+            try
+            {
+                DocumentReference documentReference = firestoreDb.Collection("room").Document(roomID);
+                DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
+                Console.WriteLine(documentSnapshot.Exists);
+
+                RoomModel newRoom = documentSnapshot.ConvertTo<RoomModel>();
+                newRoom.RoomID = roomID;
+                Room = newRoom;
+            }
+            catch
+            {
+                return NotFound("RoomID Error");
+            }
+
+            bool isError = false;
+            foreach (DateTime date in timeList)
+            {
+                Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("time", TimeZoneInfo.ConvertTimeToUtc(date)).WhereEqualTo("cancel", false).WhereEqualTo("otherGroup", false).WhereEqualTo("roomID", Room.RoomID);
+                QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
+                int count = 0;
+
+                foreach (DocumentSnapshot documentSnapshot in borrowQuerySnapshot.Documents)
+                {
+                    if (documentSnapshot.Exists)
+                    {
+                        count++;
+                    }
+                }
+                Console.WriteLine(count);
+                if (count >= Room.objNum)
+                {
+                    isError = true;
+                }
+            }
+            if (isError)
+            {
+                return NotFound("DataError");
+            }
+
+            // CollectionReference transactionCollection = firestoreDb.Collection("transaction");
+            // TransactionModel newTransaction = new TransactionModel()
+            // {
+            //     roomID = roomID,
+            //     timestamp = DateTime.UtcNow,
+            //     userID = user.UserID,
+            //     cancel = false
+            // };
+
+            // DocumentReference transactionDocument = await transactionCollection.AddAsync(newTransaction);
+            // string transactionId = transactionDocument.Id;
+
+            // foreach (DateTime date in timeList)
+            // {
+            //     CollectionReference borrowCollection = firestoreDb.Collection("borrow");
+            //     BorrowModel newBorrow = new BorrowModel()
+            //     {
+            //         roomID = roomID,
+            //         time = date,
+            //         transactionID = transactionId,
+            //         cancel = false,
+            //         otherGroup = false
+            //     };
+            //     DocumentReference borrowDocument = await borrowCollection.AddAsync(newBorrow);
+            //     Console.WriteLine(date);
+            // }
+
+            return Ok("OK");
+
         }
 
         public async Task<IActionResult> allRoom()
@@ -169,7 +275,7 @@ namespace LockLock.Controllers
                 roomList.Add(room);
             }
             roomList = roomList.OrderBy(o => o.number).ToList();
-            return Ok(Json(roomList));
+            return Ok(roomList);
         }
     }
     public class TableDataModel
