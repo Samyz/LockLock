@@ -65,7 +65,13 @@ namespace LockLock.Controllers
             if (adminUid != null)
             {
                 DocumentReference roomReference = firestoreDb.Collection("room").Document(room.RoomID);
-                await roomReference.SetAsync(room, SetOptions.Overwrite);
+                Console.WriteLine(room.objName);
+                Console.WriteLine(room.objNum);
+                // await roomReference.SetAsync(room, SetOptions.Overwrite);
+                await roomReference.UpdateAsync(new Dictionary<FieldPath, object>{
+                    { new FieldPath("objName"), room.objName},
+                    { new FieldPath("objNum"), room.objNum}
+                });
 
                 return RedirectToAction(nameof(Index));
             }

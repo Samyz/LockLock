@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="~/css/profile.css" />
 <link rel="stylesheet" href="~/css/user.css" />
 @* <link rel="stylesheet" href="~/css/all.css" /> *@
+<script src="~/js/profile.js"></script>
 
 @Html.Partial("Navbar", new NavbarModel{name= @Model.Firstname,surname= @Model.Lastname,
 isUser=@Model.role == "user"?true:false })
@@ -30,6 +31,7 @@ isUser=@Model.role == "user"?true:false })
             <button type="button" class="btn btn-warning btn-profile"><a asp-action="updateUser"
                     class="profileA">Edit</a></button>
         </div>
-        <a asp-action="changePassword" class="profileAC">Change Password</a>
+        @* <a asp-action="changePassword" class="profileAC">Change Password</a> *@
+        <a onclick="jsRequest()" class="profileAC">Change Password</a>
     </div>
 </div>

@@ -117,17 +117,19 @@ namespace LockLock.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult>   changePassword()
+        public async Task<IActionResult> changePassword()
         {
             string uid = await verifyTokenAsync();
             if (uid != null)
             {
-                try{
-                   UserRecord user = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.GetUserAsync(uid);
-                   await auth.SendPasswordResetEmailAsync(user.Email);
-                   return Ok();
+                try
+                {
+                    UserRecord user = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.GetUserAsync(uid);
+                    await auth.SendPasswordResetEmailAsync(user.Email);
+                    return Ok();
                 }
-                catch{
+                catch
+                {
                     return NotFound();
                 }
             }
@@ -144,7 +146,7 @@ namespace LockLock.Controllers
             {
                 var token = HttpContext.Session.GetString("_UserToken");
                 FirebaseToken decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
-                
+
                 return decodedToken.Uid;
             }
             catch
