@@ -712,6 +712,11 @@ namespace LockLock.Controllers
             return View();
         }
         
+         public IActionResult HistoryAdmin()
+        {
+            return View();
+        }
+        
         public IActionResult Privacy()
         {
             return View();
