@@ -12,7 +12,12 @@ using Newtonsoft.Json;
 using FirebaseAdmin.Auth;
 
 using Newtonsoft.Json.Converters;
-
+using System.IO;
+using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Authentication;
+using Firebase.Auth;
+using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 namespace LockLock.Controllers
 {
@@ -20,16 +25,30 @@ namespace LockLock.Controllers
     {
         private readonly ILogger<APIController> _logger;
         private string firebaseJSON = AppDomain.CurrentDomain.BaseDirectory + @"locklockconfigure.json";
-        private string projectId;
         private FirestoreDb firestoreDb;
+
+        private FirebaseAuthProvider auth;
 
         private string[] rooms = { "HhJCxmYvz3PbhlelTeqm", "mJPKvyzMqzvO91tWZOYU", "ujDeZXlmtfO19cJaw9xz", "hc2hLRAwGTNakdpeuS0z", "BzWSgoSk9RAQNEIjwJlp" };
         public APIController(ILogger<APIController> logger)
         {
             _logger = logger;
-            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", firebaseJSON);
-            projectId = "locklock-47b1d";
+            string projectId;
+            using (StreamReader r = new StreamReader(firebaseJSON))
+            {
+                string json = r.ReadToEnd();
+                var myJObject = JObject.Parse(json);
+                projectId = myJObject.SelectToken("project_id").Value<string>();
+            }
             firestoreDb = FirestoreDb.Create(projectId);
+
+            auth = new FirebaseAuthProvider(
+                            new FirebaseConfig("AIzaSyDYMUB0qohsGyFfdHCFWyxfcwr84HC-WCU"));
+        }
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return Content("sad");
         }
         [HttpGet]
         public async Task<IActionResult> table([FromQuery(Name = "room")] string roomQueryString)
@@ -171,6 +190,161 @@ namespace LockLock.Controllers
             roomList = roomList.OrderBy(o => o.number).ToList();
             return Ok(Json(roomList));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> loginAsync([FromBody] loginRequest request)
+        {
+            try
+            {
+                var fbAuthLink = await auth.SignInWithEmailAndPasswordAsync(request.email, request.password);
+                string token = fbAuthLink.FirebaseToken;
+                //saving the token in a session variable
+                if (token != null)
+                {
+                    return Ok(token);
+                }
+                else
+                {
+                    Console.Write("BadRequest");
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Write("BadRequest");
+                return BadRequest();
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> getAllAsync()
+        {
+            string token = await HttpContext.GetTokenAsync("Bearer", "access_token");
+            if (token != null)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> cancelTransaction([FromBody] cancelRequest request)
+        {
+            try
+            {
+                DocumentReference transactionReference = firestoreDb.Collection("transaction").Document(request.id);
+                DocumentSnapshot transactionSnapshot = await transactionReference.GetSnapshotAsync();
+
+                TransactionModel transactionData = transactionSnapshot.ConvertTo<TransactionModel>();
+
+                if (true)
+                {
+                    await transactionReference.UpdateAsync("cancel", true);
+
+                    Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("transactionID", transactionSnapshot.Id);
+                    QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
+                    foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
+                    {
+                        DocumentReference borrowReference = firestoreDb.Collection("borrow").Document(borrowSnapshot.Id);
+                        await borrowReference.UpdateAsync("cancel", true);
+                    }
+                    return Ok();
+                }
+                else
+                {
+                    Console.WriteLine("UserID not macth");
+                    return BadRequest();
+                }
+
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+
+        public async Task<IActionResult> getTransectionByUserAsync()
+        {
+            string uid = await verifyTokenAsync();
+            if (uid != null)
+            {
+                List<BookingModel> bookingList = new List<BookingModel>();
+
+                Query transactionQuery = firestoreDb.Collection("transaction").WhereEqualTo("userID", uid).WhereEqualTo("cancel", false);
+                QuerySnapshot transactionQuerySnapshot = await transactionQuery.GetSnapshotAsync();
+
+                DateTime currentDate = DateTime.Now;
+
+                foreach (DocumentSnapshot transactionSnapshot in transactionQuerySnapshot)
+                {
+
+                    if (transactionSnapshot.Exists)
+                    {
+                        TransactionModel transactionData = transactionSnapshot.ConvertTo<TransactionModel>();
+
+                        Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("transactionID", transactionSnapshot.Id);
+                        QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
+                        List<DateTime> timeLists = new List<DateTime>();
+                        foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
+                        {
+                            BorrowModel borrowData = borrowSnapshot.ConvertTo<BorrowModel>();
+                            timeLists.Add(borrowData.time.ToLocalTime());
+                        }
+                        timeLists.Sort();
+                        int timeCompare = DateTime.Compare(timeLists[0].AddHours(-1), currentDate);
+
+                        DocumentReference roomReference = firestoreDb.Collection("room").Document(transactionData.roomID);
+                        DocumentSnapshot roomSnapshot = await roomReference.GetSnapshotAsync();
+                        RoomModel roomData = roomSnapshot.ConvertTo<RoomModel>();
+
+                        BookingModel bookingItem = new BookingModel()
+                        {
+                            BookingID = transactionSnapshot.Id,
+                            Name = roomData.objName,
+                            Num = 1,
+                            RoomName = roomData.name,
+                            timeList = timeLists,
+                            cancel = timeCompare > 0 ? true : false
+                        };
+                        bookingList.Add(bookingItem);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Document does not exist!", transactionSnapshot.Id);
+                    }
+                }
+                return View(bookingList);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+
+        private async Task<string> verifyTokenAsync()
+        {
+            try
+            {
+                string authorizationHeader = this.HttpContext.Request.Headers["Authorization"];
+                string token = authorizationHeader.Substring(7);
+                FirebaseToken decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
+                return decodedToken.Uid;
+            }
+            catch
+            {
+                Console.WriteLine("ID token must not be null or empty");
+                return null;
+            }
+        }
+
+
+
+
     }
     public class TableDataModel
     {
@@ -178,4 +352,23 @@ namespace LockLock.Controllers
         public string time { get; set; }
         // public string roomID { get; set; }
     }
+
+    public class loginRequest
+    {
+        [Required]
+        [JsonPropertyName("email")]
+        public string email { get; set; }
+        [Required]
+        [JsonPropertyName("password")]
+        public string password { get; set; }
+    }
+    public class cancelRequest
+    {
+        [Required]
+        [JsonPropertyName("id")]
+        public string id { get; set; }
+
+    }
+
+
 }
