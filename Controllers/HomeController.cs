@@ -586,6 +586,7 @@ namespace LockLock.Controllers
         public async Task<IActionResult> cancelAsync(string transactionID)
         {
             string uid = await checkLogedIn();
+            string uidOther = await WebRequestLogin();
             if (uid != null)
             {
                 DocumentReference transactionReference = firestoreDb.Collection("transaction").Document(transactionID);
@@ -602,6 +603,13 @@ namespace LockLock.Controllers
                     foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
                     {
                         DocumentReference borrowReference = firestoreDb.Collection("borrow").Document(borrowSnapshot.Id);
+                        BorrowModel borrowData = borrowSnapshot.ConvertTo<BorrowModel>();
+
+                        if (borrowData.otherGroup != null)
+                        {
+                            cancelRequest(borrowSnapshot.Id,uidOther);
+                        }
+
                         await borrowReference.UpdateAsync("cancel", true);
                     }
                     return RedirectToAction("History", "Home");
@@ -696,6 +704,38 @@ namespace LockLock.Controllers
             {
                 Console.WriteLine(ex.ToString());
                 return null;
+            }
+        }
+        private async Task<bool> cancelRequest(string transactionID,string token)
+        {
+            const string URL = "https://borrowingsystem.azurewebsites.net/api/reservation/delete";
+            try
+            {
+                var webRequest = System.Net.WebRequest.Create(URL);
+                string json = new JavaScriptSerializer().Serialize(new
+                {
+                    id = transactionID,
+                });
+                if (webRequest != null)
+                {
+                    webRequest.Method = "DELETE";
+                    webRequest.Timeout = 12000;
+                    webRequest.Headers.Add("Authorization", "Bearer " + token);
+                    webRequest.ContentType = "application/json";
+                    await using (var streamWriter = new StreamWriter(webRequest.GetRequestStream()))
+                    {
+                        streamWriter.Write(json);
+                    }
+
+                    HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+                    Console.WriteLine((int)response.StatusCode);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
             }
         }
         private async Task<string> WebRequestCreate(string token, int roomId, string time)
