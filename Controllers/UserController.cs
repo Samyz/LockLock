@@ -10,6 +10,7 @@ using System.IO;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
 using FirebaseAdmin.Auth;
+using Firebase.Auth;
 
 namespace LockLock.Controllers
 {
@@ -17,6 +18,8 @@ namespace LockLock.Controllers
     {
         private string firebaseJSON = AppDomain.CurrentDomain.BaseDirectory + @"locklockconfigure.json";
         private FirestoreDb firestoreDb;
+
+        private FirebaseAuthProvider auth;
 
         public UserController()
         {
@@ -28,6 +31,9 @@ namespace LockLock.Controllers
                 projectId = myJObject.SelectToken("project_id").Value<string>();
             }
             firestoreDb = FirestoreDb.Create(projectId);
+
+            auth = new FirebaseAuthProvider(
+                            new FirebaseConfig("AIzaSyDYMUB0qohsGyFfdHCFWyxfcwr84HC-WCU"));
         }
 
         public async Task<IActionResult> Index()
@@ -110,6 +116,29 @@ namespace LockLock.Controllers
                 return RedirectToAction("SignIn", "Account");
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> changePassword()
+        {
+            string uid = await verifyTokenAsync();
+            if (uid != null)
+            {
+                try
+                {
+                    UserRecord user = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.GetUserAsync(uid);
+                    await auth.SendPasswordResetEmailAsync(user.Email);
+                    return Ok();
+                }
+                catch
+                {
+                    return NotFound();
+                }
+            }
+            else
+            {
+                Console.WriteLine("ID token must not be null or empty");
+                return NotFound();
+            }
+        }
 
         private async Task<string> verifyTokenAsync()
         {
@@ -117,6 +146,7 @@ namespace LockLock.Controllers
             {
                 var token = HttpContext.Session.GetString("_UserToken");
                 FirebaseToken decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
+
                 return decodedToken.Uid;
             }
             catch

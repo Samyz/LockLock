@@ -72,7 +72,7 @@ namespace LockLock.Controllers
             try
             {
                 //create the user
-                await auth.CreateUserWithEmailAndPasswordAsync(singUpModel.Email, singUpModel.Password, singUpModel.Firstname + " " + singUpModel.Lastname, false);
+                await auth.CreateUserWithEmailAndPasswordAsync(singUpModel.Email, singUpModel.Password, singUpModel.Firstname + " " + singUpModel.Lastname, true);
                 //log in the new user
                 var fbAuthLink = await auth
                                 .SignInWithEmailAndPasswordAsync(singUpModel.Email, singUpModel.Password);
@@ -114,7 +114,6 @@ namespace LockLock.Controllers
                 var fbAuthLink = await auth
                                            .SignInWithEmailAndPasswordAsync(model.Email, model.Password);
                 string token = fbAuthLink.FirebaseToken;
-
                 //saving the token in a session variable
                 if (token != null)
                 {

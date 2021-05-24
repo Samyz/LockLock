@@ -114,8 +114,6 @@ namespace LockLock.Controllers
                     Console.WriteLine("UserID not macth");
                     return RedirectToAction(nameof(Index));
                 }
-
-
             }
             else
             {

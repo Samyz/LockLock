@@ -65,7 +65,7 @@ n {
 .profileAC:hover,
 .profileAC:visited,
 .profileAC:focus {
-  color: #d46c4e;
+  color: #d46c4e !important;
   font-weight: normal;
   font-size: 20px;
   line-height: 21px;
