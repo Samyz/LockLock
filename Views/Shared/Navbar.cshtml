@@ -30,10 +30,22 @@
 
         <ul id="navbar_top">
             <div class="container">
-                <li><a asp-action="Index" class="title">
-                        <first>BOOKING</first>
-                        <back>EQUIPMENT</back>
-                    </a></li>
+                <li>
+                    @if (Model.isUser)
+                    {
+                        <a asp-action="Index" asp-controller="Home" class="title">
+                            <first>BOOKING</first>
+                            <back>EQUIPMENT</back>
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-action="Index" asp-controller="Admin" class="title">
+                            <first>BOOKING</first>
+                            <back>EQUIPMENT</back>
+                        </a>
+                    }
+                </li>
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">@Model.name @Model.surname</a>
                     <div class="dropdown-content">
@@ -44,7 +56,7 @@
                         }
                         else
                         {
-                            <a asp-action="Blacklist">Blacklist</a>
+                            <a asp-action="Index" asp-controller="Blacklist">Blacklist</a>
                         }
                         <a href="#">Sign Out</a>
                     </div>

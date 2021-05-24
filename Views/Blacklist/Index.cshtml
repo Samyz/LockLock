@@ -1,52 +1,75 @@
 @model IEnumerable<LockLock.Models.BlackListModel>
 
+<link rel="stylesheet" href="~/css/user.css" />
+<script src="~/js/blacklist.js"></script>
+
 @{
     ViewData["Title"] = "Blacklist";
 }
+
+@Html.Partial("Navbar", new NavbarModel{name= (string) TempData["name"],surname= (string) TempData["surname"],
+isUser=false })
+
 <div class="container">
+    <h1 class="topic-color text-center topOfContent">ประวัติการจอง</h1>
 
-    <h1>Index</h1>
 
-    <table class="table">
+    <table class="table sortable" id="blacklistTable">
         <thead>
             <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.BlacklistID)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Tel)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Email)
-                </th>
+                <th class="pointer-cursor" onclick="sortTable(0)"># &#9662</th>
+                <th class="pointer-cursor" onclick="sortTable(1)">ชื่อ-นามสกุลผู้จอง</th>
+                <th class="pointer-cursor" onclick="sortTable(2)">เบอร์โทรศัพท์</th>
+                <th class="pointer-cursor" onclick="sortTable(3)">E-mail</th>
+                <th></th>
             </tr>
         </thead>
+
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.Select((value, i) => new { i, value }))
             {
-                <tr>
+                <tr class="item">
                     <td>
-                        @Html.DisplayFor(modelItem => item.BlacklistID)
+                        @Html.DisplayFor(modelItem => item.i)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Name)
+                        @Html.DisplayFor(modelItem => item.value.Name)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Tel)
+                        @Html.DisplayFor(modelItem => item.value.Tel)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Email)
+                        @Html.DisplayFor(modelItem => item.value.Email)
                     </td>
                     <td>
-                        <form asp-action="cancle" asp-route-id="@item.BlacklistID">
-                            <button type="submit">Cancle</button>
-                        </form>
+                        <button type="button" class="btn btn-danger" onClick="toModal('@(item.value.BlacklistID)')"
+                        data-toID="@item.value.BlacklistID">ยกเลิก Blacklist</button>
+                        @* <form asp-action="cancel" asp-route-id="@item.value.BlacklistID">
+                            <button type="submit">Cancel</button>
+                            </form> *@
                     </td>
                 </tr>
             }
+
         </tbody>
-    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="CancelModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <img src="~/img/close.png" alt="close" class="closebtn" id="modalClose">
+            </div>
+            <div class="modal-body text-center">
+                <img src="~/img/blacklistModal.png" width="30%" alt="cancel">
+                <h3>ต้องการ</h3>
+                <h3>"ยกเลิก Blacklist"</h3>
+                <br>
+                <form id="cancelForm" action="/Blacklist/cancel" method="post">
+                    <button type="submit" class="btn btn-warning btn-popUp ">ยกเลิก Blacklist</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

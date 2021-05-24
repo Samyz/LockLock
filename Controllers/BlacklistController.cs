@@ -30,12 +30,15 @@ namespace LockLock.Controllers
 
         public async Task<IActionResult> IndexAsync()
         {
-            string adminUID = await verifyAdminTokenAsync();
+            Tuple<string, string, string> adminUID = await verifyAdminTokenAsync();
             if (adminUID != null)
             {
+                TempData["name"] = adminUID.Item2;
+                TempData["surname"] = adminUID.Item3;
+
                 List<BlackListModel> userBlackList = new List<BlackListModel>();
 
-                DocumentReference adminReference = firestoreDb.Collection("users").Document(adminUID);
+                DocumentReference adminReference = firestoreDb.Collection("users").Document(adminUID.Item1);
                 DocumentSnapshot adminSnapshot = await adminReference.GetSnapshotAsync();
                 AdminModel admin = adminSnapshot.ConvertTo<AdminModel>();
 
@@ -85,7 +88,7 @@ namespace LockLock.Controllers
         }
         public async Task<IActionResult> addAsync(string userID, string roomID)
         {
-            string adminUID = await verifyAdminTokenAsync();
+            Tuple<string, string, string> adminUID = await verifyAdminTokenAsync();
             if (userID == null) return BadRequest();
             if (adminUID != null)
             {
@@ -94,7 +97,7 @@ namespace LockLock.Controllers
                 {
                     userID = userID,
                     timeCreate = System.DateTime.UtcNow,
-                    adminID = adminUID,
+                    adminID = adminUID.Item1,
                     roomID = roomID
                 };
                 await firestoreDb.Collection("blacklist").AddAsync(blackListData);
@@ -105,9 +108,9 @@ namespace LockLock.Controllers
                 return RedirectToAction("SignIn", "Account");
             }
         }
-        public async Task<IActionResult> cancleAsync(string id)
+        public async Task<IActionResult> cancelAsync(string id)
         {
-            string adminUID = await verifyAdminTokenAsync();
+            Tuple<string, string, string> adminUID = await verifyAdminTokenAsync();
             if (adminUID != null)
             {
                 DocumentReference blacklistReference = firestoreDb.Collection("blacklist").Document(id);
@@ -119,7 +122,7 @@ namespace LockLock.Controllers
                 return RedirectToAction("SignIn", "Account");
             }
         }
-        private async Task<string> verifyAdminTokenAsync()
+        private async Task<Tuple<string, string, string>> verifyAdminTokenAsync()
         {
             try
             {
@@ -132,7 +135,7 @@ namespace LockLock.Controllers
 
                 if (user.role == "admin")
                 {
-                    return decodedToken.Uid;
+                    return new Tuple<string, string, string>(decodedToken.Uid, user.Firstname, user.Lastname);
                 }
                 else
                 {
