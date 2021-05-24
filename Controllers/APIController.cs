@@ -335,35 +335,41 @@ namespace LockLock.Controllers
         [HttpPost]
         public async Task<IActionResult> cancelTransaction([FromBody] cancelRequest request)
         {
-            try
+            string uid = await verifyTokenAsync();
+            if (uid != null)
             {
-                DocumentReference transactionReference = firestoreDb.Collection("transaction").Document(request.id);
-                DocumentSnapshot transactionSnapshot = await transactionReference.GetSnapshotAsync();
-
-                TransactionModel transactionData = transactionSnapshot.ConvertTo<TransactionModel>();
-
-                if (true)
+                try
                 {
-                    await transactionReference.UpdateAsync("cancel", true);
+                    DocumentReference transactionReference = firestoreDb.Collection("transaction").Document(request.id);
+                    DocumentSnapshot transactionSnapshot = await transactionReference.GetSnapshotAsync();
 
-                    Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("transactionID", transactionSnapshot.Id);
-                    QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
-                    foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
+                    TransactionModel transactionData = transactionSnapshot.ConvertTo<TransactionModel>();
+
+                    if (transactionData.userID == uid)
                     {
-                        DocumentReference borrowReference = firestoreDb.Collection("borrow").Document(borrowSnapshot.Id);
-                        await borrowReference.UpdateAsync("cancel", true);
+                        await transactionReference.UpdateAsync("cancel", true);
+
+                        Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("transactionID", transactionSnapshot.Id);
+                        QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
+                        foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
+                        {
+                            DocumentReference borrowReference = firestoreDb.Collection("borrow").Document(borrowSnapshot.Id);
+                            await borrowReference.UpdateAsync("cancel", true);
+                        }
+                        return Ok();
                     }
-                    return Ok();
+                    else
+                    {
+                        return BadRequest("UserID not macth");
+                    }
+
                 }
-                else
+                catch
                 {
-                    Console.WriteLine("UserID not macth");
                     return BadRequest();
                 }
-
             }
-            catch
-            {
+            else{
                 return BadRequest();
             }
         }
@@ -379,12 +385,9 @@ namespace LockLock.Controllers
                     DocumentSnapshot transactionSnapshot = await transactionReference.GetSnapshotAsync();
                     TransactionModel transactionData = transactionSnapshot.ConvertTo<TransactionModel>();
 
-                    if (transactionData.userID != uid)
-                    {
-                        Console.Write("User ID not Macth");
-                        return BadRequest();
-                    }
-
+                    if (transactionData.userID != uid) return BadRequest("User ID not Macth");
+                    if(transactionData.cancel) return BadRequest("This transaction is cancel");
+                    
                     DocumentReference roomReference = firestoreDb.Collection("room").Document(transactionData.roomID);
                     DocumentSnapshot roomSnapshot = await roomReference.GetSnapshotAsync();
                     RoomModel roomData = roomSnapshot.ConvertTo<RoomModel>();
@@ -489,7 +492,8 @@ namespace LockLock.Controllers
                     }
                     return Ok(bookingList);
                 }
-                catch(Exception ex){
+                catch (Exception ex)
+                {
                     Console.Write(ex);
                     return BadRequest("Exception");
                 }
