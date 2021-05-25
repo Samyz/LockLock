@@ -160,7 +160,7 @@ namespace LockLock.Controllers
                 // data from our DB //
 
                 DateTime timeRef = DateTime.Now.Date;
-                timeRef = timeRef.AddHours(-1);
+                timeRef = timeRef.AddHours(-8);
 
                 DateTime timeNow = DateTime.Now.Date;
                 timeNow = TimeZoneInfo.ConvertTimeToUtc(timeNow);
@@ -168,8 +168,8 @@ namespace LockLock.Controllers
                 DateTime timeEnd = timeNow.AddDays(7);
                 Console.WriteLine("Now " + timeNow.ToString("u"));
                 Console.WriteLine("Ref " + timeRef.ToString("u"));
-                int hourNow = int.Parse(DateTime.Now.ToString("HH"));
-                int dayNow = int.Parse(DateTime.Now.ToString("dd"));
+                int hourNow = int.Parse(DateTime.Now.AddHours(-8).ToString("HH"));
+                int dayNow = int.Parse(DateTime.Now.AddHours(-8).ToString("dd"));
                 // Console.WriteLine("hour Now " + hourNow);
                 string timeLength = timeRef.ToString("dd MMMM") + " - " + timeRef.AddDays(6).ToString("dd MMMM yyyy");
                 List<string> viewDataName = new List<string>();
@@ -406,7 +406,7 @@ namespace LockLock.Controllers
 
                 
                 DateTime timeCheck = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
-                timeCheck = timeCheck.AddHours(-1);
+                timeCheck = timeCheck.AddHours(-7);
                 if (input.color[i] == "Green")
                 {
                     Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("time", TimeZoneInfo.ConvertTimeToUtc(timeCheck)).WhereEqualTo("cancel", false).WhereEqualTo("otherGroup", false).WhereEqualTo("roomID", Room.RoomID);
@@ -467,7 +467,7 @@ namespace LockLock.Controllers
 
                 
                 DateTime save = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
-                save = save.AddHours(-1);
+                save = save.AddHours(-7);
 
 
                 if (input.color[i] == "Green")
