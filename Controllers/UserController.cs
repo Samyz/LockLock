@@ -1,89 +1,152 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Google.Cloud.Firestore;
 using LockLock.Models;
 using Newtonsoft.Json;
 
+using System.IO;
+using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Http;
+using FirebaseAdmin.Auth;
+using Firebase.Auth;
+
 namespace LockLock.Controllers
 {
     public class UserController : Controller
     {
-        private string firebaseJSON = "D:\\Samyz\\KMITL\\3-2\\SoftStu\\project\\locklockconfigure.json";
-        private string projectId;
         private FirestoreDb firestoreDb;
+
+        private FirebaseAuthProvider auth;
 
         public UserController()
         {
-            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", firebaseJSON);
-            projectId = "locklock-47b1d";
-            firestoreDb = FirestoreDb.Create(projectId);
+            firestoreDb = FirestoreDb.Create("locklock-47b1d");
+
+            auth = new FirebaseAuthProvider(
+                            new FirebaseConfig("AIzaSyDYMUB0qohsGyFfdHCFWyxfcwr84HC-WCU"));
         }
+
         public async Task<IActionResult> Index()
         {
-            Query userQuery = firestoreDb.Collection("user");
-            QuerySnapshot userQuerySnapshot = await userQuery.GetSnapshotAsync();
-            List<User> listUser = new List<User>();
-
-            foreach (DocumentSnapshot documentSnapshot in userQuerySnapshot.Documents)
+            string uid = await verifyTokenAsync();
+            if (uid != null)
             {
-                if (documentSnapshot.Exists)
+                try
                 {
-                    Dictionary<string, object> user = documentSnapshot.ToDictionary();
-                    string json = JsonConvert.SerializeObject(user);
-                    User newUser = JsonConvert.DeserializeObject<User>(json);
-                    newUser.UserId = documentSnapshot.Id;
-                    listUser.Add(newUser);
+                    DocumentReference documentReference = firestoreDb.Collection("users").Document(uid);
+                    DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
+
+                    UserModel user = documentSnapshot.ConvertTo<UserModel>();
+                    user.UserID = uid;
+                    return View(user);
+                }
+                catch
+                {
+                    Console.Write("Exception : ");
+                    // Console.Write(ex);
+                    return RedirectToAction("Index", "Home");
                 }
             }
-            return View(listUser);
-        }
-
-        [HttpGet]
-        public IActionResult newUser()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> newUser(User user)
-        {
-            CollectionReference collectionReference = firestoreDb.Collection("user");
-            await collectionReference.AddAsync(user);
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> updateUser(string userId)
-        {
-            DocumentReference documentReference = firestoreDb.Collection("user").Document(userId);
-            DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
-
-            if (documentSnapshot.Exists)
+            else
             {
-                User user = documentSnapshot.ConvertTo<User>();
-                return View(user);
+                Console.WriteLine("ID token must not be null or empty");
+                return RedirectToAction("SignIn", "Account");
             }
 
-            return NotFound();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> updateUser()
+        {
+            string uid = await verifyTokenAsync();
+            if (uid != null)
+            {
+                try
+                {
+                    DocumentReference documentReference = firestoreDb.Collection("users").Document(uid);
+                    DocumentSnapshot documentSnapshot = await documentReference.GetSnapshotAsync();
+
+                    UserModel user = documentSnapshot.ConvertTo<UserModel>();
+                    return View(user);
+
+                }
+                catch (Exception ex)
+                {
+                    Console.Write("Exception : ");
+                    Console.Write(ex);
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                Console.WriteLine("ID token must not be null or empty");
+                return RedirectToAction("SignIn", "Account");
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> updateUser(User user)
+        public async Task<IActionResult> updateUser(UserModel user)
         {
-            DocumentReference documentReference = firestoreDb.Collection("user").Document(user.UserId);
-            await documentReference.SetAsync(user, SetOptions.Overwrite);
-            return RedirectToAction(nameof(Index));
+            string uid = await verifyTokenAsync();
+            if (uid != null)
+            {
+                DocumentReference documentReference = firestoreDb.Collection("users").Document(uid);
+                // await documentReference.SetAsync(user, SetOptions.Overwrite);
+                await documentReference.UpdateAsync(new Dictionary<FieldPath, object>{
+                    { new FieldPath("Firstname"), user.Firstname},
+                    { new FieldPath("Lastname"), user.Lastname},
+                    { new FieldPath("Tel"), user.Tel}
+                });
+
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                Console.WriteLine("ID token must not be null or empty");
+                return RedirectToAction("SignIn", "Account");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> changePassword()
+        {
+            string uid = await verifyTokenAsync();
+            if (uid != null)
+            {
+                try
+                {
+                    UserRecord user = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.GetUserAsync(uid);
+                    await auth.SendPasswordResetEmailAsync(user.Email);
+                    return Ok();
+                }
+                catch
+                {
+                    return NotFound();
+                }
+            }
+            else
+            {
+                Console.WriteLine("ID token must not be null or empty");
+                return NotFound();
+            }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> deleteUser(string userId)
+        private async Task<string> verifyTokenAsync()
         {
-            DocumentReference documentReference = firestoreDb.Collection("user").Document(userId);
-            await documentReference.DeleteAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var token = HttpContext.Session.GetString("_UserToken");
+                FirebaseToken decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
+
+                return decodedToken.Uid;
+            }
+            catch
+            {
+                Console.Write("Exception : ");
+                Console.WriteLine("ID token must not be null or empty");
+                return null;
+            }
         }
     }
 }

@@ -1,39 +1,48 @@
-@model LockLock.Models.User
+@model LockLock.Models.UserModel
 
 @{
     ViewData["Title"] = "updateUser";
 }
 
-<h1>Update User</h1>
+<link rel="stylesheet" href="~/css/profile.css" />
+<link rel="stylesheet" href="~/css/user.css" />
+@* <link rel="stylesheet" href="~/css/all.css" /> *@
 
-<h4>User</h4>
-<div class="row">
-    <div class="col-md-4">
+@Html.Partial("Navbar", new NavbarModel{name= @Model.Firstname,surname= @Model.Lastname,
+isUser=@Model.role == "user"?true:false })
+
+<div class="container">
+    <div class="contain600">
+        <h1 class="topic-color text-center topOfContent">My Profile</h1>
+        <div class="flexProfile">
+            <img src="~/img/defaultProfile.png" alt="defaultProfile">
+            <p class="profile-top">@Model.Firstname @Model.Lastname</p>
+        </div>
         <form asp-action="updateUser">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input asp-for="UserId" class="form-control" hidden />
+            <input asp-for="UserID" class="form-controlP" type="hidden" />
             <div class="form group">
-                <label asp-for="email" class="control-label"></label>
-                <input asp-for="email" class="form-control" />
-                <span asp-validation-for="email" class="text-danger"></span>
+                @* <label asp-for="Email" class="control-label"></label> *@
+                <input asp-for="Email" class="form-controlP" type="hidden" />
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form group">
-                <label asp-for="firstname" class="control-label"></label>
-                <input asp-for="firstname" class="form-control" />
-                <span asp-validation-for="firstname" class="text-danger"></span>
+                <label asp-for="Firstname" class="control-label"></label>
+                <input asp-for="Firstname" class="form-controlP" />
+                <span asp-validation-for="Firstname" class="text-danger"></span>
             </div>
             <div class="form group">
-                <label asp-for="lastname" class="control-label"></label>
-                <input asp-for="lastname" class="form-control" />
-                <span asp-validation-for="lastname" class="text-danger"></span>
+                <label asp-for="Lastname" class="control-label"></label>
+                <input asp-for="Lastname" class="form-controlP" />
+                <span asp-validation-for="Lastname" class="text-danger"></span>
             </div>
             <div class="form group">
-                <label asp-for="tel" class="control-label"></label>
-                <input asp-for="tel" class="form-control" />
-                <span asp-validation-for="tel" class="text-danger"></span>
+                <label asp-for="Tel" class="control-label"></label>
+                <input asp-for="Tel" class="form-controlP" />
+                <span asp-validation-for="Tel" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save Change" class="btn btn-info btn-profileE" />
             </div>
         </form>
     </div>

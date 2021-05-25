@@ -1,69 +1,37 @@
-@model IEnumerable<LockLock.Models.User>
+@model LockLock.Models.UserModel
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<h1>Index</h1>
+<link rel="stylesheet" href="~/css/profile.css" />
+<link rel="stylesheet" href="~/css/user.css" />
+@* <link rel="stylesheet" href="~/css/all.css" /> *@
+<script src="~/js/profile.js"></script>
 
-@* <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    </div> *@
+@Html.Partial("Navbar", new NavbarModel{name= @Model.Firstname,surname= @Model.Lastname,
+isUser=@Model.role == "user"?true:false })
 
-<p>
-    <a asp-action="newUser">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.firstname)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.lastname)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.tel)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.firstname)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.lastname)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.tel)
-                </td>
-                <td>
-                    <a asp-action="updateUser" asp-route-userId="@item.UserId">Update</a>
-                    <form asp-action="deleteUser" asp-route-userId="@item.UserId">
-                        <button type="submit">Delete</button>
-                    </form>
-                    @* @Html.ActionLink("Edit", "Edit", new {}) |
-                        @Html.ActionLink("Details", "Details", new {}) |
-                        @Html.ActionLink("Delete", "Delete", new {}) | *@
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="container">
+    <div class="contain600">
+        <h1 class="topic-color text-center topOfContent">My Profile</h1>
+        <div class="flexProfile">
+            <img src="~/img/defaultProfile.png" alt="defaultProfile">
+            <p class="profile-top">@Model.Firstname @Model.Lastname</p>
+        </div>
+        <p class="profile-text">Name: <n>@Model.Firstname</n>
+        </p>
+        <p class="profile-text">Surname: <n>@Model.Lastname</n>
+        </p>
+        <p class="profile-text">Telephone Number: <n>@Model.Tel</n>
+        </p>
+        <p class="profile-text">Email: <n>@Model.Email</n>
+        </p>
+        <div class="flexProfileButton">
+            <button type="button" class="btn btn-warning btn-profile"><a asp-action="updateUser"
+                    class="profileA">Edit</a></button>
+        </div>
+        @* <a asp-action="changePassword" class="profileAC">Change Password</a> *@
+        <a onclick="jsRequest()" class="profileAC">Change Password</a>
+    </div>
+</div>
