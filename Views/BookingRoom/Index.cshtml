@@ -74,7 +74,7 @@ isUser=false })
                         @Html.DisplayFor(modelItem => item.value.status)
                     </td>
                     <td>
-                        <button type="button" class="btn btn-danger" onClick="toModalBlack('@(item.value.userID)','@(item.value.RoomID)')"
+                        <button type="button" class="btn btn-warning" onClick="toModalBlack('@(item.value.userID)','@(item.value.RoomID)')"
                         data-toID="@item.value.userID">Blacklist</button>
 
                         @if (item.value.cancel)

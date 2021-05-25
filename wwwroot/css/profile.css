@@ -62,7 +62,6 @@ n {
 }
 
 .profileAC,
-.profileAC:hover,
 .profileAC:visited,
 .profileAC:focus {
   color: #d46c4e !important;
@@ -74,6 +73,19 @@ n {
   display: block;
   width: 100%;
   text-align: left;
+}
+
+.profileAC:hover {
+  color: #ac4326 !important;
+  font-weight: normal;
+  font-size: 20px;
+  line-height: 21px;
+  padding: 12px 0px;
+  text-decoration: underline;
+  display: block;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
 }
 
 .control-label {
