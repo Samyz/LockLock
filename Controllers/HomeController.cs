@@ -158,7 +158,11 @@ namespace LockLock.Controllers
                 List<List<int>> gameList = await WebRequestGetAllRoom(token, list[roomNum == 0 ? 0 : roomNum - 1].id);
 
                 // data from our DB //
+                TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+
                 DateTime timeRef = DateTime.Now.Date;
+                timeRef = TimeZoneInfo.ConvertTime(timeRef, asiaThTimeZone);
+
                 DateTime timeNow = DateTime.Now.Date;
                 timeNow = TimeZoneInfo.ConvertTimeToUtc(timeNow);
                 // timeNow = TimeZoneInfo.ConvertTimeFromUtc(timeNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
@@ -401,7 +405,9 @@ namespace LockLock.Controllers
                 string[] temp = input.dates[i].Split(" ");
                 string[] month = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
+                TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime timeCheck = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
+                timeCheck = TimeZoneInfo.ConvertTime(timeCheck, asiaThTimeZone);
                 if (input.color[i] == "Green")
                 {
                     Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("time", TimeZoneInfo.ConvertTimeToUtc(timeCheck)).WhereEqualTo("cancel", false).WhereEqualTo("otherGroup", false).WhereEqualTo("roomID", Room.RoomID);
@@ -460,7 +466,10 @@ namespace LockLock.Controllers
                 string[] temp = input.dates[i].Split(" ");
                 string[] month = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
+                TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime save = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
+                save = TimeZoneInfo.ConvertTime(save, asiaThTimeZone);
+
 
                 if (input.color[i] == "Green")
                 {

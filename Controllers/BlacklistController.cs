@@ -93,7 +93,7 @@ namespace LockLock.Controllers
                     roomID = roomID
                 };
                 await firestoreDb.Collection("blacklist").AddAsync(blackListData);
-                return RedirectToAction("Index", "BookingRoom", new { room = roomID });
+                return RedirectToAction("Index");
             }
             else
             {

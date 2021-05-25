@@ -73,7 +73,10 @@ namespace LockLock.Controllers
                 return NotFound("Room Error");
             }
 
+            TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
             DateTime timeRef = DateTime.Now.Date;
+            timeRef = TimeZoneInfo.ConvertTime(timeRef, asiaThTimeZone);
+
             DateTime timeNow = DateTime.Now.Date;
             timeNow = TimeZoneInfo.ConvertTimeToUtc(timeNow);
             DateTime timeEnd = timeNow.AddDays(7);
@@ -189,6 +192,9 @@ namespace LockLock.Controllers
             List<DateTime> timeList = new List<DateTime>();
             if (input.startDateTime.Minute != 0 && input.startDateTime.Second != 0)
                 return NotFound("Date Error");
+
+            TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            input.startDateTime = TimeZoneInfo.ConvertTimeFromUtc(input.startDateTime, asiaThTimeZone);
             for (int i = 0; i < input.hourPeriod; i++)
             {
                 timeList.Add(input.startDateTime.AddHours(i));
@@ -304,7 +310,7 @@ namespace LockLock.Controllers
                     return BadRequest();
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 Console.Write("BadRequest");
                 return BadRequest();

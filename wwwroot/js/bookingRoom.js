@@ -43,12 +43,12 @@ function toModalCancel(id) {
   console.log('but');
 }
 
-function toModalBlack(id) {
+function toModalBlack(id,roomID) {
   //   var id = this.data-toID;
   console.log(id);
   var form = document.getElementById('blackForm');
-  form.setAttribute('action', `/Blacklist/add?userID=${id}`);
-  modal.style.display = 'block';
+  form.setAttribute('action', `/Blacklist/add?userID=${id}&roomID=${roomID}`);
+  modalBlack.style.display = 'block';
   console.log('but');
 }
 
