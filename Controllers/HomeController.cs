@@ -161,7 +161,7 @@ namespace LockLock.Controllers
                 TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
 
                 DateTime timeRef = DateTime.Now.Date;
-                timeRef = TimeZoneInfo.ConvertTimeFromUTC(timeRef, asiaThTimeZone);
+                timeRef = TimeZoneInfo.ConvertTimeFromUtc(timeRef, asiaThTimeZone);
 
                 DateTime timeNow = DateTime.Now.Date;
                 timeNow = TimeZoneInfo.ConvertTimeToUtc(timeNow);
@@ -468,7 +468,7 @@ namespace LockLock.Controllers
 
                 TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime save = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
-                save = TimeZoneInfo.ConvertTimeFromUTC(save, asiaThTimeZone);
+                save = TimeZoneInfo.ConvertTimeFromUtc(save, asiaThTimeZone);
 
 
                 if (input.color[i] == "Green")
@@ -656,7 +656,7 @@ namespace LockLock.Controllers
         }
         public async Task<IActionResult> Test1()
         {
-            return Ok(DateTime.Now.toString('u'));
+            return Ok(DateTime.Now);
         }
         private async Task<string> WebRequestLogin()
         {
