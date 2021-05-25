@@ -137,12 +137,12 @@ namespace LockLock.Controllers
                         }
                         await borrowReference.UpdateAsync("cancel", true);
                     }
-                    return Ok();
+                    return RedirectToAction("Index", "BookingRoom", new { room = transactionData.roomID });
                 }
                 else
                 {
                     Console.WriteLine("adminID not macth");
-                    return Unauthorized();
+                    return RedirectToAction("SignIn", "Account");
                 }
             }
             else
@@ -242,9 +242,8 @@ namespace LockLock.Controllers
                 }
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex.ToString());
                 return false;
             }
         }
@@ -267,9 +266,8 @@ namespace LockLock.Controllers
                 }
                 return true;
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
+            catch
+            { 
                 return false;
             }
         }

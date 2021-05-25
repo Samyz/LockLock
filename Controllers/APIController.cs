@@ -308,7 +308,7 @@ namespace LockLock.Controllers
                     return BadRequest();
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 Console.Write("BadRequest");
                 return BadRequest();

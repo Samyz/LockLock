@@ -1,16 +1,4 @@
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-
-<link rel="stylesheet" href="~/css/user.css" />
-
-@{
-    ViewData["Title"] = "Blacklist";
-}
-
-<style>
-  .container {
+ .container {
     max-width: 1200px;
   }
 
@@ -315,47 +303,3 @@
     border-bottom-right-radius: .3rem;
     border-bottom-left-radius: .3rem;
   }
-</style>
-
-<div class="container">
-    <h1 class="topic-color text-center">Blacklist</h1> 
-    <table class="table sortable" id="blacklistTable">
-  <tr>
-    <th class="pointer-cursor"># <span id="sorttable_sortfwdind">&nbsp;▾</span> </th>
-    <th>ชื่อ-นามสกุลผู้จอง</th>
-    <th>เบอร์โทรศัพท์</th>
-    <th>E-mail</th>
-    <th></th>
-  </tr>
-
-  <tr class="item">
-    <td>1.</td>
-    <td>Darlene Robertson</td>
-    <td>061-392-6169</td>
-    <td>tim.jennings@example.com</td>
-    <td><button type="button" class="btn btn-danger">ยกเลิก Blacklist</button></td>
-  </tr>
-  <tr class="item">
-    <td>2.</td>
-    <td>Robert Fox</td>
-    <td>080-015-9148</td>
-    <td>sara.cruz@example.com</td>
-    <td><button type="button" class="btn btn-danger">ยกเลิก Blacklist</button></td>
-  </tr>
-  <tr class="item">
-    <td>3.</td>
-    <td>Arlene McCoy</td>
-    <td>081-141-5887</td>
-    <td>felicia.reid@example.com</td>
-    <td><button type="button" class="btn btn-danger">ยกเลิก Blacklist</button></td>
-  </tr>
-  <tr class="item">
-    <td>4.</td>
-    <td>Jacob Jones</td>
-    <td>082-220-1546</td>
-    <td>tim.jennings@example.com</td>
-    <td><button type="button" class="btn btn-danger">ยกเลิก Blacklist</button></td>
-  </tr>
-</table>
-</div>
-

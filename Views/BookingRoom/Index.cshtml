@@ -4,6 +4,7 @@
     ViewData["Title"] = "BookingRoom";
 }
 
+<link rel="stylesheet" href="~/css/booking.css" />
 <link rel="stylesheet" href="~/css/user.css" />
 <script src="~/js/bookingRoom.js"></script>
 
@@ -28,7 +29,7 @@ isUser=false })
 
 <div class="container">
 
-    <h1 class="topic-color text-center topOfContent">Blacklist</h1>
+    <h1 class="topic-color text-center topOfContent">รายการจอง</h1>
 
     <table class="table sortable" id="bookingTable">
         <thead>
@@ -73,18 +74,14 @@ isUser=false })
                         @Html.DisplayFor(modelItem => item.value.status)
                     </td>
                     <td>
-                        <button type="button" class="btn btn-danger" onClick="toModalBlack('@(item.value.userID)')"
+                        <button type="button" class="btn btn-danger" onClick="toModalBlack('@(item.value.userID)','@(item.value.RoomID)')"
                         data-toID="@item.value.userID">Blacklist</button>
-                        @* <form asp-action="add" asp-controller="Blacklist" asp-route-userID="@item.value.userID">
-                            <button type="submit">Blacklist</button>
-                            </form> *@
+
                         @if (item.value.cancel)
                         {
                             <button type="button" class="btn btn-danger" onClick="toModalCancel('@(item.value.BookingID)')"
                         data-toID="@item.value.BookingID">ยกเลิก</button>
-                            @* <form asp-action="cancle" asp-route-transactionID="@item.value.BookingID">
-                                <button type="submit">Cancle</button>
-                                </form> *@
+
                         }
 
                     </td>
@@ -107,7 +104,7 @@ isUser=false })
                 <h3>ต้องการ</h3>
                 <h3>"ยกเลิกการจอง"</h3>
                 <br>
-                <form id="cancleForm" action="/BookingRoom/cancel" method="post">
+                <form id="cancelForm" action="/BookingRoom/cancel" method="post">
                     <button type="submit" class="btn btn-warning btn-popUp ">ยกเลิกการจอง</button>
                 </form>
             </div>
