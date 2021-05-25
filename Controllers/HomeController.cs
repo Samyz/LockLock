@@ -168,7 +168,7 @@ namespace LockLock.Controllers
                 DateTime timeEnd = timeNow.AddDays(7);
                 Console.WriteLine("Now " + timeNow.ToString("u"));
                 Console.WriteLine("Ref " + timeRef.ToString("u"));
-                DateTime timeaaa = DateTime.Now.AddHours(-8);//.AddHours(-8)
+                DateTime timeaaa = DateTime.Now;//.AddHours(-8).AddHours(7)
                 int hourNow = int.Parse(timeaaa.ToString("HH"));
                 int dayNow = int.Parse(timeaaa.ToString("dd"));
                 // Console.WriteLine("hour Now " + hourNow);
