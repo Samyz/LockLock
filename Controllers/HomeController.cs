@@ -168,8 +168,9 @@ namespace LockLock.Controllers
                 DateTime timeEnd = timeNow.AddDays(7);
                 Console.WriteLine("Now " + timeNow.ToString("u"));
                 Console.WriteLine("Ref " + timeRef.ToString("u"));
-                int hourNow = int.Parse(DateTime.Now.AddHours(-8).ToString("HH"));
-                int dayNow = int.Parse(DateTime.Now.AddHours(-8).ToString("dd"));
+                DateTime timeaaa = DateTime.Now.AddHours(-8);
+                int hourNow = int.Parse(timeaaa.ToString("HH"));
+                int dayNow = int.Parse(timeaaa.ToString("dd"));
                 // Console.WriteLine("hour Now " + hourNow);
                 string timeLength = timeRef.ToString("dd MMMM") + " - " + timeRef.AddDays(6).ToString("dd MMMM yyyy");
                 List<string> viewDataName = new List<string>();
