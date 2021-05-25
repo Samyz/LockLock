@@ -566,7 +566,8 @@ namespace LockLock.Controllers
                                     Console.Write("reservation not found");
                                 }
                             }
-                            timeLists.Add(borrowData.time); 
+                            DateTime temp = borrowData.time;
+                            timeLists.Add(temp.AddHours(7)); 
                         }
                         timeLists.Sort();
                         int timeCompare = DateTime.Compare(timeLists[0].AddHours(-1), currentDate);
