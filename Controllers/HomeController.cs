@@ -158,7 +158,11 @@ namespace LockLock.Controllers
                 List<List<int>> gameList = await WebRequestGetAllRoom(token, list[roomNum == 0 ? 0 : roomNum - 1].id);
 
                 // data from our DB //
+                TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+
                 DateTime timeRef = DateTime.Now.Date;
+                timeRef = TimeZoneInfo.ConvertTime(timeRef, asiaThTimeZone);
+
                 DateTime timeNow = DateTime.Now.Date;
                 timeNow = TimeZoneInfo.ConvertTimeToUtc(timeNow);
                 // timeNow = TimeZoneInfo.ConvertTimeFromUtc(timeNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
@@ -401,7 +405,9 @@ namespace LockLock.Controllers
                 string[] temp = input.dates[i].Split(" ");
                 string[] month = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
+                TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime timeCheck = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
+                timeCheck = TimeZoneInfo.ConvertTime(timeCheck, asiaThTimeZone);
                 if (input.color[i] == "Green")
                 {
                     Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("time", TimeZoneInfo.ConvertTimeToUtc(timeCheck)).WhereEqualTo("cancel", false).WhereEqualTo("otherGroup", false).WhereEqualTo("roomID", Room.RoomID);
@@ -460,7 +466,10 @@ namespace LockLock.Controllers
                 string[] temp = input.dates[i].Split(" ");
                 string[] month = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
+                TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime save = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
+                save = TimeZoneInfo.ConvertTime(save, asiaThTimeZone);
+
 
                 if (input.color[i] == "Green")
                 {
@@ -507,7 +516,7 @@ namespace LockLock.Controllers
         public async Task<IActionResult> History()
         {
             string uid = await checkLogedIn();
-
+            string uidOther = await WebRequestLogin();
             if (uid != null)
             {
                 UserModel user = new UserModel();
@@ -549,7 +558,15 @@ namespace LockLock.Controllers
                         foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
                         {
                             BorrowModel borrowData = borrowSnapshot.ConvertTo<BorrowModel>();
-                            timeLists.Add(borrowData.time.ToLocalTime());
+                            if (borrowData.otherGroup != null)
+                            {
+                                bool res = verifyReservationByID(uidOther, borrowData.otherGroup);
+                                if (!res)
+                                {
+                                    Console.Write("reservation not found");
+                                }
+                            }
+                            timeLists.Add(borrowData.time.ToLocalTime()); 
                         }
                         timeLists.Sort();
                         int timeCompare = DateTime.Compare(timeLists[0].AddHours(-1), currentDate);
@@ -609,7 +626,8 @@ namespace LockLock.Controllers
 
                         if (borrowData.otherGroup != null)
                         {
-                            cancelRequest(borrowSnapshot.Id, uidOther);
+                            bool res = cancelRequest(borrowData.otherGroup, uidOther);
+                            if (!res) Console.Write("Unable");
                         }
 
                         await borrowReference.UpdateAsync("cancel", true);
@@ -621,8 +639,6 @@ namespace LockLock.Controllers
                     Console.WriteLine("UserID not macth");
                     return RedirectToAction("History", "Home");
                 }
-
-
             }
             else
             {
@@ -708,26 +724,19 @@ namespace LockLock.Controllers
                 return null;
             }
         }
-        private async Task<bool> cancelRequest(string transactionID, string token)
+        private bool cancelRequest(string transactionID, string token)
         {
             const string URL = "https://borrowingsystem.azurewebsites.net/api/reservation/delete";
             try
             {
-                var webRequest = System.Net.WebRequest.Create(URL);
-                string json = new JavaScriptSerializer().Serialize(new
-                {
-                    id = transactionID,
-                });
+                var webRequest = System.Net.WebRequest.Create(URL + "?id=" + transactionID);
+
                 if (webRequest != null)
                 {
                     webRequest.Method = "DELETE";
                     webRequest.Timeout = 12000;
                     webRequest.Headers.Add("Authorization", "Bearer " + token);
                     webRequest.ContentType = "application/json";
-                    await using (var streamWriter = new StreamWriter(webRequest.GetRequestStream()))
-                    {
-                        streamWriter.Write(json);
-                    }
 
                     HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
                     Console.WriteLine((int)response.StatusCode);
@@ -812,6 +821,30 @@ namespace LockLock.Controllers
             {
                 Console.WriteLine(ex.ToString());
                 return null;
+            }
+        }
+        private bool verifyReservationByID(string token, string reservationID)
+        {
+            const string URL = "https://borrowingsystem.azurewebsites.net/api/reservation/get-reservation-by-id";
+            try
+            {
+                var webRequest = System.Net.WebRequest.Create(URL + "?id=" + reservationID);
+
+                if (webRequest != null)
+                {
+                    webRequest.Method = "GET";
+                    webRequest.Timeout = 12000;
+                    webRequest.Headers.Add("Authorization", "Bearer " + token);
+
+                    HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+                    if ((int)response.StatusCode >= 300) return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
             }
         }
         public IActionResult Blacklist()

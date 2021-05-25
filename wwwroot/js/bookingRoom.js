@@ -48,7 +48,7 @@ function toModalBlack(id) {
   console.log(id);
   var form = document.getElementById('blackForm');
   form.setAttribute('action', `/Blacklist/add?userID=${id}`);
-  modal.style.display = 'block';
+  modalBlack.style.display = 'block';
   console.log('but');
 }
 
