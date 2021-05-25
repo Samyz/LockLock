@@ -73,16 +73,14 @@ namespace LockLock.Controllers
                 return NotFound("Room Error");
             }
 
-            TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
             DateTime timeRef = DateTime.Now.Date;
-            timeRef = TimeZoneInfo.ConvertTime(timeRef, asiaThTimeZone);
 
             DateTime timeNow = DateTime.Now.Date;
             timeNow = TimeZoneInfo.ConvertTimeToUtc(timeNow);
             DateTime timeEnd = timeNow.AddDays(7);
             Console.WriteLine("Now " + timeNow.ToString("u"));
             Console.WriteLine("Ref " + timeRef.ToString("u"));
-            int hourNow = int.Parse(DateTime.Now.ToString("HH"));
+            int hourNow = int.Parse(DateTime.Now.ToString("HH")) + 7;
             int dayNow = int.Parse(DateTime.Now.ToString("dd"));
             string timeLength = timeRef.ToString("dd MMMM") + " - " + timeRef.AddDays(6).ToString("dd MMMM yyyy");
 
@@ -193,8 +191,8 @@ namespace LockLock.Controllers
             if (input.startDateTime.Minute != 0 && input.startDateTime.Second != 0)
                 return NotFound("Date Error");
 
-            TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-            input.startDateTime = TimeZoneInfo.ConvertTimeFromUtc(input.startDateTime, asiaThTimeZone);
+            // TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            // input.startDateTime = TimeZoneInfo.ConvertTimeFromUtc(input.startDateTime, asiaThTimeZone);
             for (int i = 0; i < input.hourPeriod; i++)
             {
                 timeList.Add(input.startDateTime.AddHours(i));
@@ -260,7 +258,7 @@ namespace LockLock.Controllers
                 BorrowModel newBorrow = new BorrowModel()
                 {
                     roomID = input.roomID,
-                    time = date,
+                    time = date.AddHours(-7),
                     transactionID = transactionId,
                     cancel = false,
                     otherGroup = null

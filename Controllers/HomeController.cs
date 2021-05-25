@@ -544,6 +544,7 @@ namespace LockLock.Controllers
                 QuerySnapshot transactionQuerySnapshot = await transactionQuery.GetSnapshotAsync();
 
                 DateTime currentDate = DateTime.Now;
+                currentDate = currentDate.AddHours(7);
 
                 foreach (DocumentSnapshot transactionSnapshot in transactionQuerySnapshot)
                 {
