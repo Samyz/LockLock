@@ -662,19 +662,6 @@ namespace LockLock.Controllers
                 return RedirectToAction("SignIn", "Account");
             }
         }
-        public async Task<IActionResult> Test()
-        {
-            string token = await WebRequestLogin();
-            List<GetRoomModel> list = await WebRequestGetAllRoom(token);
-            // string outs = await WebRequestCreate(token, 1);
-            List<List<int>> test = await WebRequestGetAllRoom(token, 1);
-            // Console.WriteLine(test[0][8]);
-            return Ok(test);
-        }
-        public async Task<IActionResult> Test1()
-        {
-            return Ok(DateTime.Now);
-        }
         private async Task<string> WebRequestLogin()
         {
             const string URL = "https://borrowingsystem.azurewebsites.net/api/user/login";
@@ -867,50 +854,6 @@ namespace LockLock.Controllers
                 Console.WriteLine(ex.ToString());
                 return false;
             }
-        }
-        public IActionResult Blacklist()
-        {
-            return View();
-        }
-
-        public IActionResult Profile()
-        {
-            return View();
-        }
-
-        public IActionResult EditProfile()
-        {
-            return View();
-        }
-
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        public IActionResult SignIn()
-        {
-            return View();
-        }
-
-        public IActionResult MainRoom()
-        {
-            return View();
-        }
-
-        public IActionResult Edit()
-        {
-            return View();
-        }
-
-        public IActionResult HistoryAdmin()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
