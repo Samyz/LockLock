@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using FirebaseAdmin.Auth;
 using Google.Cloud.Firestore;
 using LockLock.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Nancy.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace LockLock.Controllers
@@ -22,6 +25,7 @@ namespace LockLock.Controllers
         public async Task<IActionResult> IndexAsync(string room)
         {
             Tuple<string, string, string> adminUID = await verifyAdminTokenAsync();
+            string uidOther = await WebRequestLogin();
             if (adminUID != null)
             {
                 TempData["name"] = adminUID.Item2;
@@ -46,15 +50,19 @@ namespace LockLock.Controllers
                         foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
                         {
                             BorrowModel borrowData = borrowSnapshot.ConvertTo<BorrowModel>();
+                            if (borrowData.otherGroup != null)
+                            {
+                                bool res = verifyReservationByID(uidOther, borrowData.otherGroup);
+                                if (!res)
+                                {
+                                    Console.Write("reservation not found");
+                                }
+                            }
                             timeLists.Add(borrowData.time.ToLocalTime());
+                            
                         }
                         timeLists.Sort();
-                        int lastIndex = timeLists.Count - 1;
-                        int timeCompare = 0;
-                        if (lastIndex >= 0)
-                        {
-                            timeCompare = DateTime.Compare(timeLists[timeLists.Count - 1], currentDate);
-                        }
+                        int timeCompare = DateTime.Compare(timeLists[0].AddHours(-1), currentDate);
 
                         DocumentReference roomReference = firestoreDb.Collection("room").Document(transactionData.roomID);
                         DocumentSnapshot roomSnapshot = await roomReference.GetSnapshotAsync();
@@ -74,8 +82,8 @@ namespace LockLock.Controllers
                             Num = 1,
                             RoomName = roomData.name,
                             timeList = timeLists,
-                            status = timeCompare > 0 ? "Complete" : transactionData.cancel ? "Cancel" : "Booking",
-                            cancel = timeCompare > 0 ? false : !transactionData.cancel,
+                            status = timeCompare < 0 ? "Complete" : transactionData.cancel ? "Cancel" : "Booking",
+                            cancel = timeCompare > 0 && !transactionData.cancel ? true : false,
                             inBlacklist = blacklistQuerySnapshot.Count == 0,
                             name = userData.Firstname + " " + userData.Lastname,
                             userID = transactionData.userID,
@@ -94,12 +102,12 @@ namespace LockLock.Controllers
             {
                 return RedirectToAction("SignIn", "Account");
             }
-
         }
 
         public async Task<IActionResult> cancelAsync(string transactionID)
         {
             Tuple<string, string, string> adminUID = await verifyAdminTokenAsync();
+            string uidOther = await WebRequestLogin();
             if (adminUID != null)
             {
                 DocumentReference transactionReference = firestoreDb.Collection("transaction").Document(transactionID);
@@ -119,6 +127,12 @@ namespace LockLock.Controllers
                     foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
                     {
                         DocumentReference borrowReference = firestoreDb.Collection("borrow").Document(borrowSnapshot.Id);
+                        BorrowModel borrowData = borrowSnapshot.ConvertTo<BorrowModel>();
+                        if (borrowData.otherGroup != null)
+                        {
+                            bool res = cancelRequest(borrowData.otherGroup, uidOther);
+                            if (!res) Console.Write("Unable");
+                        }
                         await borrowReference.UpdateAsync("cancel", true);
                     }
                     return Ok();
@@ -163,6 +177,98 @@ namespace LockLock.Controllers
             {
                 Console.WriteLine("ID token must not be null or empty");
                 return null;
+            }
+        }
+
+
+
+        private async Task<string> WebRequestLogin()
+        {
+            const string URL = "https://borrowingsystem.azurewebsites.net/api/user/login";
+            try
+            {
+                var webRequest = System.Net.WebRequest.Create(URL);
+                GetLoginModel login = new GetLoginModel();
+                string json = new JavaScriptSerializer().Serialize(new
+                {
+                    email = "admin@locklock.com",
+                    password = "password"
+                });
+                if (webRequest != null)
+                {
+                    webRequest.Method = "POST";
+                    webRequest.Timeout = 12000;
+                    webRequest.ContentType = "application/json";
+
+                    await using (var streamWriter = new StreamWriter(webRequest.GetRequestStream()))
+                    {
+                        streamWriter.Write(json);
+                    }
+
+                    await using (System.IO.Stream s = webRequest.GetResponse().GetResponseStream())
+                    {
+                        using (System.IO.StreamReader sr = new System.IO.StreamReader(s))
+                        {
+                            var jsonResponse = sr.ReadToEnd();
+                            login = JsonConvert.DeserializeObject<GetLoginModel>(jsonResponse);
+                        }
+                    }
+                }
+                return login.accessToken;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
+        }
+        private bool verifyReservationByID(string token, string reservationID)
+        {
+            const string URL = "https://borrowingsystem.azurewebsites.net/api/reservation/get-reservation-by-id";
+            try
+            {
+                var webRequest = System.Net.WebRequest.Create(URL + "?id=" + reservationID);
+
+                if (webRequest != null)
+                {
+                    webRequest.Method = "GET";
+                    webRequest.Timeout = 12000;
+                    webRequest.Headers.Add("Authorization", "Bearer " + token);
+
+                    HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+                    if ((int)response.StatusCode >= 300) return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+        }
+        private bool cancelRequest(string transactionID, string token)
+        {
+            const string URL = "https://borrowingsystem.azurewebsites.net/api/reservation/delete";
+            try
+            {
+                var webRequest = System.Net.WebRequest.Create(URL + "?id=" + transactionID);
+
+                if (webRequest != null)
+                {
+                    webRequest.Method = "DELETE";
+                    webRequest.Timeout = 12000;
+                    webRequest.Headers.Add("Authorization", "Bearer " + token);
+                    webRequest.ContentType = "application/json";
+
+                    HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+                    Console.WriteLine((int)response.StatusCode);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
             }
         }
     }
