@@ -380,6 +380,16 @@
         margin-top: 5px;
         margin-right: 4px;
     }
+
+    td,
+    n,
+    input {
+        font-size: 16px !important;
+    }
+
+    button {
+        font-size: 18px !important;
+    }
 </style>
 
 
@@ -452,28 +462,30 @@ isUser=false })
                                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                         <input type="hidden" id="RoomID" name="RoomID" value="@item.RoomID">
                                         <td>
-                                            <input style="font-size:16px;" class="input-objName" type="text" id="objName1" name="objName" value="@item.objName" disabled>
+                                            <input class="input-objName" type="text" id="objName1" name="objName"
+                                    value="@item.objName" disabled>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="objName"
                                     data-valmsg-replace="true"></span>
                                         </td>
                                         <td class="td-objNum">
-                                            <input style="font-size:16px;" class="input-objNum" type="number" id="objNum1" name="objNum" value="@item.objNum" disabled>
-                                            <n  style="font-size:16px;">ชิ้น</n>
+                                            <input class="input-objNum" type="number" id="objNum1" name="objNum"
+                                    value="@item.objNum" disabled>
+                                            <n>ชิ้น</n>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="objNum"
                                     data-valmsg-replace="true"></span>
                                         </td>
                                         <td class="td-btnEdit">
                                             <button type="button" class="btn btn-warning" id="change1"
-                                    onClick="changeBut(1)"  style="font-size:18px;">แก้ไข</button>
+                                    onClick="changeBut(1)">แก้ไข</button>
                                             <button type="submit" class="btn btn-info" id="submit1"
-                                    style="display: none;"  style="font-size:18px;">ยืนยัน</button>
+                                    style="display: none;">ยืนยัน</button>
                                         </td>
                                     </form>
                                 </tr>
                             </tbody>
                         </table>
                         <form class="btn-footer" asp-controller="BookingRoom" asp-route-room="@item.RoomID">
-                            <button type="submit" class="btn btn-info"  style="font-size:18px;">รายการจอง</button>
+                            <button type="submit" class="btn btn-info" style="font-size:18px;">รายการจอง</button>
                         </form>
                     }
                 }
@@ -504,12 +516,14 @@ isUser=false })
                                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                         <input type="hidden" id="RoomID" name="RoomID" value="@item.RoomID">
                                         <td>
-                                            <input class="input-objName" type="text" id="objName2" name="objName" value="@item.objName" disabled>
+                                            <input class="input-objName" type="text" id="objName2" name="objName"
+                                    value="@item.objName" disabled>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="objName"
                                     data-valmsg-replace="true"></span>
                                         </td>
                                         <td class="td-objNum">
-                                            <input class="input-objNum" type="number" id="objNum2" name="objNum" value="@item.objNum" disabled>
+                                            <input class="input-objNum" type="number" id="objNum2" name="objNum"
+                                    value="@item.objNum" disabled>
                                             <n>ชิ้น</n>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="objNum"
                                     data-valmsg-replace="true"></span>
@@ -556,12 +570,14 @@ isUser=false })
                                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                         <input type="hidden" id="RoomID" name="RoomID" value="@item.RoomID">
                                         <td>
-                                            <input class="input-objName" type="text" id="objName3" name="objName" value="@item.objName" disabled>
+                                            <input class="input-objName" type="text" id="objName3" name="objName"
+                                    value="@item.objName" disabled>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="objName"
                                     data-valmsg-replace="true"></span>
                                         </td>
                                         <td class="td-objNum">
-                                            <input class="input-objNum" type="number" id="objNum3" name="objNum" value="@item.objNum" disabled>
+                                            <input class="input-objNum" type="number" id="objNum3" name="objNum"
+                                    value="@item.objNum" disabled>
                                             <n>ชิ้น</n>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="objNum"
                                     data-valmsg-replace="true"></span>
@@ -610,12 +626,14 @@ isUser=false })
                                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                         <input type="hidden" id="RoomID" name="RoomID" value="@item.RoomID">
                                         <td>
-                                            <input class="input-objName" type="text" id="objName4" name="objName" value="@item.objName" disabled>
+                                            <input class="input-objName" type="text" id="objName4" name="objName"
+                                    value="@item.objName" disabled>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="objName"
                                     data-valmsg-replace="true"></span>
                                         </td>
                                         <td class="td-objNum">
-                                            <input class="input-objNum" type="number" id="objNum4" name="objNum" value="@item.objNum" disabled>
+                                            <input class="input-objNum" type="number" id="objNum4" name="objNum"
+                                    value="@item.objNum" disabled>
                                             <n>ชิ้น</n>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="objNum"
                                     data-valmsg-replace="true"></span>
@@ -664,12 +682,14 @@ isUser=false })
                                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                         <input type="hidden" id="RoomID" name="RoomID" value="@item.RoomID">
                                         <td>
-                                            <input class="input-objName" type="text" id="objName5" name="objName" value="@item.objName" disabled>
+                                            <input class="input-objName" type="text" id="objName5" name="objName"
+                                    value="@item.objName" disabled>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="objName"
                                     data-valmsg-replace="true"></span>
                                         </td>
                                         <td class="td-objNum">
-                                            <input class="input-objNum" type="number" id="objNum5" name="objNum" value="@item.objNum" disabled>
+                                            <input class="input-objNum" type="number" id="objNum5" name="objNum"
+                                    value="@item.objNum" disabled>
                                             <n>ชิ้น</n>
                                             <span class="text-danger field-validation-valid" data-valmsg-for="objNum"
                                     data-valmsg-replace="true"></span>
