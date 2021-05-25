@@ -387,8 +387,12 @@ a.disable {
 .container-row {
   display: flex;
   flex-direction: row;
-  width: 50%;
-  justify-content: space-around;
+  width: 60%;
+  /* justify-content: space-around; */
+margin-left: 30px;
+}
+.label-text-info{
+  margin-right: 30px;
 }
 
 #object {
