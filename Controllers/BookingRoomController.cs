@@ -37,6 +37,7 @@ namespace LockLock.Controllers
                 QuerySnapshot transactionQuerySnapshot = await transactionQuery.GetSnapshotAsync();
 
                 DateTime currentDate = DateTime.Now;
+                currentDate = currentDate.AddHours(7);
 
                 foreach (DocumentSnapshot transactionSnapshot in transactionQuerySnapshot)
                 {
@@ -58,7 +59,8 @@ namespace LockLock.Controllers
                                     Console.Write("reservation not found");
                                 }
                             }
-                            timeLists.Add(borrowData.time.ToLocalTime());
+                            DateTime temp = borrowData.time;
+                            timeLists.Add(temp.AddHours(7));
                             
                         }
                         timeLists.Sort();
