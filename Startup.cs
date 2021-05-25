@@ -33,6 +33,11 @@ namespace LockLock
                 Credential = GoogleCredential.FromFile(firebaseJSON),
             });
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", firebaseJSON);
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
+            });
 
         }
 
@@ -54,6 +59,7 @@ namespace LockLock
 
             app.UseRouting();
 
+            app.UseCors("AllowAll");
             app.UseAuthorization();
 
             app.UseSession();

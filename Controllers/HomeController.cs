@@ -516,7 +516,7 @@ namespace LockLock.Controllers
         public async Task<IActionResult> History()
         {
             string uid = await checkLogedIn();
-
+            string uidOther = await WebRequestLogin();
             if (uid != null)
             {
                 UserModel user = new UserModel();
@@ -558,7 +558,15 @@ namespace LockLock.Controllers
                         foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
                         {
                             BorrowModel borrowData = borrowSnapshot.ConvertTo<BorrowModel>();
-                            timeLists.Add(borrowData.time.ToLocalTime());
+                            if (borrowData.otherGroup != null)
+                            {
+                                bool res = verifyReservationByID(uidOther, borrowData.otherGroup);
+                                if (!res)
+                                {
+                                    Console.Write("reservation not found");
+                                }
+                            }
+                            timeLists.Add(borrowData.time.ToLocalTime()); 
                         }
                         timeLists.Sort();
                         int timeCompare = DateTime.Compare(timeLists[0].AddHours(-1), currentDate);
@@ -618,7 +626,8 @@ namespace LockLock.Controllers
 
                         if (borrowData.otherGroup != null)
                         {
-                            cancelRequest(borrowSnapshot.Id, uidOther);
+                            bool res = cancelRequest(borrowData.otherGroup, uidOther);
+                            if (!res) Console.Write("Unable");
                         }
 
                         await borrowReference.UpdateAsync("cancel", true);
@@ -630,8 +639,6 @@ namespace LockLock.Controllers
                     Console.WriteLine("UserID not macth");
                     return RedirectToAction("History", "Home");
                 }
-
-
             }
             else
             {
@@ -717,26 +724,19 @@ namespace LockLock.Controllers
                 return null;
             }
         }
-        private async Task<bool> cancelRequest(string transactionID, string token)
+        private bool cancelRequest(string transactionID, string token)
         {
             const string URL = "https://borrowingsystem.azurewebsites.net/api/reservation/delete";
             try
             {
-                var webRequest = System.Net.WebRequest.Create(URL);
-                string json = new JavaScriptSerializer().Serialize(new
-                {
-                    id = transactionID,
-                });
+                var webRequest = System.Net.WebRequest.Create(URL + "?id=" + transactionID);
+
                 if (webRequest != null)
                 {
                     webRequest.Method = "DELETE";
                     webRequest.Timeout = 12000;
                     webRequest.Headers.Add("Authorization", "Bearer " + token);
                     webRequest.ContentType = "application/json";
-                    await using (var streamWriter = new StreamWriter(webRequest.GetRequestStream()))
-                    {
-                        streamWriter.Write(json);
-                    }
 
                     HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
                     Console.WriteLine((int)response.StatusCode);
@@ -821,6 +821,30 @@ namespace LockLock.Controllers
             {
                 Console.WriteLine(ex.ToString());
                 return null;
+            }
+        }
+        private bool verifyReservationByID(string token, string reservationID)
+        {
+            const string URL = "https://borrowingsystem.azurewebsites.net/api/reservation/get-reservation-by-id";
+            try
+            {
+                var webRequest = System.Net.WebRequest.Create(URL + "?id=" + reservationID);
+
+                if (webRequest != null)
+                {
+                    webRequest.Method = "GET";
+                    webRequest.Timeout = 12000;
+                    webRequest.Headers.Add("Authorization", "Bearer " + token);
+
+                    HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+                    if ((int)response.StatusCode >= 300) return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
             }
         }
         public IActionResult Blacklist()
