@@ -158,10 +158,9 @@ namespace LockLock.Controllers
                 List<List<int>> gameList = await WebRequestGetAllRoom(token, list[roomNum == 0 ? 0 : roomNum - 1].id);
 
                 // data from our DB //
-                TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
 
                 DateTime timeRef = DateTime.Now.Date;
-                timeRef = TimeZoneInfo.ConvertTime(timeRef, asiaThTimeZone);
+                // timeRef = timeRef.AddHours(-8);
 
                 DateTime timeNow = DateTime.Now.Date;
                 timeNow = TimeZoneInfo.ConvertTimeToUtc(timeNow);
@@ -169,8 +168,9 @@ namespace LockLock.Controllers
                 DateTime timeEnd = timeNow.AddDays(7);
                 Console.WriteLine("Now " + timeNow.ToString("u"));
                 Console.WriteLine("Ref " + timeRef.ToString("u"));
-                int hourNow = int.Parse(DateTime.Now.ToString("HH"));
-                int dayNow = int.Parse(DateTime.Now.ToString("dd"));
+                DateTime timeaaa = DateTime.Now;//.AddHours(-8).AddHours(7)
+                int hourNow = int.Parse(timeaaa.ToString("HH")) + 7;
+                int dayNow = int.Parse(timeaaa.ToString("dd"));
                 // Console.WriteLine("hour Now " + hourNow);
                 string timeLength = timeRef.ToString("dd MMMM") + " - " + timeRef.AddDays(6).ToString("dd MMMM yyyy");
                 List<string> viewDataName = new List<string>();
@@ -405,9 +405,9 @@ namespace LockLock.Controllers
                 string[] temp = input.dates[i].Split(" ");
                 string[] month = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
-                TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                
                 DateTime timeCheck = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
-                timeCheck = TimeZoneInfo.ConvertTime(timeCheck, asiaThTimeZone);
+                timeCheck = timeCheck.AddHours(-7);
                 if (input.color[i] == "Green")
                 {
                     Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("time", TimeZoneInfo.ConvertTimeToUtc(timeCheck)).WhereEqualTo("cancel", false).WhereEqualTo("otherGroup", false).WhereEqualTo("roomID", Room.RoomID);
@@ -466,9 +466,9 @@ namespace LockLock.Controllers
                 string[] temp = input.dates[i].Split(" ");
                 string[] month = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
-                TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                
                 DateTime save = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
-                save = TimeZoneInfo.ConvertTime(save, asiaThTimeZone);
+                save = save.AddHours(-7);
 
 
                 if (input.color[i] == "Green")
@@ -566,7 +566,8 @@ namespace LockLock.Controllers
                                     Console.Write("reservation not found");
                                 }
                             }
-                            timeLists.Add(borrowData.time.ToLocalTime()); 
+                            DateTime temp = borrowData.time;
+                            timeLists.Add(temp.AddHours(7)); 
                         }
                         timeLists.Sort();
                         int timeCompare = DateTime.Compare(timeLists[0].AddHours(-1), currentDate);
@@ -653,6 +654,10 @@ namespace LockLock.Controllers
             List<List<int>> test = await WebRequestGetAllRoom(token, 1);
             // Console.WriteLine(test[0][8]);
             return Ok(test);
+        }
+        public async Task<IActionResult> Test1()
+        {
+            return Ok(DateTime.Now);
         }
         private async Task<string> WebRequestLogin()
         {
