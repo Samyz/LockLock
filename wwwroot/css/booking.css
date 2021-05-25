@@ -304,3 +304,10 @@
     border-bottom-right-radius: .3rem;
     border-bottom-left-radius: .3rem;
   }
+  tbody td:nth-child(6),tbody td:nth-child(7),tbody td:nth-child(8){
+    text-align: left;
+  }
+  .btn-warning  {
+    box-shadow: none !important; 
+  }
+  

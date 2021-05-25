@@ -208,4 +208,6 @@ a {
   text-decoration: none;
   background-color: transparent;
 }
-
+a:hover{
+  text-decoration: underline;
+}
