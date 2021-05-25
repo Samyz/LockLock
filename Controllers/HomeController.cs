@@ -405,7 +405,7 @@ namespace LockLock.Controllers
                 string[] temp = input.dates[i].Split(" ");
                 string[] month = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
-                
+
                 DateTime timeCheck = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
                 timeCheck = timeCheck.AddHours(-7);
                 if (input.color[i] == "Green")
@@ -466,7 +466,7 @@ namespace LockLock.Controllers
                 string[] temp = input.dates[i].Split(" ");
                 string[] month = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
-                
+
                 DateTime save = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
                 save = save.AddHours(-7);
 
@@ -556,6 +556,7 @@ namespace LockLock.Controllers
                         Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("transactionID", transactionSnapshot.Id);
                         QuerySnapshot borrowQuerySnapshot = await borrowQuery.GetSnapshotAsync();
                         List<DateTime> timeLists = new List<DateTime>();
+                        bool checkCancel = false;
                         foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
                         {
                             BorrowModel borrowData = borrowSnapshot.ConvertTo<BorrowModel>();
@@ -564,11 +565,25 @@ namespace LockLock.Controllers
                                 bool res = verifyReservationByID(uidOther, borrowData.otherGroup);
                                 if (!res)
                                 {
+                                    checkCancel = true;
                                     Console.Write("reservation not found");
+                                    break;
                                 }
                             }
                             DateTime temp = borrowData.time;
-                            timeLists.Add(temp.AddHours(7)); 
+                            timeLists.Add(temp.AddHours(7));
+                        }
+                        if (checkCancel)
+                        {
+                            DocumentReference transactionReference = firestoreDb.Collection("transaction").Document(transactionSnapshot.Id);
+                            await transactionReference.UpdateAsync("cancel", true);
+
+                            foreach (DocumentSnapshot borrowSnapshot in borrowQuerySnapshot)
+                            {
+                                DocumentReference borrowReference = firestoreDb.Collection("borrow").Document(borrowSnapshot.Id);
+                                await borrowReference.UpdateAsync("cancel", true);
+                            }
+                            continue;
                         }
                         timeLists.Sort();
                         int timeCompare = DateTime.Compare(timeLists[0].AddHours(-1), currentDate);
