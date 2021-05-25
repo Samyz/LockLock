@@ -161,7 +161,7 @@ namespace LockLock.Controllers
                 TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
 
                 DateTime timeRef = DateTime.Now.Date;
-                timeRef = TimeZoneInfo.ConvertTime(timeRef, asiaThTimeZone);
+                timeRef = TimeZoneInfo.ConvertTimeFromUTC(timeRef, asiaThTimeZone);
 
                 DateTime timeNow = DateTime.Now.Date;
                 timeNow = TimeZoneInfo.ConvertTimeToUtc(timeNow);
@@ -407,7 +407,7 @@ namespace LockLock.Controllers
 
                 TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime timeCheck = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
-                timeCheck = TimeZoneInfo.ConvertTime(timeCheck, asiaThTimeZone);
+                timeCheck = TimeZoneInfo.ConvertTimeFromUtc(timeCheck, asiaThTimeZone);
                 if (input.color[i] == "Green")
                 {
                     Query borrowQuery = firestoreDb.Collection("borrow").WhereEqualTo("time", TimeZoneInfo.ConvertTimeToUtc(timeCheck)).WhereEqualTo("cancel", false).WhereEqualTo("otherGroup", false).WhereEqualTo("roomID", Room.RoomID);
@@ -468,7 +468,7 @@ namespace LockLock.Controllers
 
                 TimeZoneInfo asiaThTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime save = new DateTime(int.Parse(temp[3]), Array.IndexOf(month, temp[2]) + 1, int.Parse(temp[1]), int.Parse(temp[4].Split(".")[0]), 0, 0);
-                save = TimeZoneInfo.ConvertTime(save, asiaThTimeZone);
+                save = TimeZoneInfo.ConvertTimeFromUTC(save, asiaThTimeZone);
 
 
                 if (input.color[i] == "Green")
@@ -653,6 +653,10 @@ namespace LockLock.Controllers
             List<List<int>> test = await WebRequestGetAllRoom(token, 1);
             // Console.WriteLine(test[0][8]);
             return Ok(test);
+        }
+        public async Task<IActionResult> Test1()
+        {
+            return Ok(DateTime.Now.toString('u'));
         }
         private async Task<string> WebRequestLogin()
         {
