@@ -169,7 +169,7 @@ namespace LockLock.Controllers
                 Console.WriteLine("Now " + timeNow.ToString("u"));
                 Console.WriteLine("Ref " + timeRef.ToString("u"));
                 DateTime timeaaa = DateTime.Now;//.AddHours(-8).AddHours(7)
-                int hourNow = int.Parse(timeaaa.ToString("HH"));
+                int hourNow = int.Parse(timeaaa.ToString("HH")) + 7;
                 int dayNow = int.Parse(timeaaa.ToString("dd"));
                 // Console.WriteLine("hour Now " + hourNow);
                 string timeLength = timeRef.ToString("dd MMMM") + " - " + timeRef.AddDays(6).ToString("dd MMMM yyyy");
@@ -566,7 +566,7 @@ namespace LockLock.Controllers
                                     Console.Write("reservation not found");
                                 }
                             }
-                            timeLists.Add(borrowData.time.ToLocalTime()); 
+                            timeLists.Add(borrowData.time.AddHour(7)); 
                         }
                         timeLists.Sort();
                         int timeCompare = DateTime.Compare(timeLists[0].AddHours(-1), currentDate);
