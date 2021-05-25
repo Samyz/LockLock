@@ -72,7 +72,7 @@ namespace LockLock.Controllers
                         DocumentSnapshot userSnapshot = await userReference.GetSnapshotAsync();
                         UserModel userData = userSnapshot.ConvertTo<UserModel>();
 
-                        Query blacklistQuery = firestoreDb.Collection("blacklist").WhereEqualTo("userID", userReference.Id);
+                        Query blacklistQuery = firestoreDb.Collection("blacklist").WhereEqualTo("userID", userSnapshot.Id);
                         QuerySnapshot blacklistQuerySnapshot = await blacklistQuery.GetSnapshotAsync();
 
                         BookingModel bookingItem = new BookingModel()
