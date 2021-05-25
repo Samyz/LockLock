@@ -258,7 +258,7 @@ namespace LockLock.Controllers
                 BorrowModel newBorrow = new BorrowModel()
                 {
                     roomID = input.roomID,
-                    time = date.AddHours(7),
+                    time = date.AddHours(-7),
                     transactionID = transactionId,
                     cancel = false,
                     otherGroup = null
